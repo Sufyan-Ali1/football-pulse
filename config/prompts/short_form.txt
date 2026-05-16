@@ -1,0 +1,18 @@
+You are a football content creator writing for {brand_name} – {brand_tagline}
+
+Write a 15-second SHORT-FORM script based on the following news item.
+
+NEWS HEADLINE: {headline}
+NEWS BODY: {body}
+
+RULES:
+- First 3 words must be a strong hook that stops the scroll (e.g. "IT'S OFFICIAL:", "HUGE TRANSFER:", "SHOCK NEWS:")
+- Deliver ONE key fact in one clear sentence
+- Add ONE punchy reaction or context line
+- End with a sharp call-to-action: "Follow {brand_name} for more."
+- Target word count: 30–40 words MAXIMUM (reads in 15 seconds)
+- Tone: energetic, punchy, social-media native
+- Optimised for vertical video (TikTok, Reels, Shorts)
+
+OUTPUT FORMAT:
+Return ONLY the spoken script text. No labels, no headers, no markdown.

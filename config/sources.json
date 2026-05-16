@@ -1,0 +1,108 @@
+{
+  "rss_feeds": [
+    {
+      "name": "Sky Sports Football",
+      "url": "https://www.skysports.com/rss/12040",
+      "active": true
+    },
+    {
+      "name": "BBC Sport Football",
+      "url": "https://feeds.bbci.co.uk/sport/football/rss.xml",
+      "active": true
+    },
+    {
+      "name": "ESPN FC",
+      "url": "https://www.espn.com/espn/rss/soccer/news",
+      "active": true
+    },
+    {
+      "name": "TalkSport",
+      "url": "https://talksport.com/feed/",
+      "active": true
+    },
+    {
+      "name": "The Guardian Football",
+      "url": "https://www.theguardian.com/football/rss",
+      "active": true
+    },
+    {
+      "name": "90min",
+      "url": "https://www.90min.com/feed",
+      "active": true
+    },
+    {
+      "name": "Football Italia",
+      "url": "https://www.football-italia.net/rss.xml",
+      "active": true
+    }
+  ],
+  "google_alert_rss_urls": [
+    "https://www.google.com/alerts/feeds/04458690083290690691/3188954713599048507",
+    "https://www.google.com/alerts/feeds/04458690083290690691/12409202703152718690",
+    "https://www.google.com/alerts/feeds/04458690083290690691/8163779025542539356",
+    "https://www.google.com/alerts/feeds/04458690083290690691/13863871064075040308"
+  ],
+  "twitter_accounts": [
+    {
+      "username": "FabrizioRomano",
+      "display_name": "Fabrizio Romano",
+      "active": true
+    },
+    {
+      "username": "David_Ornstein",
+      "display_name": "David Ornstein",
+      "active": true
+    },
+    {
+      "username": "BenJacobs",
+      "display_name": "Ben Jacobs",
+      "active": true
+    },
+    {
+      "username": "ManUtd",
+      "display_name": "Manchester United",
+      "active": true
+    },
+    {
+      "username": "ChelseaFC",
+      "display_name": "Chelsea FC",
+      "active": true
+    },
+    {
+      "username": "realmadrid",
+      "display_name": "Real Madrid",
+      "active": true
+    },
+    {
+      "username": "PSG_English",
+      "display_name": "PSG",
+      "active": true
+    },
+    {
+      "username": "FCBarcelona",
+      "display_name": "FC Barcelona",
+      "active": true
+    },
+    {
+      "username": "AlNassrFC_EN",
+      "display_name": "Al-Nassr",
+      "active": true
+    },
+    {
+      "username": "InterMiamiCF",
+      "display_name": "Inter Miami",
+      "active": true
+    }
+  ],
+  "filter_keywords": [
+    "transfer", "signing", "deal", "contract", "loan", "fee",
+    "premier league", "la liga", "bundesliga", "serie a", "ligue 1",
+    "champions league", "europa league",
+    "breaking", "confirmed", "agreement", "here we go",
+    "injury", "ban", "suspension", "sacked", "appointed",
+    "messi", "ronaldo", "haaland", "mbappe", "bellingham", "salah",
+    "man utd", "manchester united", "chelsea", "arsenal", "liverpool",
+    "man city", "real madrid", "barcelona", "psg", "juventus",
+    "al-nassr", "inter miami"
+  ]
+}
