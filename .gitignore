@@ -1,8 +1,14 @@
 .env
 venv
+config/secrets/
 config/youtube_client_secrets.json
 config/youtube_token.json
+config/google_cloud_service_account.json
+config/gdrive_client_secrets.json
 config/gdrive_service_account.json
+config/gdrive_secrets.json
+config/gdrive_token.json
+config/logo.png
 __pycache__/
 *.pyc
 *.pyo
@@ -10,6 +16,7 @@ __pycache__/
 storage/Voiceovers/*
 storage/Videos/Raw/*
 storage/Videos/Final/*
+storage/Videos/Cache/*
 storage/Thumbnails/*
 !storage/Voiceovers/.gitkeep
 !storage/Videos/Raw/.gitkeep

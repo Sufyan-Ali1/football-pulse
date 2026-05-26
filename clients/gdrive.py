@@ -1,0 +1,202 @@
+"""
+Google Drive client — upload storage/ files to Drive and optionally delete local copies.
+
+Authentication: OAuth 2.0 (your Google account) via config/gdrive_client_secrets.json
+                Token cached at config/gdrive_token.json after first browser login.
+Root folder:    settings.GDRIVE_FOLDER_ID  (folder shared with your Google account)
+"""
+import io
+import logging
+import pickle
+from pathlib import Path
+
+from config import settings
+
+logger = logging.getLogger(__name__)
+
+_SCOPES = ["https://www.googleapis.com/auth/drive"]
+
+# Maps local storage/ subpaths → Drive subfolder hierarchy
+# Videos/Cache/pexels is excluded — clips are regeneratable from the API
+_SYNC_MAP: dict[str, list[str]] = {
+    "Videos/Final":  ["Videos", "Final"],
+    "Videos/Raw":    ["Videos", "Raw"],
+    "Voiceovers":    ["Voiceovers"],
+    "Thumbnails":    ["Thumbnails"],
+}
+
+
+def _get_service():
+    """Return an authenticated Drive v3 service object (OAuth 2.0).
+
+    First call opens a browser login page and saves the token to
+    config/gdrive_token.json. All subsequent calls use the saved token.
+    """
+    from google.auth.transport.requests import Request
+    from google_auth_oauthlib.flow import InstalledAppFlow
+    from googleapiclient.discovery import build
+
+    creds = None
+    token_path   = settings.GDRIVE_TOKEN_PATH
+    secrets_path = settings.GDRIVE_CLIENT_SECRETS_PATH
+
+    if token_path.exists():
+        with open(token_path, "rb") as f:
+            creds = pickle.load(f)
+
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            if not secrets_path.exists():
+                raise FileNotFoundError(
+                    f"OAuth client secrets not found at {secrets_path}.\n"
+                    "In Google Cloud Console: APIs & Services → Credentials → "
+                    "Create Credentials → OAuth 2.0 Client ID → Desktop App → Download JSON.\n"
+                    "Save it as config/gdrive_client_secrets.json"
+                )
+            flow  = InstalledAppFlow.from_client_secrets_file(str(secrets_path), _SCOPES)
+            creds = flow.run_local_server(port=0)
+
+        with open(token_path, "wb") as f:
+            pickle.dump(creds, f)
+        logger.info("Drive OAuth token saved to %s", token_path)
+
+    return build("drive", "v3", credentials=creds, cache_discovery=False)
+
+
+def get_or_create_folder(service, name: str, parent_id: str) -> str:
+    """Return the Drive folder ID for `name` under `parent_id`, creating it if absent."""
+    query = (
+        f"name='{name}' and mimeType='application/vnd.google-apps.folder' "
+        f"and '{parent_id}' in parents and trashed=false"
+    )
+    results = service.files().list(q=query, fields="files(id, name)").execute()
+    files = results.get("files", [])
+    if files:
+        return files[0]["id"]
+
+    meta = {
+        "name": name,
+        "mimeType": "application/vnd.google-apps.folder",
+        "parents": [parent_id],
+    }
+    folder = service.files().create(body=meta, fields="id").execute()
+    logger.info("Created Drive folder: %s (id=%s)", name, folder["id"])
+    return folder["id"]
+
+
+
+def sync_storage_to_drive(delete_local: bool = False) -> dict:
+    """Sync all storage/ subfolders to Google Drive.
+
+    Mirrors the folder structure under settings.GDRIVE_FOLDER_ID.
+    Skips files already present on Drive.
+    If delete_local=True, deletes each local file after a successful upload.
+
+    Returns {"uploaded": N, "skipped": N, "failed": N}.
+    """
+    root_id = settings.GDRIVE_FOLDER_ID
+    if not root_id:
+        raise ValueError(
+            "GOOGLE_DRIVE_FOLDER_ID is not set in .env. "
+            "Add it with the folder ID the client shared with you."
+        )
+
+    service = _get_service()
+    storage_root = settings.STORAGE_DIR
+
+    stats = {"uploaded": 0, "skipped": 0, "failed": 0}
+
+    print(f"\n{'='*56}")
+    print(f"  Google Drive Sync  |  root folder: {root_id}")
+    print(f"  delete_local={delete_local}")
+    print(f"{'='*56}")
+
+    for local_subpath, drive_path in _SYNC_MAP.items():
+        local_dir = storage_root / local_subpath.replace("/", "\\")
+        if not local_dir.exists():
+            print(f"\n  [GDrive] Skipping {local_subpath} — folder does not exist locally")
+            continue
+
+        files = [f for f in local_dir.iterdir() if f.is_file()]
+        if not files:
+            print(f"\n  [GDrive] {local_subpath} — no files to upload")
+            continue
+
+        # Resolve (or create) the matching Drive subfolder hierarchy
+        folder_id = root_id
+        for part in drive_path:
+            folder_id = get_or_create_folder(service, part, folder_id)
+
+        print(f"\n  [{local_subpath}]  {len(files)} file(s) → Drive/{'/'.join(drive_path)}")
+
+        for f in sorted(files):
+            # Re-use the already-built service — pass folder_id directly
+            name = f.name
+            size_mb = f.stat().st_size / (1024 * 1024)
+
+            query = f"name='{name}' and '{folder_id}' in parents and trashed=false"
+            existing = service.files().list(q=query, fields="files(id)").execute().get("files", [])
+            if existing:
+                print(f"    [GDrive] Skipped (already on Drive): {name}")
+                stats["skipped"] += 1
+                continue
+
+            print(f"    [GDrive] Uploading {name} ({size_mb:.1f} MB) ...")
+            try:
+                from googleapiclient.http import MediaFileUpload
+                media = MediaFileUpload(str(f), resumable=True)
+                file_meta = {"name": name, "parents": [folder_id]}
+                result = (
+                    service.files()
+                    .create(body=file_meta, media_body=media, fields="id")
+                    .execute()
+                )
+                file_id = result["id"]
+                print(f"    [GDrive] Done — {name} (id={file_id})")
+                logger.info("Uploaded: %s → Drive id=%s", name, file_id)
+                stats["uploaded"] += 1
+
+                if delete_local:
+                    f.unlink()
+                    print(f"    [GDrive] Local copy deleted: {name}")
+
+            except Exception as exc:
+                logger.warning("Upload failed %s: %s", name, exc)
+                print(f"    [GDrive] FAILED: {name} — {exc}")
+                stats["failed"] += 1
+
+    print(f"\n{'='*56}")
+    print(f"  Sync complete — uploaded={stats['uploaded']}  skipped={stats['skipped']}  failed={stats['failed']}")
+    print(f"{'='*56}\n")
+    return stats
+
+
+def download_file(drive_file_id: str, local_path: Path) -> bool:
+    """Download a Drive file by ID to `local_path`.
+
+    Returns True on success. Use this to retrieve a file that was
+    previously uploaded and deleted locally.
+    """
+    from googleapiclient.http import MediaIoBaseDownload
+
+    service = _get_service()
+    local_path.parent.mkdir(parents=True, exist_ok=True)
+
+    print(f"    [GDrive] Downloading {local_path.name} ...")
+    try:
+        request = service.files().get_media(fileId=drive_file_id)
+        with io.FileIO(str(local_path), "wb") as fh:
+            downloader = MediaIoBaseDownload(fh, request)
+            done = False
+            while not done:
+                _, done = downloader.next_chunk()
+        size_mb = local_path.stat().st_size / (1024 * 1024)
+        print(f"    [GDrive] Downloaded: {local_path.name} ({size_mb:.1f} MB)")
+        logger.info("Downloaded from Drive: %s (id=%s)", local_path.name, drive_file_id)
+        return True
+    except Exception as exc:
+        logger.warning("Download failed for id=%s: %s", drive_file_id, exc)
+        print(f"    [GDrive] Download FAILED: {exc}")
+        return False

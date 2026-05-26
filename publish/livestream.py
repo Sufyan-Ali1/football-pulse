@@ -22,6 +22,7 @@ from config import settings
 logger = logging.getLogger(__name__)
 
 _SCOPES = [
+    "https://www.googleapis.com/auth/youtube.upload",
     "https://www.googleapis.com/auth/youtube",
     "https://www.googleapis.com/auth/youtube.force-ssl",
 ]
@@ -42,6 +43,7 @@ def _get_youtube_client():
                 str(settings.YOUTUBE_CLIENT_SECRETS_PATH), _SCOPES
             )
             creds = flow.run_local_server(port=0)
+        settings.YOUTUBE_TOKEN_PATH.parent.mkdir(parents=True, exist_ok=True)
         with open(settings.YOUTUBE_TOKEN_PATH, "wb") as f:
             pickle.dump(creds, f)
     return build("youtube", "v3", credentials=creds)
@@ -89,6 +91,7 @@ def add_video_to_rotation(youtube_video_id: str) -> None:
 
 def rebuild_concat_list() -> None:
     """Rebuild the FFmpeg concat list after new videos are added."""
+    settings.VIDEOS_FINAL_DIR.mkdir(parents=True, exist_ok=True)
     video_files = sorted(settings.VIDEOS_FINAL_DIR.glob("*_final_branded.mp4"))
     concat_list = settings.VIDEOS_FINAL_DIR / "concat_list.txt"
     with open(concat_list, "w") as f:

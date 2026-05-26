@@ -6,9 +6,24 @@ Define once here — never duplicate across modules.
 # ── Classification signals ────────────────────────────────────────────────────
 
 BREAKING_SIGNALS: list[str] = [
-    "here we go", "confirmed", "done deal", "official", "breaking",
-    "agreement reached", "deal signed", "medicals", "contract signed",
-    "announced", "unveiled", "sacked", "appointed",
+    "here we go",
+    "done deal",
+    "agreement reached",
+    "deal signed",
+    "medicals",
+    "contract signed",
+    "officially confirmed",
+    "officially unveiled",
+    "officially appointed",
+    "officially sacked",
+    "sacked as manager",
+    "sacked as head coach",
+    "appointed as manager",
+    "appointed as head coach",
+    "signs for",
+    "joins on a",
+    "world record fee",
+    "breaks transfer record",
 ]
 
 TRANSFER_SIGNALS: list[str] = [
@@ -21,6 +36,28 @@ TACTICAL_SIGNALS: list[str] = [
     "match report", "tactical", "formation", "press conference",
     "lineup", "starting eleven", "substitution", "tactics",
     "analysis", "performance", "rating",
+]
+
+# Signals that indicate low viewer interest — used to penalise rank score
+LOW_INTEREST_SIGNALS: list[str] = [
+    "how to watch",
+    "where to watch",
+    "live stream guide",
+    "tv schedule",
+    "fantasy football",
+    "betting tips",
+    "fixture list",
+    "fixtures and results",
+    "on this day",
+    "years ago today",
+    "throwback",
+    "flashback",
+    "tickets on sale",
+    "buy tickets",
+    "kit review",
+    "boots review",
+    "top 10",
+    "best football",
 ]
 
 # ── Source quality tiers (used by ranker) ─────────────────────────────────────
@@ -43,13 +80,4 @@ STOP_WORDS: set[str] = {
     "the", "a", "an", "is", "in", "on", "at", "to", "for", "of",
     "and", "or", "but", "it", "he", "she", "we", "are", "was", "has",
     "have", "be", "been", "that", "this", "with", "from", "as",
-}
-
-# ── Content-type badge labels (used by video_editor and thumbnail) ────────────
-
-BADGE_LABELS: dict[str, str] = {
-    "breaking_news":   "BREAKING NEWS",
-    "transfer_rumour": "TRANSFER NEWS",
-    "club_update":     "CLUB UPDATE",
-    "tactical":        "TACTICAL ANALYSIS",
 }

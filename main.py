@@ -5,11 +5,12 @@ Start the full system:
     python main.py
 
 What this does:
-  1. Runs an immediate first poll on startup
-  2. Schedules RSS + Google Alerts every 5 minutes
-  3. Starts the 24/7 FFmpeg livestream (if final videos exist)
+  1. Runs an immediate collector poll on startup
+  2. Schedules collector (RSS + Google Alerts → DB) every 5 minutes
+  3. Schedules daily video generation once per day (default 8 PM UTC)
+  4. Starts the 24/7 FFmpeg livestream (if final videos exist)
 
-To run just one poll manually (useful for testing):
+To run just one collector poll manually (useful for testing):
     python main.py --once
 """
 import logging
@@ -17,12 +18,12 @@ import sys
 from pathlib import Path
 
 from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
 
 from config import settings
-from fetch.rss      import fetch_all_rss
-from fetch.alerts   import fetch_google_alerts
-from pipeline.orchestrator import run_batch
+from pipeline.collector    import run_collector
+from pipeline.daily_runner import run_daily_video
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 
@@ -40,16 +41,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-# ── Poll jobs ─────────────────────────────────────────────────────────────────
-
-def poll_rss_and_alerts() -> None:
-    logger.info("--- Poll started ---")
-    items = fetch_all_rss() + fetch_google_alerts()
-    if items:
-        run_batch(items)
-    logger.info("--- Poll done (%d items fetched) ---", len(items))
-
-
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -63,28 +54,43 @@ def main() -> None:
         logger.warning("FFmpeg stream not started: %s", e)
 
     if run_once:
-        logger.info("Running a single poll (--once mode).")
-        poll_rss_and_alerts()
+        logger.info("Running a single collector poll (--once mode).")
+        run_collector()
         return
 
     scheduler = BlockingScheduler(timezone="UTC")
+
+    # Job 1: collect articles every 5 minutes
     scheduler.add_job(
-        poll_rss_and_alerts,
+        run_collector,
         trigger=IntervalTrigger(seconds=settings.POLL_INTERVAL_RSS),
         id="rss_poll",
-        name="RSS + Google Alerts",
+        name="RSS + Google Alerts Collector",
         max_instances=1,
         coalesce=True,
         misfire_grace_time=60,
     )
 
+    # Job 2: generate daily multi-story video once per day
+    scheduler.add_job(
+        run_daily_video,
+        trigger=CronTrigger(hour=settings.DAILY_VIDEO_HOUR_UTC, minute=0, timezone="UTC"),
+        id="daily_video",
+        name="Daily Video Generator",
+        max_instances=1,
+        coalesce=True,
+        misfire_grace_time=3600,
+    )
+
     logger.info(
-        "Football AutoNews Engine started. Polling every %ds. Press Ctrl+C to stop.",
+        "Football AutoNews Engine started. Collector every %ds, daily video at %02d:00 UTC. "
+        "Press Ctrl+C to stop.",
         settings.POLL_INTERVAL_RSS,
+        settings.DAILY_VIDEO_HOUR_UTC,
     )
 
     try:
-        poll_rss_and_alerts()   # Run immediately on startup
+        run_collector()         # Run immediately on startup
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
         logger.info("Stopped.")

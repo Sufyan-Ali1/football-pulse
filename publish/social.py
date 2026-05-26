@@ -1,7 +1,7 @@
 """
 Social media poster — Step 10.
 
-Posts the 15-second short-form vertical clip to:
+Posts a video clip to:
   TikTok, Instagram Reels, X (Twitter), YouTube Shorts
 via the Buffer API.
 

@@ -2,10 +2,10 @@
 Content classifier — Step 3.
 
 Classifies a NewsItem into one of four content types:
-  breaking_news   → 60-second urgent script
-  transfer_rumour → 2-3 min analysis
-  club_update     → 2-3 min club-specific script
-  tactical        → 2-3 min match/tactical breakdown
+  breaking_news   → confirmed events (signings, sackings, contracts)
+  transfer_rumour → unconfirmed links, bids, negotiations
+  club_update     → injuries, squad news, club statements
+  tactical        → match results, reports, tactical breakdowns
 
 Strategy:
   1. Keyword matching (free, instant) — handles ~60% of items
@@ -43,11 +43,14 @@ def _keyword_classify(text: str) -> ContentType | None:
 
 # ── Single-item Groq fallback ─────────────────────────────────────────────────
 
-_SINGLE_PROMPT = """Classify the following football news headline into EXACTLY one category:
-- breaking_news   (confirmed, official, just-announced)
-- transfer_rumour (unconfirmed transfers, links, rumours)
-- club_update     (injuries, suspensions, managerial, club news)
-- tactical        (match reports, formations, tactical analysis)
+_SINGLE_PROMPT = """Classify this football news headline into EXACTLY one category:
+
+- breaking_news   → ONLY for confirmed/completed events: a transfer signing completed, a manager officially sacked or appointed, a contract extension signed. A match result is NEVER breaking_news.
+- transfer_rumour → Unconfirmed: transfer links, rumours, interest, bids, negotiations, player "linked to" a club
+- tactical        → Match results (including cup finals and major finals), match reports, post-match reaction or analysis, formations, tactical breakdowns, player ratings
+- club_update     → Injuries, suspensions, squad news, kit releases, merchandise, press conferences, club statements
+
+Key rule: if in doubt between breaking_news and any other category, choose the other category.
 
 Headline: {headline}
 
@@ -82,10 +85,17 @@ def classify(item: NewsItem) -> ContentType:
 # ── Batch Groq classifier (10 headlines per API call) ────────────────────────
 
 _BATCH_PROMPT = """Classify each football news headline into exactly one category:
-- breaking_news   (confirmed/official/just-announced news)
-- transfer_rumour (unconfirmed transfers, links, rumours, negotiations)
-- club_update     (injuries, suspensions, managerial changes, club announcements)
-- tactical        (match reports, formations, tactical analysis)
+
+- breaking_news   → ONLY for confirmed/completed events: transfer signing completed, manager officially sacked or appointed, contract extension confirmed. A match result is NEVER breaking_news, even if it is a final or a championship win.
+- transfer_rumour → Unconfirmed: transfer links, rumours, bids, interest, negotiations, player "linked to" a club, speculation
+- tactical        → Match results, match reports, post-match reaction or analysis, team performance, formations, tactical breakdowns, player ratings, cup finals, tournament results
+- club_update     → Injuries, suspensions, squad announcements, kit releases, merchandise, press conferences, club statements, general club news
+
+Rules:
+- "Confirmed" in a match or analysis context does NOT make it breaking_news
+- Kit releases, merchandise, or commercial partnerships are always club_update
+- Women's football results and analysis are tactical, not breaking_news
+- If unsure between breaking_news and anything else, choose the other category
 
 Headlines:
 {lines}
@@ -122,10 +132,11 @@ def _groq_batch(indexed: list[tuple[int, NewsItem]]) -> dict[str, ContentType]:
     return result
 
 
-def batch_classify(items: list[NewsItem]) -> dict[str, ContentType]:
+def batch_classify(items: list[NewsItem]) -> dict[str, tuple[ContentType, str]]:
     """
     Classify a list of items efficiently.
-    Returns {news_id: ContentType} for every item.
+    Returns {news_id: (ContentType, classified_by)} for every item.
+      classified_by is 'keyword' (free, instant) or 'groq_batch' (Groq API).
 
     - Keyword matching runs first (free, instant)
     - Remaining items are sent to Groq in batches of 10
@@ -133,35 +144,26 @@ def batch_classify(items: list[NewsItem]) -> dict[str, ContentType]:
     if not items:
         return {}
 
-    result: dict[str, ContentType] = {}
+    result: dict[str, tuple[ContentType, str]] = {}
     needs_groq: list[tuple[int, NewsItem]] = []
 
     for i, item in enumerate(items, start=1):
         kw = _keyword_classify(item.headline + " " + item.body[:300])
         if kw:
-            result[item.id] = kw
+            result[item.id] = (kw, "keyword")
         else:
             needs_groq.append((i, item))
 
     for start in range(0, len(needs_groq), 10):
         batch = needs_groq[start:start + 10]
-        result.update(_groq_batch(batch))
+        groq_result = _groq_batch(batch)
+        for news_id, content_type in groq_result.items():
+            result[news_id] = (content_type, "groq_batch")
 
     groq_calls = (len(needs_groq) + 9) // 10 if needs_groq else 0
     logger.info(
-        "batch_classify: %d items — %d keyword, %d Groq (%d call(s))",
+        "batch_classify: %d items - %d keyword, %d Groq (%d call(s))",
         len(items), len(items) - len(needs_groq), len(needs_groq), groq_calls,
     )
     return result
 
-
-# ── Club extraction helper ────────────────────────────────────────────────────
-
-def get_club_from_item(item: NewsItem) -> str | None:
-    """Return the primary club name mentioned in the item, or None."""
-    text = (item.headline + " " + item.body[:200]).lower()
-    from config import settings as s
-    for club in s.CLUB_COLOURS:
-        if club != "default" and club in text:
-            return club
-    return None

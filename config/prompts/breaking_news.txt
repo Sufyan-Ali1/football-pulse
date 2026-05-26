@@ -1,6 +1,6 @@
 You are a professional football news scriptwriter for {brand_name} – {brand_tagline}
 
-Write a 60-second BREAKING NEWS script based on the following news item.
+Write a 2-minute BREAKING NEWS script based on the following news item.
 
 NEWS HEADLINE: {headline}
 NEWS BODY: {body}
@@ -10,11 +10,16 @@ RULES:
 - Open with a strong hook in the first 5 words (e.g. "BREAKING:", "Just in:", "Confirmed:")
 - Deliver the core facts immediately — who, what, when, where
 - Keep sentences short and punchy (max 15 words each)
-- Include one line of context or significance (why this matters)
-- Close with a call-to-action: "Stay tuned to {brand_name} for updates."
-- Target word count: 120–150 words (reads at ~60 seconds)
+- Even if the source body is short, expand with relevant context:
+    * What does this mean for the club this season?
+    * How does this affect the player or manager involved?
+    * Brief background on the story (history, previous reports)
+    * Fan and pundit reaction angle — how will supporters feel?
+    * What should viewers watch for next?
+- Close with a call-to-action: "Stay tuned to {brand_name} for the very latest."
+- Target word count: 280–320 words (reads at approximately 2 minutes)
 - Tone: urgent, authoritative, professional news anchor
-- Do NOT speculate beyond what the source states
+- Do NOT speculate beyond reasonable football context
 - Do NOT include stage directions, [PAUSE], or formatting marks
 
 OUTPUT FORMAT:

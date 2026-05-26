@@ -1,0 +1,68 @@
+{
+  "https://feeds.bbci.co.uk/sport/football/rss.xml": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.skysports.com/rss/12040": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.theguardian.com/football/rss": {
+    "etag": "W/\"hash2434348048376457217\"",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.espn.com/espn/rss/soccer/news": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.90min.com/feed": {
+    "etag": "",
+    "last_modified": "Fri, 22 May 2026 10:52:33 GMT",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://talksport.com/feed/": {
+    "etag": "W/\"9054abf8896495f71b9a27084186cd61\"",
+    "last_modified": "Fri, 22 May 2026 10:48:15 GMT",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.football-italia.net/rss.xml": {
+    "etag": "W/\"a25dd712ca0f2c2c2af7f843c36b9e00\"",
+    "last_modified": "Fri, 22 May 2026 10:50:50 GMT",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.google.com/alerts/feeds/04458690083290690691/12409202703152718690": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.google.com/alerts/feeds/04458690083290690691/8163779025542539356": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.google.com/alerts/feeds/04458690083290690691/3188954713599048507": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.google.com/alerts/feeds/04458690083290690691/13863871064075040308": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  }
+}

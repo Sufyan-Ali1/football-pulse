@@ -218,17 +218,13 @@ def fetch_feeds_parallel(feeds: list[tuple[str, str]]) -> list[NewsItem]:
 
     # Deduplicate within this batch by NewsItem.id
     seen: set[str] = set()
-    return [i for i in all_items if not (i.id in seen or seen.add(i.id))]  # type: ignore[func-returns-value]
+    result: list[NewsItem] = []
+    for i in all_items:
+        if i.id not in seen:
+            seen.add(i.id)
+            result.append(i)
+    return result
 
-
-# ── Public API ────────────────────────────────────────────────────────────────
-
-def fetch_rss_items(feed_url: str, source_name: str) -> list[NewsItem]:
-    """
-    Fetch a single RSS feed (used directly by fetch/alerts.py for one-off calls).
-    For a list of feeds, prefer fetch_feeds_parallel() — it is faster.
-    """
-    return fetch_feeds_parallel([(feed_url, source_name)])
 
 
 def fetch_all_rss() -> list[NewsItem]:

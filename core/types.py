@@ -37,10 +37,14 @@ class Script:
     """Generated script for a NewsItem."""
     news_id:                    str
     script_type:                ContentType
-    format:                     str   # "main" | "short"
+    format:                     str   # "main" | "short" | "segment"
     text:                       str
     word_count:                 int
     estimated_duration_seconds: int
+    selected_clip_ids:          list[str] = field(default_factory=list)
+    display_headline:           str       = ""
+    display_points:             list[str] = field(default_factory=list)
+    panel_label:                str       = ""
 
 
 @dataclass
@@ -56,7 +60,7 @@ class VideoMetadata:
 
 @dataclass
 class PipelineResult:
-    """Result returned by pipeline/orchestrator.py after processing one item."""
+    """Result returned by process/item_runner.py after processing one item."""
     news_id:          str
     success:          bool
     youtube_video_id: str | None = None

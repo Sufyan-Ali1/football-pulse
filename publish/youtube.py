@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 _SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
     "https://www.googleapis.com/auth/youtube",
+    "https://www.googleapis.com/auth/youtube.force-ssl",
 ]
 _groq = OpenAI(api_key=settings.GROQ_API_KEY, base_url="https://api.groq.com/openai/v1")
 
@@ -41,6 +42,7 @@ def _get_youtube_client():
                 str(settings.YOUTUBE_CLIENT_SECRETS_PATH), _SCOPES
             )
             creds = flow.run_local_server(port=0)
+        settings.YOUTUBE_TOKEN_PATH.parent.mkdir(parents=True, exist_ok=True)
         with open(settings.YOUTUBE_TOKEN_PATH, "wb") as f:
             pickle.dump(creds, f)
     return build("youtube", "v3", credentials=creds)
@@ -97,22 +99,37 @@ def _next_publish_time() -> str:
     return dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
 
+def _normalise_privacy_status(value: str) -> str:
+    allowed = {"private", "unlisted", "public"}
+    status = (value or "private").lower().strip()
+    if status not in allowed:
+        logger.warning("Invalid YouTube privacy_status=%r, falling back to private", value)
+        return "private"
+    return status
+
+
 # ── Upload ────────────────────────────────────────────────────────────────────
 
 def upload_video(
     video_path: Path,
-    thumbnail_path: Path,
-    item: NewsItem,
-    script: Script,
-    schedule: bool = True,
+    thumbnail_path: Path | None,
+    metadata: VideoMetadata,
+    schedule: bool = False,
 ) -> str:
     """
-    Upload a video to YouTube with auto-generated metadata and thumbnail.
+    Upload a video to YouTube with the provided metadata and optional thumbnail.
     Returns the YouTube video ID.
+
+    Build metadata with generate_metadata(item, script) for single-story videos,
+    or construct VideoMetadata directly for multi-story/custom uploads.
     """
-    metadata = generate_metadata(item, script)
     if schedule:
         metadata.publish_at = _next_publish_time()
+
+    privacy_status = _normalise_privacy_status(metadata.privacy_status)
+    if metadata.publish_at:
+        # YouTube scheduled uploads must be private until the scheduled publish time.
+        privacy_status = "private"
 
     youtube = _get_youtube_client()
     body    = {
@@ -123,7 +140,7 @@ def upload_video(
             "categoryId":  metadata.category_id,
         },
         "status": {
-            "privacyStatus": "private",
+            "privacyStatus": privacy_status,
             **({"publishAt": metadata.publish_at} if metadata.publish_at else {}),
         },
     }
@@ -137,13 +154,14 @@ def upload_video(
     video_id = response["id"]
     logger.info("YouTube upload complete: %s | '%s'", video_id, metadata.title)
 
-    try:
-        youtube.thumbnails().set(
-            videoId=video_id,
-            media_body=MediaFileUpload(str(thumbnail_path), mimetype="image/jpeg"),
-        ).execute()
-        logger.info("Thumbnail attached to %s", video_id)
-    except Exception as e:
-        logger.warning("Thumbnail upload failed for %s: %s", video_id, e)
+    if thumbnail_path:
+        try:
+            youtube.thumbnails().set(
+                videoId=video_id,
+                media_body=MediaFileUpload(str(thumbnail_path), mimetype="image/jpeg"),
+            ).execute()
+            logger.info("Thumbnail attached to %s", video_id)
+        except Exception as e:
+            logger.warning("Thumbnail upload failed for %s: %s", video_id, e)
 
     return video_id

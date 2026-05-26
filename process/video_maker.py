@@ -1,447 +1,343 @@
 """
-Animated broadcast-style news video generator — Step 6.
+Video orchestration — Step 6.
 
-Layout (Sky Sports / BBC Sport style):
-  ┌────────────────────────────────────────────────────────┐
-  │ [accent bar] FOOTBALL CREDO HUB        ● LIVE  date   │  header
-  │════════════════════════════════════════════════════════│  accent line
-  │                                                        │
-  │  [■ BREAKING]                                         │  badge slides in
-  │                                                        │
-  │  Manchester United Sign Striker                        │  headline
-  │  in £80m Deal — Here We Go                            │  (staggered slide-in)
-  │                                                        │
-  │  ─────────────────────────────────                    │  divider
-  │  Source: Sky Sports Football                           │  source fades in
-  │                                                        │
-  │════════════════════════════════════════════════════════│
-  │[● BREAKING][ Man Utd sign £80m striker... →→→ ]       │  scrolling ticker
-  └────────────────────────────────────────────────────────┘
+All video rendering uses the broadcast compositor (process/broadcast/).
+B-roll clips are selected by the LLM during script generation and
+looked up from the local video_clips DB table.
 
-Animations (all driven by time t):
-  0.00 – 0.40s  Left accent bar grows top→bottom
-  0.00 – 0.35s  Header bar slides down from top
-  0.30 – 0.65s  BREAKING badge scales in (subtle pulse after)
-  0.55 – 1.20s  Headline lines stagger slide-in from left
-  1.20 – 1.60s  Divider line draws left→right
-  1.30 – 1.70s  Source text fades in
-  0.00 – end    News ticker scrolls left continuously
-  0.30 – end    LIVE dot pulses
-
-No ImageMagick. No external API. Requires: moviepy, numpy, Pillow.
+Single-story and multi-story videos both use create_multi_story_video().
+Pass a list of one tuple for a single-story video.
 """
 import logging
-import math
-import platform
 from datetime import datetime
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 
 from config import settings
-from core.constants import BADGE_LABELS
 from core.types import NewsItem, Script
+from core.database import get_clips_by_ids
+from process.broadcast.assets import load_background, load_frame_and_mask, load_video_clip as _load_video_clip
+from process.broadcast.compositor import make_frame_func as _broadcast_make_frame
+from process.broadcast.ticker import build_ticker as _build_ticker
+from process.broadcast.animations import build_dp_anim as _build_dp_anim
+from process.broadcast.data import build_data_dict as _build_broadcast_data
+from process.broadcast import constants as _BC
+
+_CHANNEL = settings.BRAND_NAME
+_TAGLINE = settings.BRAND_TAGLINE
 
 logger = logging.getLogger(__name__)
 
-_LANDSCAPE = (1920, 1080)
-_VERTICAL  = (1080, 1920)
-_FPS       = 24
+_INTRO_VIDEO_PATH = settings.BASE_DIR / "config" / "video" / "intro.mp4"
+_OUTRO_VIDEO_PATH = settings.BASE_DIR / "config" / "video" / "outro.mp4"
 
 
-# ── Utilities ─────────────────────────────────────────────────────────────────
-
-def _hex_to_rgb(hex_colour: str) -> tuple[int, int, int]:
-    h = hex_colour.lstrip("#")
-    return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+def _ticker_text(item: NewsItem) -> str:
+    return f"  {item.headline}  ▪  {item.source}  ▪  {_CHANNEL}  ▪  {_TAGLINE}  ▪  "
 
 
-def _clamp(val: float, lo: float = 0.0, hi: float = 1.0) -> float:
-    return max(lo, min(hi, val))
-
-
-def _ease_out(t: float) -> float:
-    """Cubic ease-out: fast start, slow finish."""
-    return 1 - (1 - t) ** 3
-
-
-def _get_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
-    candidates: list[Path] = []
-    if platform.system() == "Windows":
-        fonts = Path("C:/Windows/Fonts")
-        if bold:
-            candidates += [fonts / "arialbd.ttf", fonts / "calibrib.ttf"]
-        candidates += [fonts / "arial.ttf", fonts / "calibri.ttf"]
-    deja = Path("/usr/share/fonts/truetype/dejavu")
-    if bold:
-        candidates.append(deja / "DejaVuSans-Bold.ttf")
-    candidates += [deja / "DejaVuSans.ttf", Path("DejaVuSans.ttf")]
-    for path in candidates:
-        try:
-            return ImageFont.truetype(str(path), size)
-        except (OSError, IOError):
-            continue
-    return ImageFont.load_default()
-
-
-def _wrap_text(text: str, max_chars: int) -> list[str]:
-    words = text.split()
-    lines, current = [], ""
-    for word in words:
-        candidate = (current + " " + word).strip()
-        if len(candidate) <= max_chars:
-            current = candidate
-        else:
-            if current:
-                lines.append(current)
-            current = word
-    if current:
-        lines.append(current)
-    return lines
-
-
-def _draw_rounded_rect(
-    draw: ImageDraw.ImageDraw,
-    xy: tuple[int, int, int, int],
-    radius: int,
-    fill: tuple,
-) -> None:
-    x1, y1, x2, y2 = xy
-    draw.rectangle([x1 + radius, y1, x2 - radius, y2], fill=fill)
-    draw.rectangle([x1, y1 + radius, x2, y2 - radius], fill=fill)
-    draw.ellipse([x1, y1, x1 + radius * 2, y1 + radius * 2], fill=fill)
-    draw.ellipse([x2 - radius * 2, y1, x2, y1 + radius * 2], fill=fill)
-    draw.ellipse([x1, y2 - radius * 2, x1 + radius * 2, y2], fill=fill)
-    draw.ellipse([x2 - radius * 2, y2 - radius * 2, x2, y2], fill=fill)
-
-
-def _get_club_colour(item: NewsItem) -> str:
-    text = (item.headline + " " + item.body[:200]).lower()
-    for club, colour in settings.CLUB_COLOURS.items():
-        if club != "default" and club in text:
-            return colour
-    return settings.CLUB_COLOURS["default"]
-
-
-# ── Frame factory ─────────────────────────────────────────────────────────────
-
-def _make_frame_func(
-    item: NewsItem,
-    script: Script,
-    size: tuple[int, int],
-    ticker_text: str,
-):
-    """
-    Returns make_frame(t) -> np.ndarray.
-    MoviePy calls this for every frame; all animation is driven by t.
-    """
-    w, h        = size
-    is_vertical = w < h
-    scale       = w / 1920
-
-    # Colours
-    club_hex   = _get_club_colour(item)
-    accent_rgb = _hex_to_rgb(club_hex)
-    bg_rgb     = (11, 11, 18)       # deep navy-black
-    header_bg  = (18, 18, 30)
-
-    # Fonts
-    font_brand    = _get_font(int(26 * scale), bold=True)
-    font_date     = _get_font(int(21 * scale))
-    font_badge    = _get_font(int(27 * scale), bold=True)
-    font_headline = _get_font(int(70 * scale), bold=True)
-    font_source   = _get_font(int(26 * scale))
-    font_ticker   = _get_font(int(27 * scale))
-    font_live     = _get_font(int(22 * scale), bold=True)
-
-    # Layout constants
-    margin      = int(80 * scale)
-    accent_bar  = int(6 * scale)          # left vertical bar width
-    content_x   = margin + accent_bar + int(20 * scale)
-    header_h    = int(68 * scale)
-    ticker_h    = int(58 * scale)
-    ticker_y    = h - ticker_h
-    ticker_label_w = int(220 * scale)
-    ticker_speed   = int(170 * scale)     # pixels per second
-
-    badge_text      = BADGE_LABELS.get(script.script_type, "NEWS")
-    badge_y         = header_h + int(70 * scale)
-    max_chars       = 26 if is_vertical else 36
-    headline_lines  = _wrap_text(item.headline, max_chars)[:3]
-    line_h          = int(86 * scale)
-    headline_y      = badge_y + int(65 * scale)
-    divider_y       = headline_y + len(headline_lines) * line_h + int(20 * scale)
-    source_y        = divider_y + int(22 * scale)
-
-    now_str = datetime.now().strftime("%d %b %Y  %H:%M")
-
-    # Pre-measure ticker text width for seamless loop
-    _tmp = Image.new("RGB", (10, 10))
-    _d   = ImageDraw.Draw(_tmp)
-    _tb  = _d.textbbox((0, 0), ticker_text, font=font_ticker)
-    ticker_text_w = max(1, _tb[2] - _tb[0] + int(80 * scale))
-
-    def make_frame(t: float) -> np.ndarray:
-        img  = Image.new("RGB", (w, h), color=bg_rgb)
-        draw = ImageDraw.Draw(img)
-
-        # ── Subtle accent glow in top-left corner ─────────────────────────────
-        for r in range(int(500 * scale), 0, int(-25 * scale)):
-            brightness = int(18 * (1 - r / (500 * scale)))
-            ar, ag, ab = accent_rgb
-            glow_col = (
-                min(255, bg_rgb[0] + int(ar * brightness / 255)),
-                min(255, bg_rgb[1] + int(ag * brightness / 255)),
-                min(255, bg_rgb[2] + int(ab * brightness / 255)),
-            )
-            draw.ellipse(
-                [-r // 2, -r // 2, r // 2, r // 2],
-                fill=glow_col,
-            )
-
-        # ── Left accent bar (grows downward 0 → 0.40s) ───────────────────────
-        bar_prog = _clamp(t / 0.40)
-        if bar_prog > 0:
-            bar_max_h = ticker_y
-            draw.rectangle(
-                [(0, 0), (accent_bar, int(bar_max_h * _ease_out(bar_prog)))],
-                fill=accent_rgb,
-            )
-
-        # ── Header (slides down from top 0 → 0.35s) ──────────────────────────
-        hdr_prog   = _clamp(t / 0.35)
-        hdr_offset = int(header_h * (1 - _ease_out(hdr_prog)))
-        hdr_top    = -hdr_offset
-        hdr_bot    = header_h - hdr_offset
-
-        draw.rectangle([(0, hdr_top), (w, hdr_bot)], fill=header_bg)
-        # Bottom accent line on header
-        draw.rectangle([(0, hdr_bot), (w, hdr_bot + int(3 * scale))], fill=accent_rgb)
-
-        # Brand name in header
-        brand_y = hdr_top + (header_h - int(28 * scale)) // 2
-        draw.text(
-            (content_x, brand_y),
-            settings.BRAND_NAME.upper(),
-            fill=accent_rgb,
-            font=font_brand,
-        )
-
-        # Date top-right
-        draw.text(
-            (w - margin, brand_y),
-            now_str,
-            fill=(150, 150, 165),
-            font=font_date,
-            anchor="ra",
-        )
-
-        # ── LIVE dot (pulses, appears after 0.30s) ────────────────────────────
-        if t > 0.30:
-            pulse = 0.55 + 0.45 * abs(math.sin(t * math.pi * 1.8))
-            live_r = int(pulse * 255)
-            dot_r  = int(7 * scale)
-            dot_cx = w - margin - int(100 * scale)
-            dot_cy = hdr_top + header_h // 2
-            draw.ellipse(
-                [(dot_cx - dot_r, dot_cy - dot_r), (dot_cx + dot_r, dot_cy + dot_r)],
-                fill=(live_r, 40, 40),
-            )
-            draw.text(
-                (dot_cx + dot_r + int(7 * scale), dot_cy - int(11 * scale)),
-                "LIVE",
-                fill=(live_r, 60, 60),
-                font=font_live,
-            )
-
-        # ── Content-type badge (scales in 0.30 → 0.65s, then pulses) ─────────
-        badge_prog = _clamp((t - 0.30) / 0.35)
-        if badge_prog > 0:
-            scale_factor = (
-                _ease_out(badge_prog)
-                if badge_prog < 1.0
-                else 1.0 + 0.012 * math.sin(t * 5.0)
-            )
-            pad   = int(14 * scale)
-            bb    = draw.textbbox((0, 0), badge_text, font=font_badge)
-            b_w   = int((bb[2] - bb[0] + pad * 2) * scale_factor)
-            b_h   = int((bb[3] - bb[1] + pad) * scale_factor)
-            _draw_rounded_rect(
-                draw,
-                (content_x, badge_y, content_x + b_w, badge_y + b_h),
-                radius=int(4 * scale),
-                fill=accent_rgb,
-            )
-            draw.text(
-                (content_x + int(pad * scale_factor), badge_y + int(pad / 2 * scale_factor)),
-                badge_text,
-                fill=(255, 255, 255),
-                font=font_badge,
-            )
-
-        # ── Headline lines (staggered slide-in from left) ─────────────────────
-        for i, line in enumerate(headline_lines):
-            start = 0.55 + i * 0.14
-            prog  = _clamp((t - start) / 0.38)
-            if prog > 0:
-                slide_x = int((1 - _ease_out(prog)) * -220 * scale)
-                y = headline_y + i * line_h
-                x = content_x + slide_x
-                # Drop shadow
-                draw.text(
-                    (x + int(3 * scale), y + int(3 * scale)),
-                    line,
-                    fill=(0, 0, 0),
-                    font=font_headline,
-                )
-                draw.text((x, y), line, fill=(255, 255, 255), font=font_headline)
-
-        # ── Divider line (draws left → right 1.20 → 1.55s) ───────────────────
-        div_prog = _clamp((t - 1.20) / 0.35)
-        if div_prog > 0:
-            max_div_w = w - content_x - margin
-            draw.rectangle(
-                [
-                    (content_x, divider_y),
-                    (content_x + int(max_div_w * _ease_out(div_prog)), divider_y + int(2 * scale)),
-                ],
-                fill=accent_rgb,
-            )
-
-        # ── Source text (fades in 1.30 → 1.70s) ──────────────────────────────
-        src_prog = _clamp((t - 1.30) / 0.40)
-        if src_prog > 0:
-            v = int(160 * src_prog)
-            draw.text(
-                (content_x, source_y),
-                f"Source: {item.source}",
-                fill=(v, v, int(v * 1.05)),
-                font=font_source,
-            )
-
-        # ── Bottom ticker ─────────────────────────────────────────────────────
-        # Background panel
-        draw.rectangle([(0, ticker_y), (w, h)], fill=(8, 8, 16))
-        # Top separator line
-        draw.rectangle(
-            [(0, ticker_y), (w, ticker_y + int(2 * scale))],
-            fill=accent_rgb,
-        )
-
-        # Draw scrolling text FIRST (behind label box)
-        scroll_offset = int((ticker_speed * t) % ticker_text_w)
-        text_y_ticker = ticker_y + (ticker_h - int(28 * scale)) // 2
-        for rep in range(3):  # draw three copies for seamless loop
-            tx = ticker_label_w + int(20 * scale) - scroll_offset + rep * ticker_text_w
-            if -ticker_text_w < tx < w:
-                draw.text(
-                    (tx, text_y_ticker),
-                    ticker_text,
-                    fill=(210, 210, 225),
-                    font=font_ticker,
-                )
-
-        # Label box on top (covers any text bleeding into it)
-        draw.rectangle(
-            [(0, ticker_y + int(2 * scale)), (ticker_label_w, h)],
-            fill=accent_rgb,
-        )
-        lbl = "● BREAKING"
-        lb  = draw.textbbox((0, 0), lbl, font=font_badge)
-        lw  = lb[2] - lb[0]
-        draw.text(
-            ((ticker_label_w - lw) // 2, ticker_y + (ticker_h - (lb[3] - lb[1])) // 2),
-            lbl,
-            fill=(255, 255, 255),
-            font=font_badge,
-        )
-
-        return np.array(img)
-
-    return make_frame
-
-
-# ── Public API ────────────────────────────────────────────────────────────────
-
-def create_video(
-    script: Script,
-    voiceover_path: Path | None = None,
-    item: NewsItem | None = None,
+def create_multi_story_video(
+    stories: list[tuple[Script, NewsItem, Path | None]],
+    output_name: str = "multi_story_breaking",
+    include_intro_outro: bool = True,
 ) -> Path:
+    """Render one or more news stories into a single broadcast video.
+
+    Set include_intro_outro=False to skip intro/outro (useful for quick tests).
+    Each story uses clip IDs from script.selected_clip_ids (set by
+    generate_segment_script). voiceover_path can be None for silent segments.
     """
-    Create an animated broadcast-style news video.
+    from moviepy.editor import (
+        VideoClip,
+        VideoFileClip as _VFC,
+        concatenate_videoclips,
+        AudioFileClip,
+        CompositeAudioClip,
+    )
 
-    Args:
-        script:         Script dataclass (text, type, format).
-        voiceover_path: Path to ElevenLabs MP3 (optional; uses estimated duration if missing).
-        item:           NewsItem for headline + branding (optional; falls back to script text).
-
-    Returns:
-        Path to the MP4 in storage/Videos/Raw/.
-    """
-    from moviepy.editor import AudioFileClip, VideoClip
-
-    output_path = settings.VIDEOS_RAW_DIR / f"{script.news_id}_{script.format}_raw.mp4"
-
-    if output_path.exists():
-        logger.info("Video already exists, skipping: %s", output_path.name)
-        return output_path
-
+    output_path = settings.VIDEOS_RAW_DIR / f"{output_name}_raw.mp4"
     settings.VIDEOS_RAW_DIR.mkdir(parents=True, exist_ok=True)
 
-    if item is None:
-        from datetime import timezone
-        item = NewsItem(
-            id=script.news_id,
-            headline=script.text[:120],
-            body=script.text,
-            url="",
-            source=settings.BRAND_NAME,
-            source_type="rss",
-            timestamp=datetime.now(timezone.utc),
+    _TRANSITION_DUR = 3.2
+
+    video_clips: list = []
+    audio_clips: list = []
+
+    total = len(stories)
+    print(f"\n{'='*56}")
+    print(f"  Broadcast Video  |  {total} stor{'y' if total == 1 else 'ies'}")
+    print(f"{'='*56}")
+
+    # Load shared broadcast assets once (cached at module level in assets.py)
+    bg_clip             = load_background("config/video/background.mp4")
+    frame_img, win_mask = load_frame_and_mask("config/images/frame.png")
+    date_str = (
+        str(datetime.now().day) + " " + datetime.now().strftime("%b  %H:%M")
+    )
+    print("  Broadcast assets loaded (background + frame.png)")
+
+    # Intro
+    t_offset = 0.0
+    if include_intro_outro:
+        if _INTRO_VIDEO_PATH.exists():
+            intro_clip = _VFC(str(_INTRO_VIDEO_PATH))
+            _INTRO_DUR = intro_clip.duration
+            if intro_clip.audio:
+                audio_clips.append(intro_clip.audio.set_start(0.0))
+            video_clips.append(intro_clip.without_audio())
+            print(f"  Intro: {_INTRO_DUR:.1f}s")
+        else:
+            _INTRO_DUR = 3.0
+            video_clips.append(VideoClip(
+                lambda t: np.zeros((_BC.H, _BC.W, 3), dtype=np.uint8),
+                duration=_INTRO_DUR,
+            ))
+            print("  WARNING: intro.mp4 not found — black fallback")
+        t_offset = _INTRO_DUR
+    else:
+        print("  Intro skipped")
+
+    def _black_clip(dur: float = _TRANSITION_DUR) -> VideoClip:
+        return VideoClip(
+            lambda t: np.zeros((_BC.H, _BC.W, 3), dtype=np.uint8),
+            duration=dur,
         )
 
-    size = _VERTICAL if script.format == "short" else _LANDSCAPE
+    # ── Logo sweep transition ─────────────────────────────────────────────────
+    _LOGO_PATH = settings.BASE_DIR / "config" / "images" / "logo.png"
+    _LOGO_H    = 520
+    _TILT      = 0.55   # "/" bar angle
+    _PAD       = 600    # off-screen padding
+    _STRIPES   = [
+        (  0,  90, (130,  0,  0), 1.00),
+        ( 80,  55, (195,  0,  0), 1.00),
+        (140,  22, (225, 25, 25), 1.00),
+        (163,   6, (255, 90, 90), 1.00),
+    ]
 
-    # Ticker text — loops continuously
-    ticker_text = (
-        f"  {item.headline}  ▪  {item.source}  ▪  "
-        f"{settings.BRAND_NAME}  ▪  {settings.BRAND_TAGLINE}  ▪  "
-    )
+    _logo_img: Image.Image | None = None
+    if _LOGO_PATH.exists():
+        _raw = Image.open(_LOGO_PATH).convert("RGBA")
+        _scale = _LOGO_H / _raw.height
+        _logo_img = _raw.resize((int(_raw.width * _scale), _LOGO_H), Image.LANCZOS)
+        logger.info("Transition logo loaded: %dx%d", _logo_img.width, _logo_img.height)
 
-    make_frame = _make_frame_func(item, script, size, ticker_text)
+    def _logo_sweep_clip(
+        old_get_frame,        # callable: t -> np.ndarray
+        new_get_frame,        # callable: t -> np.ndarray
+        old_start_t: float,   # time in old clip to begin from (pass old_dur to continue past voice end)
+        dur: float = _TRANSITION_DUR,
+    ) -> VideoClip:
+        """
+        Wipe transition: "/" diagonal band sweeps bottom-left -> top-right.
+          Right of band = old story, LIVE — ticker/video keep advancing.
+          Left  of band = new story, LIVE — headline animates in from t=0.
+        old_start_t = old_dur makes the old side continue exactly where the
+        voice ended with no freeze and no rewind.
+        Transition sound is added separately in the audio timeline.
+        """
+        _y_g, _x_g = np.mgrid[0:_BC.H, 0:_BC.W]
+        _diag  = _x_g.astype(np.float32) - _y_g.astype(np.float32) * _TILT
+        lw = _logo_img.width  if _logo_img else 0
+        lh = _logo_img.height if _logo_img else 0
 
-    # Audio
-    audio_clip = None
-    if voiceover_path and voiceover_path.exists():
-        audio_clip = AudioFileClip(str(voiceover_path))
-        duration   = audio_clip.duration
+        def _make_frame(t: float) -> np.ndarray:
+            # Old side: continues live from old_start_t (past voice end — no freeze)
+            # New side: starts fresh at t=0 so headline animates in during the wipe
+            old_f = old_get_frame(old_start_t + t).astype(np.float32)
+            new_f = new_get_frame(t).astype(np.float32)
+
+            p  = t / dur
+            cx = -_PAD + p * (_BC.W + 2 * _PAD)
+            cy = _BC.H + _PAD - p * (_BC.H + 2 * _PAD)
+            d_center = cx - cy * _TILT
+
+            left_mask = (_diag < d_center)[:, :, np.newaxis]
+            canvas    = np.where(left_mask, new_f, old_f)
+
+            for d_off, hw, color, opacity in _STRIPES:
+                dist = np.abs(_diag - (d_center + d_off))
+                mask = (dist <= hw)[:, :, np.newaxis]
+                col  = np.array(color, dtype=np.float32)
+                canvas = np.where(mask, canvas * (1.0 - opacity) + col * opacity, canvas)
+
+            out = canvas.clip(0, 255).astype(np.uint8)
+
+            if _logo_img is None:
+                return out
+
+            px = int(cx) - lw // 2
+            py = int(cy) - lh // 2
+            fade = min(1.0, min(p, 1.0 - p) / 0.12)
+            if fade <= 0.0:
+                return out
+
+            logo_rgba = _logo_img.copy()
+            if fade < 1.0:
+                r, g, b, a = logo_rgba.split()
+                logo_rgba = Image.merge("RGBA", (r, g, b, a.point(lambda v: int(v * fade))))
+
+            pil_out = Image.fromarray(out)
+            sx0 = max(0, -px);          sy0 = max(0, -py)
+            sx1 = min(lw, _BC.W - px);  sy1 = min(lh, _BC.H - py)
+            dx  = max(0, px);           dy  = max(0, py)
+            if sx1 > sx0 and sy1 > sy0:
+                crop = logo_rgba.crop((sx0, sy0, sx1, sy1))
+                pil_out.paste(crop, (dx, dy), crop)
+            return np.array(pil_out)
+
+        return VideoClip(_make_frame, duration=dur)
+
+    # ── Pass 1: build all story clips ────────────────────────────────────────
+    built: list[tuple] = []   # (VideoClip, audio_clip, duration)
+
+    for idx, (script, item, vo_path) in enumerate(stories):
+        print(f"\n[{idx+1}/{total}] {item.headline[:70]}")
+        logger.info("Story %d/%d: %s", idx + 1, total, item.headline[:60])
+
+        print("  Step 1/3 — Audio / duration")
+        audio_clip = None
+        if vo_path and Path(vo_path).exists():
+            audio_clip = AudioFileClip(str(vo_path))
+            duration = audio_clip.duration
+            print(f"    Voiceover: {Path(vo_path).name}  ({duration:.1f}s)")
+        else:
+            duration = float(script.estimated_duration_seconds)
+            print(f"    No voiceover — using estimated {duration:.0f}s")
+        duration = max(duration, 10.0)
+
+        print("  Step 2/3 — Library clip lookup")
+        left_clip = None
+        left_path = None
+        if script.selected_clip_ids:
+            rows = get_clips_by_ids(script.selected_clip_ids)
+            loaded = []
+            for row in rows:
+                p = Path(row["file_path"])
+                if p.exists():
+                    loaded.append((p, _load_video_clip(str(p))))
+                else:
+                    print(f"    Clip file missing: {p.name}")
+            if loaded:
+                left_path = loaded[0][0]
+                if len(loaded) == 1:
+                    left_clip = loaded[0][1]
+                    print(f"    Clip: {loaded[0][0].name}")
+                else:
+                    from moviepy.editor import concatenate_videoclips
+                    left_clip = concatenate_videoclips([c for _, c in loaded], method="compose")
+                    names = ", ".join(p.name for p, _ in loaded)
+                    print(f"    Clips ({len(loaded)}): {names}")
+            else:
+                print("    Clip IDs not found in DB — left panel empty")
+        else:
+            print("    No clip IDs in script — left panel empty")
+
+        print("  Step 3/3 — Building broadcast frame")
+        ticker_text          = _ticker_text(item)
+        data                 = _build_broadcast_data(script, item, None, left_path, ticker_text)
+        ticker_img, ticker_w = _build_ticker(data)
+        dp_anim              = _build_dp_anim(data)
+
+        make_frame = _broadcast_make_frame(
+            data, bg_clip, frame_img, win_mask,
+            left_clip, ticker_img, ticker_w, dp_anim, date_str,
+        )
+        clip = VideoClip(make_frame, duration=duration)
+        print(f"    Broadcast frame ready ({duration:.1f}s @ {_BC.FPS}fps)")
+
+        built.append((clip, audio_clip, duration))
+        print(f"  [OK] Story {idx+1} built")
+
+    # ── Pass 2: assemble ──────────────────────────────────────────────────────
+    # Timeline per story pair:
+    #   [story N — full voice duration, full video duration — they end together] →
+    #   [wipe: old side live past voice end / new side = static first frame (empty slate)] →
+    #   [story N+1 — full clip from t=0, voice starts after wipe]
+    #
+    # All stories play their full duration so voice always ends exactly when
+    # the wipe starts — no voice overlap with animation.
+    # The new side of the wipe shows a static first frame (headline not yet
+    # visible at t=0) so there is no double headline render after the wipe.
+    _TRANSITION_SFX_PATH = settings.BASE_DIR / "config" / "audio" / "transition.mp3"
+
+    for idx, (clip, audio_clip, duration) in enumerate(built):
+        video_clips.append(clip)
+        if audio_clip:
+            audio_clips.append(audio_clip.set_start(t_offset))
+        t_offset += duration
+
+        if idx < total - 1:
+            old_clip, _, old_dur = built[idx]
+            new_clip             = built[idx + 1][0]
+
+            # Old side: continues live from old_dur — ticker keeps scrolling
+            # New side: static frame at t=0 — empty slate, headline not yet visible
+            #           so after the wipe the headline animates in fresh (no double render)
+            new_first_frame = new_clip.get_frame(0)
+            video_clips.append(_logo_sweep_clip(
+                old_clip.get_frame, lambda t, f=new_first_frame: f, old_dur,
+            ))
+
+            # Transition sound plays during the wipe
+            if _TRANSITION_SFX_PATH.exists():
+                sfx = AudioFileClip(str(_TRANSITION_SFX_PATH))
+                if sfx.duration > _TRANSITION_DUR:
+                    sfx = sfx.subclip(0, _TRANSITION_DUR)
+                audio_clips.append(sfx.set_start(t_offset))
+                print(f"    Transition SFX: {_TRANSITION_SFX_PATH.name}")
+            else:
+                print(f"    No transition SFX ({_TRANSITION_SFX_PATH.name} not found)")
+
+            t_offset += _TRANSITION_DUR
+            logger.info("Transition %d->%d added (%.1fs)", idx + 1, idx + 2, _TRANSITION_DUR)
+
+        print(f"  [OK] Story {idx+1} queued  (running total: {t_offset:.1f}s)")
+
+    # Outro
+    if include_intro_outro:
+        if _OUTRO_VIDEO_PATH.exists():
+            outro_clip = _VFC(str(_OUTRO_VIDEO_PATH))
+            _OUTRO_DUR = outro_clip.duration
+            if outro_clip.audio:
+                audio_clips.append(outro_clip.audio.set_start(t_offset))
+            video_clips.append(outro_clip.without_audio())
+            print(f"  Outro: {_OUTRO_DUR:.1f}s")
+        else:
+            print("  WARNING: outro.mp4 not found — skipping")
+        if _OUTRO_VIDEO_PATH.exists():
+            t_offset += _OUTRO_DUR
     else:
-        duration = float(script.estimated_duration_seconds)
-        logger.warning("No voiceover — video will be silent, duration=%ds", int(duration))
+        print("  Outro skipped")
 
-    video = VideoClip(make_frame, duration=duration)
-    if audio_clip:
-        video = video.set_audio(audio_clip)
+    total_dur = t_offset
+    print(f"\n  Step 4/4 — Concatenating {len(video_clips)} clips ({total_dur:.1f}s total) ...")
+    logger.info("Concatenating %d clips (total %.1fs) ...", len(video_clips), total_dur)
+    final = concatenate_videoclips(video_clips, method="compose")
+    if audio_clips:
+        final = final.set_audio(CompositeAudioClip(audio_clips))
+        print(f"  Audio: {len(audio_clips)} track(s) merged")
 
-    logger.info(
-        "Rendering animated news video: %s (%.1fs, %dx%d) ...",
-        output_path.name, duration, size[0], size[1],
-    )
-    video.write_videofile(
+    print(f"\n  Rendering -> {output_path.name}  (this takes a while) ...")
+    logger.info("Rendering %s ...", output_path.name)
+    has_audio = bool(audio_clips)
+    final.write_videofile(
         str(output_path),
-        fps=_FPS,
+        fps=_BC.FPS,
         codec="libx264",
-        audio_codec="aac" if audio_clip else None,
+        audio=has_audio,
+        audio_codec="aac" if has_audio else None,
         verbose=False,
         logger=None,
     )
-
-    if audio_clip:
-        audio_clip.close()
-    video.close()
+    final.close()
 
     size_mb = output_path.stat().st_size / (1024 * 1024)
-    logger.info("Video saved: %s (%.1f MB)", output_path.name, size_mb)
+    logger.info("Video saved: %s (%.1f MB, %.1fs)", output_path.name, size_mb, total_dur)
+    print(f"\n{'='*56}")
+    print(f"  [OK] DONE  {output_path.name}")
+    print(f"      Size: {size_mb:.1f} MB   Duration: {total_dur:.1f}s")
+    print(f"{'='*56}\n")
     return output_path

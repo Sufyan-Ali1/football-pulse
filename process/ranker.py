@@ -4,8 +4,6 @@ Ranker — Step 3 pre-filter.
 Before classification and pipeline execution, this module:
   1. Removes near-duplicate headlines (Jaccard word-set similarity)
   2. Scores each item (source tier + recency + breaking signals + club mention)
-  3. Returns the top N items by score
-  4. Caps the final batch sent to the pipeline (breaking news first)
 
 This reduces ~300 raw articles down to 2–3 high-quality pipeline runs per cycle.
 """
@@ -14,7 +12,7 @@ import re
 from datetime import datetime, timezone
 
 from config import settings
-from core.constants import BREAKING_SIGNALS, SOURCE_TIERS, DEFAULT_SOURCE_SCORE, STOP_WORDS
+from core.constants import BREAKING_SIGNALS, LOW_INTEREST_SIGNALS, SOURCE_TIERS, DEFAULT_SOURCE_SCORE, STOP_WORDS
 from core.types import NewsItem
 
 logger = logging.getLogger(__name__)
@@ -54,9 +52,23 @@ def _club_score(item: NewsItem) -> int:
     return 0
 
 
+def _interest_penalty(item: NewsItem) -> int:
+    """Return -40 if the article matches low-interest patterns, else 0."""
+    text = (item.headline + " " + item.body[:200]).lower()
+    if any(s in text for s in LOW_INTEREST_SIGNALS):
+        return -40
+    return 0
+
+
 def score_item(item: NewsItem) -> int:
-    """0–160 quality score. Higher = more likely to become a video."""
-    return _source_score(item) + _recency_score(item) + _breaking_score(item) + _club_score(item)
+    """0–170 quality + interest score. Higher = more likely to become a video."""
+    return (
+        _source_score(item)
+        + _recency_score(item)
+        + _breaking_score(item)
+        + _club_score(item)
+        + _interest_penalty(item)
+    )
 
 
 # ── Fuzzy deduplication (Jaccard similarity) ──────────────────────────────────
@@ -90,32 +102,3 @@ def deduplicate_fuzzy(items: list[NewsItem], threshold: float = 0.65) -> list[Ne
     return kept
 
 
-# ── Public API ────────────────────────────────────────────────────────────────
-
-def rank_and_filter(items: list[NewsItem], top_n: int = 20) -> list[NewsItem]:
-    """
-    Full pre-pipeline filter:
-      1. Fuzzy deduplicate near-identical stories
-      2. Score and return top N items
-    """
-    unique = deduplicate_fuzzy(items)
-    ranked = sorted(unique, key=score_item, reverse=True)[:top_n]
-    logger.info("rank_and_filter: %d in → %d unique → %d selected", len(items), len(unique), len(ranked))
-    return ranked
-
-
-def _is_breaking(item: NewsItem) -> bool:
-    text = (item.headline + " " + item.body[:150]).lower()
-    return any(s in text for s in BREAKING_SIGNALS)
-
-
-def get_batch_for_pipeline(items: list[NewsItem], max_per_run: int = 3) -> list[NewsItem]:
-    """
-    Final gate before production pipeline.
-    Returns at most max_per_run items with breaking news first.
-    """
-    breaking = [i for i in items if _is_breaking(i)]
-    others   = [i for i in items if not _is_breaking(i)]
-    batch    = (breaking + others)[:max_per_run]
-    logger.info("Pipeline batch: %d/%d items (max=%d)", len(batch), len(items), max_per_run)
-    return batch
