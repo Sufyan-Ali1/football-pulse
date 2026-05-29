@@ -1,5 +1,5 @@
 """
-Sync local storage/ to Google Drive.
+Sync local temp/ to Google Drive.
 
 Usage:
     python scripts/sync_drive.py              # upload all, keep local copies
@@ -7,8 +7,8 @@ Usage:
     python scripts/sync_drive.py --dry-run    # print what would be uploaded, no action
 
 Requires:
-    - GOOGLE_DRIVE_SERVICE_ACCOUNT_PATH in .env (path to service account JSON)
-    - GOOGLE_DRIVE_FOLDER_ID in .env (root folder shared by client)
+    - GDRIVE_REFRESH_TOKEN in .env
+    - GOOGLE_DRIVE_FOLDER_ID in .env
 """
 import sys
 from pathlib import Path
@@ -22,7 +22,6 @@ from config import settings
 def _dry_run():
     from clients.gdrive import _SYNC_MAP
 
-    storage_root = settings.STORAGE_DIR
     total = 0
 
     print(f"\n{'='*56}")
@@ -31,7 +30,7 @@ def _dry_run():
     print(f"{'='*56}")
 
     for local_subpath, drive_path in _SYNC_MAP.items():
-        local_dir = storage_root / local_subpath.replace("/", "\\")
+        local_dir = settings.TEMP_DIR / local_subpath.replace("/", "\\")
         if not local_dir.exists():
             print(f"\n  [{local_subpath}] — folder does not exist locally, skip")
             continue

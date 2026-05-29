@@ -66,20 +66,43 @@ ANIM_DUR = 0.7   # seconds per headline/source wipe
 LINE_DUR = 0.4   # seconds per deal-point line wipe
 
 # ── Fonts ─────────────────────────────────────────────────────────────────────
-_FONTS = Path("C:/Windows/Fonts")
+import sys as _sys
+
+_WIN_FONTS  = Path("C:/Windows/Fonts")
+_PROJ_FONTS = Path(__file__).resolve().parent.parent.parent / "config" / "fonts"
+_LINUX_FONTS = [
+    Path("/usr/share/fonts/truetype/msttcorefonts"),
+    Path("/usr/share/fonts/truetype/freefont"),
+    Path("/usr/share/fonts"),
+]
 
 
 def load_font(size: int, bold: bool = False, italic: bool = False) -> ImageFont.FreeTypeFont:
     cands = []
-    if not bold and not italic:
-        cands += [_FONTS / "impact.ttf", _FONTS / "IMPACT.TTF"]
-    if bold and italic:
-        cands += [_FONTS / "arialbi.ttf", _FONTS / "ARIALBI.TTF"]
-    elif bold:
-        cands += [_FONTS / "arialbd.ttf", _FONTS / "ARIALBD.TTF"]
-    elif italic:
-        cands += [_FONTS / "ariali.ttf",  _FONTS / "ARIALI.TTF"]
-    cands += [_FONTS / "arial.ttf", _FONTS / "ARIAL.TTF"]
+
+    def _from(folder: Path) -> None:
+        if not bold and not italic:
+            cands.extend([folder / "impact.ttf", folder / "Impact.ttf", folder / "IMPACT.TTF"])
+        if bold and italic:
+            cands.extend([folder / "arialbi.ttf", folder / "ARIALBI.TTF"])
+        elif bold:
+            cands.extend([folder / "arialbd.ttf", folder / "ARIALBD.TTF",
+                          folder / "Arial_Bold.ttf", folder / "FreeSansBold.ttf"])
+        elif italic:
+            cands.extend([folder / "ariali.ttf", folder / "ARIALI.TTF"])
+        cands.extend([folder / "arial.ttf", folder / "Arial.ttf", folder / "ARIAL.TTF",
+                      folder / "FreeSans.ttf"])
+
+    # Project-bundled fonts take priority (works on any OS)
+    _from(_PROJ_FONTS)
+
+    # OS font directories
+    if _sys.platform == "win32":
+        _from(_WIN_FONTS)
+    else:
+        for d in _LINUX_FONTS:
+            _from(d)
+
     for p in cands:
         try:
             return ImageFont.truetype(str(p), size)

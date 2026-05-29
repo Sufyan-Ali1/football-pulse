@@ -6,21 +6,17 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ── Storage paths ────────────────────────────────────────────────────────────
-STORAGE_DIR        = BASE_DIR / "storage"
-VOICEOVERS_DIR     = STORAGE_DIR / "Voiceovers"
-VIDEOS_RAW_DIR     = STORAGE_DIR / "Videos" / "Raw"
-VIDEOS_FINAL_DIR   = STORAGE_DIR / "Videos" / "Final"
-THUMBNAILS_DIR     = STORAGE_DIR / "Thumbnails"
+# ── Paths ─────────────────────────────────────────────────────────────────────
+DATABASE_DIR   = BASE_DIR / "database"
+TEMP_DIR       = BASE_DIR / "temp"
+VOICEOVERS_DIR = TEMP_DIR / "voiceover"
+VIDEOS_DIR     = TEMP_DIR / "videos" / "final"
+CLIPS_DIR      = TEMP_DIR / "videos" / "clips"
 
 # ── Groq ─────────────────────────────────────────────────────────────────────
 GROQ_API_KEY          = os.environ.get("GROQ_API_KEY", "")
 GROQ_MODEL            = "llama-3.3-70b-versatile"
 GROQ_VISION_MODEL     = "meta-llama/llama-4-scout-17b-16e-instruct"
-
-# ── Pexels (stock B-roll video for news frame) ────────────────────────────────
-PEXELS_API_KEY = os.environ.get("PEXELS_API_KEY", "")
-
 
 # ── ElevenLabs ───────────────────────────────────────────────────────────────
 ELEVENLABS_API_KEY          = os.environ.get("ELEVENLABS_API_KEY", "")
@@ -28,39 +24,23 @@ ELEVENLABS_VOICE_ID_ENGLISH = os.environ.get("ELEVENLABS_VOICE_ID_ENGLISH", "")
 ELEVENLABS_VOICE_ID_YORUBA  = os.environ.get("ELEVENLABS_VOICE_ID_YORUBA", "")
 
 
-# ── Twitter / X ──────────────────────────────────────────────────────────────
+# ── Twitter / X (future) ─────────────────────────────────────────────────────
 TWITTER_BEARER_TOKEN   = os.environ.get("TWITTER_BEARER_TOKEN", "")
-TWITTER_API_KEY        = os.environ.get("TWITTER_API_KEY", "")
-TWITTER_API_SECRET     = os.environ.get("TWITTER_API_SECRET", "")
-TWITTER_ACCESS_TOKEN   = os.environ.get("TWITTER_ACCESS_TOKEN", "")
-TWITTER_ACCESS_SECRET  = os.environ.get("TWITTER_ACCESS_SECRET", "")
+
+# ── Google OAuth (shared client for YouTube + Drive) ─────────────────────────
+GOOGLE_CLIENT_ID     = os.environ.get("GOOGLE_CLIENT_ID", "")
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
 
 # ── YouTube ───────────────────────────────────────────────────────────────────
-YOUTUBE_CLIENT_SECRETS_PATH = BASE_DIR / os.environ.get(
-    "YOUTUBE_CLIENT_SECRETS_PATH", "config/secrets/youtube_client_secrets.json"
-)
-YOUTUBE_TOKEN_PATH = BASE_DIR / os.environ.get(
-    "YOUTUBE_TOKEN_PATH", "config/secrets/youtube_token.json"
-)
-YOUTUBE_STREAM_KEY  = os.environ.get("YOUTUBE_STREAM_KEY", "")
-YOUTUBE_RTMP_URL    = os.environ.get("YOUTUBE_RTMP_URL", "rtmp://a.rtmp.youtube.com/live2")
-YOUTUBE_CHANNEL_ID  = os.environ.get("YOUTUBE_CHANNEL_ID", "")
+YOUTUBE_REFRESH_TOKEN = os.environ.get("YOUTUBE_REFRESH_TOKEN", "")
+YOUTUBE_PLAYLIST_ID   = os.environ.get("YOUTUBE_PLAYLIST_ID", "")
 
-# ── Buffer ───────────────────────────────────────────────────────────────────
+# ── Buffer (future — social posting) ─────────────────────────────────────────
 BUFFER_ACCESS_TOKEN        = os.environ.get("BUFFER_ACCESS_TOKEN", "")
-BUFFER_PROFILE_ID_YOUTUBE  = os.environ.get("BUFFER_PROFILE_ID_YOUTUBE", "")
-BUFFER_PROFILE_ID_TIKTOK   = os.environ.get("BUFFER_PROFILE_ID_TIKTOK", "")
-BUFFER_PROFILE_ID_INSTAGRAM = os.environ.get("BUFFER_PROFILE_ID_INSTAGRAM", "")
-BUFFER_PROFILE_ID_TWITTER  = os.environ.get("BUFFER_PROFILE_ID_TWITTER", "")
 
 # ── Google Drive ──────────────────────────────────────────────────────────────
-GDRIVE_CLIENT_SECRETS_PATH = BASE_DIR / os.environ.get(
-    "GDRIVE_CLIENT_SECRETS_PATH", "config/secrets/gdrive_client_secrets.json"
-)
-GDRIVE_TOKEN_PATH = BASE_DIR / os.environ.get(
-    "GDRIVE_TOKEN_PATH", "config/secrets/gdrive_token.json"
-)
-GDRIVE_FOLDER_ID = os.environ.get("GOOGLE_DRIVE_FOLDER_ID", "")
+GDRIVE_REFRESH_TOKEN = os.environ.get("GDRIVE_REFRESH_TOKEN", "")
+GDRIVE_FOLDER_ID     = os.environ.get("GOOGLE_DRIVE_FOLDER_ID", "")
 
 # ── Brand ─────────────────────────────────────────────────────────────────────
 BRAND_NAME    = os.environ.get("BRAND_NAME", "Football Credo Hub")
@@ -89,9 +69,7 @@ CLUB_COLOURS: dict[str, str] = {
 }
 
 # ── Scheduler intervals (seconds) ────────────────────────────────────────────
-POLL_INTERVAL_RSS            = 3600  # 1 hour
-POLL_INTERVAL_TWITTER        = 900   # 15 minutes
-POLL_INTERVAL_GOOGLE_ALERTS  = 1800  # 30 minutes
+POLL_INTERVAL_RSS = 3600  # 1 hour
 
 # ── Daily video config ────────────────────────────────────────────────────────
 BREAKING_SCORE_THRESHOLD = int(os.environ.get("BREAKING_SCORE_THRESHOLD", "100"))

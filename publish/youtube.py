@@ -6,12 +6,10 @@ auto-generates SEO metadata via Groq, and schedules publish time.
 """
 import json
 import logging
-import pickle
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from google.auth.transport.requests import Request
-from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from openai import OpenAI
@@ -30,21 +28,20 @@ _groq = OpenAI(api_key=settings.GROQ_API_KEY, base_url="https://api.groq.com/ope
 
 
 def _get_youtube_client():
-    creds = None
-    if settings.YOUTUBE_TOKEN_PATH.exists():
-        with open(settings.YOUTUBE_TOKEN_PATH, "rb") as f:
-            creds = pickle.load(f)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow  = InstalledAppFlow.from_client_secrets_file(
-                str(settings.YOUTUBE_CLIENT_SECRETS_PATH), _SCOPES
-            )
-            creds = flow.run_local_server(port=0)
-        settings.YOUTUBE_TOKEN_PATH.parent.mkdir(parents=True, exist_ok=True)
-        with open(settings.YOUTUBE_TOKEN_PATH, "wb") as f:
-            pickle.dump(creds, f)
+    from google.oauth2.credentials import Credentials
+    if not settings.YOUTUBE_REFRESH_TOKEN:
+        raise RuntimeError("YOUTUBE_REFRESH_TOKEN is not set in .env")
+    if not settings.GOOGLE_CLIENT_ID or not settings.GOOGLE_CLIENT_SECRET:
+        raise RuntimeError("GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set in .env")
+    creds = Credentials(
+        token=None,
+        refresh_token=settings.YOUTUBE_REFRESH_TOKEN,
+        token_uri="https://oauth2.googleapis.com/token",
+        client_id=settings.GOOGLE_CLIENT_ID,
+        client_secret=settings.GOOGLE_CLIENT_SECRET,
+        scopes=_SCOPES,
+    )
+    creds.refresh(Request())
     return build("youtube", "v3", credentials=creds)
 
 
@@ -163,5 +160,20 @@ def upload_video(
             logger.info("Thumbnail attached to %s", video_id)
         except Exception as e:
             logger.warning("Thumbnail upload failed for %s: %s", video_id, e)
+
+    if settings.YOUTUBE_PLAYLIST_ID:
+        try:
+            youtube.playlistItems().insert(
+                part="snippet",
+                body={
+                    "snippet": {
+                        "playlistId": settings.YOUTUBE_PLAYLIST_ID,
+                        "resourceId": {"kind": "youtube#video", "videoId": video_id},
+                    }
+                },
+            ).execute()
+            logger.info("Added to playlist %s: %s", settings.YOUTUBE_PLAYLIST_ID, video_id)
+        except Exception as e:
+            logger.warning("Playlist insert failed for %s: %s", video_id, e)
 
     return video_id

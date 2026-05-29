@@ -57,8 +57,8 @@ def create_multi_story_video(
         CompositeAudioClip,
     )
 
-    output_path = settings.VIDEOS_RAW_DIR / f"{output_name}_raw.mp4"
-    settings.VIDEOS_RAW_DIR.mkdir(parents=True, exist_ok=True)
+    output_path = settings.VIDEOS_DIR / f"{output_name}.mp4"
+    settings.VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
 
     _TRANSITION_DUR = 3.2
 
@@ -192,6 +192,7 @@ def create_multi_story_video(
 
     # ── Pass 1: build all story clips ────────────────────────────────────────
     built: list[tuple] = []   # (VideoClip, audio_clip, duration)
+    _downloaded_clips: list[Path] = []  # cleaned up after render
 
     for idx, (script, item, vo_path) in enumerate(stories):
         print(f"\n[{idx+1}/{total}] {item.headline[:70]}")
@@ -208,18 +209,23 @@ def create_multi_story_video(
             print(f"    No voiceover — using estimated {duration:.0f}s")
         duration = max(duration, 10.0)
 
-        print("  Step 2/3 — Library clip lookup")
+        print("  Step 2/3 — Downloading clips from Drive")
         left_clip = None
         left_path = None
         if script.selected_clip_ids:
+            from clients.gdrive import download_clip as _drive_download
             rows = get_clips_by_ids(script.selected_clip_ids)
             loaded = []
+            settings.CLIPS_DIR.mkdir(parents=True, exist_ok=True)
             for row in rows:
-                p = Path(row["file_path"])
-                if p.exists():
+                filename = Path(row["file_path"]).name
+                p = settings.CLIPS_DIR / filename
+                print(f"    Downloading {filename} ...")
+                if _drive_download(filename, p):
+                    _downloaded_clips.append(p)
                     loaded.append((p, _load_video_clip(str(p))))
                 else:
-                    print(f"    Clip file missing: {p.name}")
+                    print(f"    Clip not available on Drive: {p.name}")
             if loaded:
                 left_path = loaded[0][0]
                 if len(loaded) == 1:
@@ -231,7 +237,7 @@ def create_multi_story_video(
                     names = ", ".join(p.name for p, _ in loaded)
                     print(f"    Clips ({len(loaded)}): {names}")
             else:
-                print("    Clip IDs not found in DB — left panel empty")
+                print("    No clips available — left panel empty")
         else:
             print("    No clip IDs in script — left panel empty")
 
@@ -323,16 +329,26 @@ def create_multi_story_video(
     print(f"\n  Rendering -> {output_path.name}  (this takes a while) ...")
     logger.info("Rendering %s ...", output_path.name)
     has_audio = bool(audio_clips)
-    final.write_videofile(
-        str(output_path),
-        fps=_BC.FPS,
-        codec="libx264",
-        audio=has_audio,
-        audio_codec="aac" if has_audio else None,
-        verbose=False,
-        logger=None,
-    )
-    final.close()
+    try:
+        final.write_videofile(
+            str(output_path),
+            fps=_BC.FPS,
+            codec="libx264",
+            audio=has_audio,
+            audio_codec="aac" if has_audio else None,
+            ffmpeg_params=["-preset", "ultrafast"],
+            verbose=False,
+            logger=None,
+        )
+    finally:
+        final.close()
+        for p in _downloaded_clips:
+            try:
+                p.unlink()
+            except Exception:
+                pass
+        if _downloaded_clips:
+            print(f"  Cleaned up {len(_downloaded_clips)} downloaded clip(s)")
 
     size_mb = output_path.stat().st_size / (1024 * 1024)
     logger.info("Video saved: %s (%.1f MB, %.1fs)", output_path.name, size_mb, total_dur)

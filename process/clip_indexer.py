@@ -28,7 +28,11 @@ def index_clip(
 
     Returns True if newly indexed, False if already exists or failed.
     """
-    path_str = str(video_path)
+    from config import settings
+    try:
+        path_str = str(video_path.resolve().relative_to(settings.BASE_DIR))
+    except ValueError:
+        path_str = str(video_path)
 
     if clip_exists(path_str):
         logger.debug("Already indexed: %s", video_path.name)

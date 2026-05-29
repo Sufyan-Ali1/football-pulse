@@ -8,7 +8,6 @@ Used by pipeline/collector.py for immediate breaking news processing.
 Each step retries up to MAX_RETRIES times with exponential backoff.
 """
 import logging
-import shutil
 import time
 from pathlib import Path
 
@@ -18,6 +17,8 @@ from process import classifier, voiceover
 from process.script_gen import generate_segment_script
 from core.database import get_all_clips
 from process.video_maker import create_multi_story_video
+from publish.youtube import generate_metadata, upload_video
+from clients.gdrive import sync_storage_to_drive
 
 logger = logging.getLogger(__name__)
 
@@ -36,19 +37,6 @@ def _retry(fn, *args, **kwargs):
     raise last
 
 
-def _promote_moviepy_output(raw_video_path: Path, script: Script) -> Path:
-    output_path = settings.VIDEOS_FINAL_DIR / f"{script.news_id}_final_branded.mp4"
-
-    if output_path.exists():
-        logger.info("Final video already exists, skipping copy: %s", output_path.name)
-        return output_path
-
-    settings.VIDEOS_FINAL_DIR.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(raw_video_path, output_path)
-    logger.info("Final video saved: %s", output_path.name)
-    return output_path
-
-
 def run_pipeline(item: NewsItem) -> PipelineResult:
     """Run classify → script → voiceover → video for a single NewsItem."""
     logger.info("=== Pipeline START: %s ===", item.headline[:80])
@@ -63,14 +51,23 @@ def run_pipeline(item: NewsItem) -> PipelineResult:
         vo_path = _retry(voiceover.generate_voiceover, script, "english")
         logger.info("[3/3] Voiceover done")
 
-        raw_path  = create_multi_story_video(
+        video_path = create_multi_story_video(
             [(script, item, vo_path)],
             output_name=script.news_id,
         )
-        final_path = _promote_moviepy_output(raw_path, script)
-        logger.info("=== Pipeline COMPLETE: %s ===", final_path.name)
 
-        return PipelineResult(news_id=item.id, success=True)
+        metadata = generate_metadata(item, script)
+        video_id = upload_video(video_path, None, metadata)
+        logger.info("[4/4] YouTube upload: %s", video_id)
+
+        sync_storage_to_drive()
+
+        video_path.unlink(missing_ok=True)
+        vo_path.unlink(missing_ok=True)
+        logger.info("Local files cleaned up")
+
+        logger.info("=== Pipeline COMPLETE: %s ===", video_path.name)
+        return PipelineResult(news_id=item.id, success=True, youtube_video_id=video_id)
 
     except Exception as e:
         msg = f"{type(e).__name__}: {e}"

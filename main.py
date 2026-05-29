@@ -6,9 +6,8 @@ Start the full system:
 
 What this does:
   1. Runs an immediate collector poll on startup
-  2. Schedules collector (RSS + Google Alerts → DB) every 5 minutes
+  2. Schedules collector (RSS + Google Alerts → DB) every hour
   3. Schedules daily video generation once per day (default 8 PM UTC)
-  4. Starts the 24/7 FFmpeg livestream (if final videos exist)
 
 To run just one collector poll manually (useful for testing):
     python main.py --once
@@ -45,13 +44,6 @@ logger = logging.getLogger(__name__)
 
 def main() -> None:
     run_once = "--once" in sys.argv
-
-    # Attempt to start the FFmpeg livestream (skipped if no videos yet)
-    try:
-        from publish.livestream import start_ffmpeg_stream
-        start_ffmpeg_stream()
-    except Exception as e:
-        logger.warning("FFmpeg stream not started: %s", e)
 
     if run_once:
         logger.info("Running a single collector poll (--once mode).")

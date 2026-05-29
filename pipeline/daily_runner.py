@@ -29,11 +29,13 @@ from core.database import (
     row_to_news_item,
     update_daily_video,
 )
-from core.types import NewsItem, Script
+from core.types import NewsItem, Script, VideoMetadata
 from process.script_gen import generate_segment_script
 from process.verifier import verify_and_reclassify
 from process.video_maker import create_multi_story_video
 from process.voiceover import generate_voiceover
+from publish.youtube import upload_video
+from clients.gdrive import sync_storage_to_drive
 
 logger = logging.getLogger(__name__)
 
@@ -133,11 +135,36 @@ def run_daily_video() -> None:
 
             stories.append((script, item, vo_path))
 
-        output = create_multi_story_video(stories, output_name=f"daily_{today}")
+        video_output = create_multi_story_video(stories, output_name=f"daily_{today}")
+
+        headlines = [row_to_news_item(a).headline for a in articles]
+        title = f"Football News Today | {len(articles)} Stories | {today} | {settings.BRAND_NAME}"[:95]
+        description = (
+            f"Today's top football stories on {settings.BRAND_NAME}.\n\n"
+            + "\n".join(f"• {h}" for h in headlines)
+            + f"\n\n{settings.BRAND_NAME} – {settings.BRAND_TAGLINE}"
+        )
+        metadata = VideoMetadata(
+            title=title,
+            description=description,
+            tags=["football", "football news", "transfer news", "football today", settings.BRAND_NAME.lower()],
+            privacy_status="public",
+        )
+        video_id = upload_video(video_output, None, metadata)
+        logger.info("YouTube upload: %s", video_id)
+
+        sync_storage_to_drive()
 
         mark_articles_used(article_ids, today)
-        update_daily_video(today, "done", video_path=str(output))
-        logger.info("=== Daily Runner DONE: %s (%d stories) ===", output.name, len(stories))
+        update_daily_video(today, "done", video_path=f"youtube:{video_id}")
+
+        video_output.unlink(missing_ok=True)
+        for _, _, vo_path in stories:
+            if vo_path:
+                Path(vo_path).unlink(missing_ok=True)
+        logger.info("Local files cleaned up")
+
+        logger.info("=== Daily Runner DONE: %s (%d stories) ===", video_output.name, len(stories))
 
     except Exception as e:
         update_daily_video(today, "failed", error=f"{type(e).__name__}: {e}")

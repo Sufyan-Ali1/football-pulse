@@ -121,7 +121,7 @@ def index_new(folder: Path) -> None:
 def main() -> None:
     reindex = "--reindex" in sys.argv
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    folder = Path(args[0]) if args else settings.BASE_DIR / "storage" / "Videos" / "Cache" / "pexels"
+    folder = Path(args[0]) if args else settings.CLIPS_DIR
 
     if not folder.exists() and not reindex:
         print(f"Folder not found: {folder}")

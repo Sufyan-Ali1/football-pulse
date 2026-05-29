@@ -1,5 +1,5 @@
 """
-Single SQLite database for the entire pipeline (storage/db/articles.db).
+Single SQLite database for the entire pipeline (database/articles.db).
 
 Tables:
   articles      — every collected article with rank score + status
@@ -21,7 +21,7 @@ from core.types import NewsItem
 
 logger = logging.getLogger(__name__)
 
-_DB_PATH = Path(__file__).resolve().parent.parent / "storage" / "db" / "articles.db"
+_DB_PATH = Path(__file__).resolve().parent.parent / "database" / "articles.db"
 
 
 def _conn() -> sqlite3.Connection:
@@ -231,7 +231,7 @@ def update_daily_video(
 def daily_video_exists(video_date: str) -> bool:
     with _conn() as c:
         return c.execute(
-            "SELECT 1 FROM daily_videos WHERE video_date=? AND status IN ('generating','done')",
+            "SELECT 1 FROM daily_videos WHERE video_date=? AND status IN ('done','generating')",
             (video_date,),
         ).fetchone() is not None
 

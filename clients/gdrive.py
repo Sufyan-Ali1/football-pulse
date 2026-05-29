@@ -7,7 +7,6 @@ Root folder:    settings.GDRIVE_FOLDER_ID  (folder shared with your Google accou
 """
 import io
 import logging
-import pickle
 from pathlib import Path
 
 from config import settings
@@ -16,13 +15,9 @@ logger = logging.getLogger(__name__)
 
 _SCOPES = ["https://www.googleapis.com/auth/drive"]
 
-# Maps local storage/ subpaths → Drive subfolder hierarchy
-# Videos/Cache/pexels is excluded — clips are regeneratable from the API
+# Maps local dirs → Drive subfolder hierarchy
 _SYNC_MAP: dict[str, list[str]] = {
-    "Videos/Final":  ["Videos", "Final"],
-    "Videos/Raw":    ["Videos", "Raw"],
-    "Voiceovers":    ["Voiceovers"],
-    "Thumbnails":    ["Thumbnails"],
+    "videos/final": ["Videos", "Final"],
 }
 
 
@@ -33,35 +28,22 @@ def _get_service():
     config/gdrive_token.json. All subsequent calls use the saved token.
     """
     from google.auth.transport.requests import Request
-    from google_auth_oauthlib.flow import InstalledAppFlow
+    from google.oauth2.credentials import Credentials
     from googleapiclient.discovery import build
 
-    creds = None
-    token_path   = settings.GDRIVE_TOKEN_PATH
-    secrets_path = settings.GDRIVE_CLIENT_SECRETS_PATH
-
-    if token_path.exists():
-        with open(token_path, "rb") as f:
-            creds = pickle.load(f)
-
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            if not secrets_path.exists():
-                raise FileNotFoundError(
-                    f"OAuth client secrets not found at {secrets_path}.\n"
-                    "In Google Cloud Console: APIs & Services → Credentials → "
-                    "Create Credentials → OAuth 2.0 Client ID → Desktop App → Download JSON.\n"
-                    "Save it as config/gdrive_client_secrets.json"
-                )
-            flow  = InstalledAppFlow.from_client_secrets_file(str(secrets_path), _SCOPES)
-            creds = flow.run_local_server(port=0)
-
-        with open(token_path, "wb") as f:
-            pickle.dump(creds, f)
-        logger.info("Drive OAuth token saved to %s", token_path)
-
+    if not settings.GDRIVE_REFRESH_TOKEN:
+        raise RuntimeError("GDRIVE_REFRESH_TOKEN is not set in .env")
+    if not settings.GOOGLE_CLIENT_ID or not settings.GOOGLE_CLIENT_SECRET:
+        raise RuntimeError("GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set in .env")
+    creds = Credentials(
+        token=None,
+        refresh_token=settings.GDRIVE_REFRESH_TOKEN,
+        token_uri="https://oauth2.googleapis.com/token",
+        client_id=settings.GOOGLE_CLIENT_ID,
+        client_secret=settings.GOOGLE_CLIENT_SECRET,
+        scopes=_SCOPES,
+    )
+    creds.refresh(Request())
     return build("drive", "v3", credentials=creds, cache_discovery=False)
 
 
@@ -86,6 +68,16 @@ def get_or_create_folder(service, name: str, parent_id: str) -> str:
     return folder["id"]
 
 
+def _get_folder_id(service, name: str, parent_id: str) -> str | None:
+    """Return the Drive folder ID for `name` under `parent_id`, or None if it doesn't exist."""
+    query = (
+        f"name='{name}' and mimeType='application/vnd.google-apps.folder' "
+        f"and '{parent_id}' in parents and trashed=false"
+    )
+    files = service.files().list(q=query, fields="files(id)").execute().get("files", [])
+    return files[0]["id"] if files else None
+
+
 
 def sync_storage_to_drive(delete_local: bool = False) -> dict:
     """Sync all storage/ subfolders to Google Drive.
@@ -104,7 +96,7 @@ def sync_storage_to_drive(delete_local: bool = False) -> dict:
         )
 
     service = _get_service()
-    storage_root = settings.STORAGE_DIR
+    storage_root = settings.TEMP_DIR
 
     stats = {"uploaded": 0, "skipped": 0, "failed": 0}
 
@@ -114,7 +106,7 @@ def sync_storage_to_drive(delete_local: bool = False) -> dict:
     print(f"{'='*56}")
 
     for local_subpath, drive_path in _SYNC_MAP.items():
-        local_dir = storage_root / local_subpath.replace("/", "\\")
+        local_dir = storage_root / Path(*local_subpath.split("/"))
         if not local_dir.exists():
             print(f"\n  [GDrive] Skipping {local_subpath} — folder does not exist locally")
             continue
@@ -173,6 +165,28 @@ def sync_storage_to_drive(delete_local: bool = False) -> dict:
     return stats
 
 
+_CLIPS_FOLDER_PATH = ["Clips", "pexels"]
+
+
+def download_clip(filename: str, local_path: Path) -> bool:
+    """Download a Pexels clip by filename from Drive/Clips/pexels/ to local_path."""
+    service = _get_service()
+    folder_id = settings.GDRIVE_FOLDER_ID
+    for part in _CLIPS_FOLDER_PATH:
+        folder_id = _get_folder_id(service, part, folder_id)
+        if folder_id is None:
+            logger.warning("Drive folder not found for clip lookup: %s", part)
+            return False
+
+    query = f"name='{filename}' and '{folder_id}' in parents and trashed=false"
+    files = service.files().list(q=query, fields="files(id)").execute().get("files", [])
+    if not files:
+        logger.warning("Clip not found on Drive: %s", filename)
+        return False
+
+    return download_file(files[0]["id"], local_path)
+
+
 def download_file(drive_file_id: str, local_path: Path) -> bool:
     """Download a Drive file by ID to `local_path`.
 
@@ -184,7 +198,6 @@ def download_file(drive_file_id: str, local_path: Path) -> bool:
     service = _get_service()
     local_path.parent.mkdir(parents=True, exist_ok=True)
 
-    print(f"    [GDrive] Downloading {local_path.name} ...")
     try:
         request = service.files().get_media(fileId=drive_file_id)
         with io.FileIO(str(local_path), "wb") as fh:
@@ -193,10 +206,8 @@ def download_file(drive_file_id: str, local_path: Path) -> bool:
             while not done:
                 _, done = downloader.next_chunk()
         size_mb = local_path.stat().st_size / (1024 * 1024)
-        print(f"    [GDrive] Downloaded: {local_path.name} ({size_mb:.1f} MB)")
-        logger.info("Downloaded from Drive: %s (id=%s)", local_path.name, drive_file_id)
+        logger.info("Downloaded: %s (%.1f MB)", local_path.name, size_mb)
         return True
     except Exception as exc:
-        logger.warning("Download failed for id=%s: %s", drive_file_id, exc)
-        print(f"    [GDrive] Download FAILED: {exc}")
+        logger.warning("Download failed for %s: %s", local_path.name, exc)
         return False
