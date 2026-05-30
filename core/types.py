@@ -10,7 +10,17 @@ from typing import Literal
 # ── Type aliases ──────────────────────────────────────────────────────────────
 
 SourceType  = Literal["rss", "google_alerts"]
-ContentType = Literal["breaking_news", "transfer_rumour", "club_update", "tactical"]
+ContentType = Literal[
+    "deal_done",
+    "transfer_rumour",
+    "breaking_news",
+    "manager_sacked",
+    "manager_appointed",
+    "contract_extension",
+    "injury_fitness",
+    "club_statement",
+    "tactical",
+]
 
 
 # ── Data classes ──────────────────────────────────────────────────────────────

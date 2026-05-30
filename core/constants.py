@@ -5,31 +5,66 @@ Define once here — never duplicate across modules.
 
 # ── Classification signals ────────────────────────────────────────────────────
 
-BREAKING_SIGNALS: list[str] = [
-    "here we go",
-    "done deal",
-    "agreement reached",
-    "deal signed",
-    "medicals",
-    "contract signed",
-    "officially confirmed",
+DEAL_DONE_SIGNALS: list[str] = [
+    "here we go", "done deal", "agreement reached", "deal signed", "medicals",
     "officially unveiled",
-    "officially appointed",
-    "officially sacked",
-    "sacked as manager",
-    "sacked as head coach",
-    "appointed as manager",
-    "appointed as head coach",
-    "signs for",
-    "joins on a",
-    "world record fee",
-    "breaks transfer record",
+    "signs for", "joins on a", "world record fee", "breaks transfer record",
+    "transfer confirmed", "deal done", "completed signing", "unveiled as",
+    "officially joins", "announce the signing",
+]
+
+MANAGER_SACKED_SIGNALS: list[str] = [
+    "sacked", "dismissed", "parted ways", "relieved of duties",
+    "sacked as manager", "sacked as head coach",
+    "managerial departure", "no longer manager", "leaves by mutual consent",
+]
+
+MANAGER_APPOINTED_SIGNALS: list[str] = [
+    "appointed as manager", "appointed as head coach", "named as new manager",
+    "named as head coach", "takes charge as manager", "takes charge as head coach",
+    "officially appointed", "confirmed as manager", "new manager confirmed", "named manager",
+]
+
+CONTRACT_EXTENSION_SIGNALS: list[str] = [
+    "signs new contract", "contract extension",
+    "extended his contract", "signed a new deal", "penned new deal",
+    "contract renewal", "keeps him until", "new deal until",
+    "signs contract extension", "contract signed",
+]
+
+INJURY_FITNESS_SIGNALS: list[str] = [
+    "ruled out", "fitness doubt", "fitness concern", "out for",
+    "undergone surgery", "picked up an injury", "returns from injury",
+    "back in training", "injury blow", "miss the match",
+    "injury update", "on the injury",
+]
+
+CLUB_STATEMENT_SIGNALS: list[str] = [
+    "club confirm", "official statement", "officially announce", "club announce",
+    "the club have confirmed", "officially released", "statement from the club",
+    "club release statement",
+]
+
+BREAKING_SIGNALS: list[str] = [
+    "breaking", "exclusive", "just in", "developing story",
 ]
 
 TRANSFER_SIGNALS: list[str] = [
     "transfer", "signing", "loan", "bid", "fee", "move", "linked",
     "interest", "talks", "negotiations", "wanted", "target",
-    "deal", "offer", "approach", "bid rejected", "clause",
+    "offer", "approach", "bid rejected", "clause", "deal",
+]
+
+# Content types that warrant an immediate video rather than waiting for the daily runner.
+# Used in collector.py at both save-time and post-verify gates — define once here.
+BREAKING_CONTENT_TYPES: tuple[str, ...] = (
+    "breaking_news", "deal_done", "manager_sacked", "manager_appointed", "contract_extension",
+)
+
+# All valid content type strings — single source of truth for classifier and verifier validation.
+VALID_CONTENT_TYPES: list[str] = [
+    "deal_done", "transfer_rumour", "breaking_news", "manager_sacked",
+    "manager_appointed", "contract_extension", "injury_fitness", "club_statement", "tactical",
 ]
 
 TACTICAL_SIGNALS: list[str] = [
@@ -63,14 +98,19 @@ LOW_INTEREST_SIGNALS: list[str] = [
 # ── Source quality tiers (used by ranker) ─────────────────────────────────────
 
 SOURCE_TIERS: dict[str, int] = {
-    "Sky Sports Football":    90,
-    "BBC Sport Football":     85,
-    "The Guardian Football":  80,
-    "ESPN FC":                75,
-    "Google Alerts":          70,
-    "TalkSport":              65,
-    "90min":                  60,
-    "Football Italia":        55,
+    "Fabrizio Romano (Nitter)": 95,
+    "David Ornstein (Nitter)":  92,
+    "Ben Jacobs (Nitter)":      88,
+    "Laurie Whitwell (Nitter)": 85,
+    "Sky Sports Football":       90,
+    "Sky Sports Football News":  88,
+    "BBC Sport Football":        85,
+    "The Guardian Football":     80,
+    "ESPN FC":                   75,
+    "Google Alerts":             70,
+    "TalkSport":                 65,
+    "90min":                     60,
+    "Football Italia":           55,
 }
 DEFAULT_SOURCE_SCORE: int = 40
 

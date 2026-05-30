@@ -37,13 +37,18 @@ def _retry(fn, *args, **kwargs):
     raise last
 
 
-def run_pipeline(item: NewsItem) -> PipelineResult:
-    """Run classify → script → voiceover → video for a single NewsItem."""
+def run_pipeline(item: NewsItem, content_type: str | None = None) -> PipelineResult:
+    """Run script → voiceover → video for a single NewsItem.
+
+    Pass content_type from the DB (already groq_verified) to skip re-classification.
+    If omitted, falls back to a fresh classify() call.
+    """
     logger.info("=== Pipeline START: %s ===", item.headline[:80])
 
     try:
-        content_type = classifier.classify(item)
-        logger.info("[1/3] Classified: %s", content_type)
+        if content_type is None:
+            content_type = classifier.classify(item)
+        logger.info("[1/3] content_type: %s", content_type)
 
         script = _retry(generate_segment_script, item, content_type, get_all_clips())
         logger.info("[2/3] Script: %dw", script.word_count)

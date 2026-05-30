@@ -18,6 +18,7 @@ import sqlite3
 from openai import OpenAI
 
 from config import settings
+from core.constants import VALID_CONTENT_TYPES
 from core.database import bulk_update_article_classifications, get_articles_by_ids
 from core.types import ContentType
 
@@ -25,35 +26,42 @@ logger = logging.getLogger(__name__)
 
 _groq = OpenAI(api_key=settings.GROQ_API_KEY, base_url="https://api.groq.com/openai/v1")
 
-_VALID: list[ContentType] = ["breaking_news", "transfer_rumour", "club_update", "tactical"]
+_VALID = VALID_CONTENT_TYPES
 
 _VERIFY_PROMPT = """You are quality-checking football news article classifications for a YouTube channel.
 For each article return two things: the CORRECT category, and a relevance score (1-10).
 
+IMPORTANT: If an article is NOT about football at all, assign relevance 1 — it will be filtered out.
+
 Categories:
-- breaking_news   → ONLY for confirmed/completed events: transfer signing done, manager officially sacked or appointed, contract extension signed. A match result is NEVER breaking_news.
-- transfer_rumour → Unconfirmed: transfer links, rumours, bids, interest, negotiations, player "linked to" a club
-- tactical        → Match results (including finals), match reports, post-match reaction or analysis, formations, tactical breakdowns, player ratings
-- club_update     → Injuries, suspensions, squad news, kit releases, merchandise, press conferences, club statements
+- deal_done          → confirmed/completed transfer signing, "here we go", medicals done, player unveiled
+- transfer_rumour    → unconfirmed: transfer links, bids, interest, negotiations, speculation
+- breaking_news      → confirmed breaking football event not covered by other specific types
+- manager_sacked     → manager dismissed, sacked, relieved of duties, parted ways
+- manager_appointed  → manager appointed, named, takes charge of a club
+- contract_extension → player or manager signs contract extension or renewal
+- injury_fitness     → injury news, fitness updates, player ruled out, return from injury
+- club_statement     → official club announcement, statement, or press release
+- tactical           → match results, match reports, analysis, formations, post-match reaction
 
 Relevance score (viewer interest for a football news YouTube channel):
-- 9-10: Must cover — confirmed transfer/sacking, title win, historic result
-- 7-8:  Strong story — interesting rumour, big match result, key injury
+- 9-10: Must cover — confirmed big transfer, major sacking, title win, historic result
+- 7-8:  Strong story — interesting rumour, big match result, key injury to star player
 - 5-6:  Decent story — minor squad news, mid-table result, small club update
-- 3-4:  Weak — generic analysis, obscure club, low viewer interest
-- 1-2:  Skip — fixture lists, kit reviews, betting tips, throwbacks, merchandise
+- 3-4:  Weak — generic analysis, obscure club, very low viewer interest
+- 1-2:  Skip — not football, fixture lists, kit reviews, betting tips, throwbacks, merchandise, fantasy football
 
 Key rules:
-- Keep current category if correct, correct it if wrong
-- "Confirmed" in a match/analysis context is NOT breaking_news
-- Women's football results are tactical, not breaking_news
-- Kit releases and merchandise are always club_update, relevance 1-3
+- Match results and cup finals are ALWAYS tactical, never deal_done or breaking_news
+- "Confirmed" in a match/analysis context is NOT deal_done
+- Kit releases and merchandise are club_statement, relevance 1-3
+- Non-football articles get relevance 1 regardless of category
 
 Articles (format: "N. [current: TYPE] Headline"):
 {lines}
 
 Respond with ONLY a JSON object. Example:
-{{"1": {{"type": "tactical", "relevance": 8}}, "2": {{"type": "breaking_news", "relevance": 10}}}}
+{{"1": {{"type": "deal_done", "relevance": 10}}, "2": {{"type": "transfer_rumour", "relevance": 7}}}}
 No explanation. No other text."""
 
 

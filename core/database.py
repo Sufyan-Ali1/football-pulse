@@ -112,7 +112,7 @@ def insert_article(
             (
                 item.id, item.headline, item.body, item.url,
                 item.source, item.source_type, content_type,
-                rank_score, item.timestamp.isoformat(),
+                rank_score, (item.timestamp.replace(tzinfo=timezone.utc) if item.timestamp.tzinfo is None else item.timestamp.astimezone(timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 status, classified_by, datetime.now(timezone.utc).isoformat(),
             ),
         )
@@ -142,8 +142,20 @@ def get_articles_by_ids(article_ids: list[str]) -> list[sqlite3.Row]:
 def get_breaking_articles() -> list[sqlite3.Row]:
     with _conn() as c:
         return c.execute(
-            "SELECT * FROM articles WHERE status = 'breaking' ORDER BY rank_score DESC"
+            "SELECT * FROM articles WHERE status = 'breaking'"
+            " AND timestamp >= datetime('now', '-24 hours') ORDER BY rank_score DESC"
         ).fetchall()
+
+
+def demote_stale_breaking_articles() -> int:
+    """Reset breaking articles older than 24 hours back to pending so the daily runner picks them up."""
+    with _conn() as c:
+        cursor = c.execute(
+            "UPDATE articles SET status='pending' WHERE status='breaking'"
+            " AND timestamp < datetime('now', '-24 hours')"
+        )
+        c.commit()
+        return cursor.rowcount
 
 
 def mark_articles_used(article_ids: list[str], video_date: str) -> None:
@@ -307,7 +319,7 @@ def get_clips_by_ids(ids: list[str]) -> list[sqlite3.Row]:
 def row_to_news_item(row: sqlite3.Row) -> NewsItem:
     ts_str = row["timestamp"]
     try:
-        ts = datetime.fromisoformat(ts_str)
+        ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
     except Exception:
         ts = datetime.now(timezone.utc)
     if ts.tzinfo is None:

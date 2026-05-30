@@ -12,8 +12,10 @@ import logging
 import time
 
 from config import settings
+from core.constants import BREAKING_CONTENT_TYPES
 from core.database import (
     article_exists,
+    demote_stale_breaking_articles,
     get_breaking_articles,
     insert_article,
     mark_article_status,
@@ -67,13 +69,13 @@ def run_collector() -> None:
     classifications = batch_classify(unique)
 
     # ── Score + save ──────────────────────────────────────────────────────────
-    counts: dict[str, int] = {"breaking_news": 0, "transfer_rumour": 0, "club_update": 0, "tactical": 0}
+    counts: dict[str, int] = {}
     saved = 0
 
     for item in unique:
         score                      = score_item(item)
-        content_type, classified_by = classifications.get(item.id, ("club_update", "keyword"))
-        is_breaking                = content_type == "breaking_news" and score >= settings.BREAKING_SCORE_THRESHOLD
+        content_type, classified_by = classifications.get(item.id, ("tactical", "keyword"))
+        is_breaking                = content_type in BREAKING_CONTENT_TYPES and score >= settings.BREAKING_SCORE_THRESHOLD
         status                     = "breaking" if is_breaking else "pending"
 
         try:
@@ -85,16 +87,13 @@ def run_collector() -> None:
         except Exception as e:
             logger.error("DB insert failed for '%s': %s", item.headline[:60], e)
 
-    logger.info(
-        "Saved %d articles - breaking:%d  transfer:%d  club:%d  tactical:%d",
-        saved,
-        counts["breaking_news"],
-        counts["transfer_rumour"],
-        counts["club_update"],
-        counts["tactical"],
-    )
+    breakdown = "  ".join(f"{k}:{v}" for k, v in sorted(counts.items()) if v)
+    logger.info("Saved %d articles — %s", saved, breakdown or "none")
 
     # ── Breaking news: verify then generate immediate video ───────────────────
+    stale = demote_stale_breaking_articles()
+    if stale:
+        logger.info("Demoted %d stale breaking article(s) to pending", stale)
     breaking = get_breaking_articles()
     if not breaking:
         logger.info("No breaking news in queue")
@@ -104,33 +103,37 @@ def run_collector() -> None:
 
         # 2nd-pass Groq check before committing to video generation
         verified = verify_and_reclassify([article])
-        fresh    = verified[0]
-
-        if fresh["content_type"] != "breaking_news":
-            logger.info(
-                "Breaking news downgraded to [%s] after verification - skipping: %s",
-                fresh["content_type"], fresh["headline"][:70],
-            )
-            mark_article_status(fresh["id"], "pending")
-
-        elif fresh["relevance_score"] is not None and fresh["relevance_score"] < 7:
-            logger.info(
-                "Breaking news low relevance [score=%d] - skipping pipeline: %s",
-                fresh["relevance_score"], fresh["headline"][:70],
-            )
-            mark_article_status(fresh["id"], "pending")
-
+        if not verified:
+            logger.warning("Verifier returned no results — demoting breaking article: %s", article["headline"][:70])
+            mark_article_status(article["id"], "pending")
         else:
-            item   = row_to_news_item(fresh)
-            logger.info(
-                "Processing breaking news [relevance=%d]: %s",
-                fresh["relevance_score"], item.headline[:80],
-            )
-            result = run_pipeline(item)
-            if result.success:
-                mark_article_status(fresh["id"], "used")
-                logger.info("Breaking news video COMPLETE: %s", item.headline[:60])
+            fresh = verified[0]
+
+            if fresh["content_type"] not in BREAKING_CONTENT_TYPES:
+                logger.info(
+                    "Breaking news downgraded to [%s] after verification - skipping: %s",
+                    fresh["content_type"], fresh["headline"][:70],
+                )
+                mark_article_status(fresh["id"], "pending")
+
+            elif fresh["relevance_score"] is None or fresh["relevance_score"] < 7:
+                logger.info(
+                    "Breaking news low relevance [score=%d] - skipping pipeline: %s",
+                    fresh["relevance_score"], fresh["headline"][:70],
+                )
+                mark_article_status(fresh["id"], "pending")
+
             else:
-                logger.error("Breaking news pipeline FAILED: %s", result.error)
+                item   = row_to_news_item(fresh)
+                logger.info(
+                    "Processing breaking news [relevance=%d]: %s",
+                    fresh["relevance_score"], item.headline[:80],
+                )
+                result = run_pipeline(item, content_type=fresh["content_type"])
+                if result.success:
+                    mark_article_status(fresh["id"], "used")
+                    logger.info("Breaking news video COMPLETE: %s", item.headline[:60])
+                else:
+                    logger.error("Breaking news pipeline FAILED: %s", result.error)
 
     logger.info("=== Collector DONE (%.1fs) ==========================================", time.monotonic() - t0)

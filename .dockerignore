@@ -1,0 +1,26 @@
+# Python bytecode
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.venv/
+
+# Git
+.git/
+.gitignore
+
+# Env file — injected at runtime via docker-compose, never baked in
+.env
+
+# Runtime data — all mounted as volumes
+database/
+temp/
+logs/
+
+# Misc
+*.pdf
+*.log

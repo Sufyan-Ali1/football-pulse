@@ -1,16 +1,20 @@
 """
 Content classifier — Step 3.
 
-Classifies a NewsItem into one of four content types:
-  breaking_news   → confirmed events (signings, sackings, contracts)
-  transfer_rumour → unconfirmed links, bids, negotiations
-  club_update     → injuries, squad news, club statements
-  tactical        → match results, reports, tactical breakdowns
+Classifies a NewsItem into one of the following content types:
+  deal_done          → confirmed signings, "here we go", medicals, unveiled
+  transfer_rumour    → unconfirmed links, bids, interest, negotiations
+  breaking_news      → general confirmed breaking football event
+  manager_sacked     → manager sacked/dismissed/parted ways
+  manager_appointed  → manager appointed/named/takes charge
+  contract_extension → contract extensions / renewals
+  injury_fitness     → injuries, fitness updates, returns
+  club_statement     → official club statements / announcements
+  tactical           → match results, reports, analysis, formations
 
 Strategy:
-  1. Keyword matching (free, instant) — handles ~60% of items
+  1. Rule-based keyword pass (free, instant) — handles ~70% of items
   2. Groq batch API (up to 10 headlines per call) — handles the rest
-     This is ~10x cheaper than calling Groq once per item.
 """
 import json
 import logging
@@ -18,20 +22,44 @@ import logging
 from openai import OpenAI
 
 from config import settings
-from core.constants import BREAKING_SIGNALS, TRANSFER_SIGNALS, TACTICAL_SIGNALS
+from core.constants import (
+    BREAKING_SIGNALS,
+    CLUB_STATEMENT_SIGNALS,
+    CONTRACT_EXTENSION_SIGNALS,
+    DEAL_DONE_SIGNALS,
+    INJURY_FITNESS_SIGNALS,
+    MANAGER_APPOINTED_SIGNALS,
+    MANAGER_SACKED_SIGNALS,
+    TACTICAL_SIGNALS,
+    TRANSFER_SIGNALS,
+    VALID_CONTENT_TYPES,
+)
 from core.types import ContentType, NewsItem
 
 logger = logging.getLogger(__name__)
 
 _groq = OpenAI(api_key=settings.GROQ_API_KEY, base_url="https://api.groq.com/openai/v1")
 
-_VALID: list[ContentType] = ["breaking_news", "transfer_rumour", "club_update", "tactical"]
+_VALID = VALID_CONTENT_TYPES
 
 
 # ── Keyword classifier (no API cost) ─────────────────────────────────────────
 
 def _keyword_classify(text: str) -> ContentType | None:
     t = text.lower()
+    # Most specific types first to avoid false matches
+    if any(s in t for s in DEAL_DONE_SIGNALS):
+        return "deal_done"
+    if any(s in t for s in MANAGER_SACKED_SIGNALS):
+        return "manager_sacked"
+    if any(s in t for s in MANAGER_APPOINTED_SIGNALS):
+        return "manager_appointed"
+    if any(s in t for s in CONTRACT_EXTENSION_SIGNALS):
+        return "contract_extension"
+    if any(s in t for s in INJURY_FITNESS_SIGNALS):
+        return "injury_fitness"
+    if any(s in t for s in CLUB_STATEMENT_SIGNALS):
+        return "club_statement"
     if any(s in t for s in BREAKING_SIGNALS):
         return "breaking_news"
     if any(s in t for s in TRANSFER_SIGNALS):
@@ -43,18 +71,30 @@ def _keyword_classify(text: str) -> ContentType | None:
 
 # ── Single-item Groq fallback ─────────────────────────────────────────────────
 
-_SINGLE_PROMPT = """Classify this football news headline into EXACTLY one category:
+_SINGLE_PROMPT = """You are classifying football news headlines for a football YouTube channel.
 
-- breaking_news   → ONLY for confirmed/completed events: a transfer signing completed, a manager officially sacked or appointed, a contract extension signed. A match result is NEVER breaking_news.
-- transfer_rumour → Unconfirmed: transfer links, rumours, interest, bids, negotiations, player "linked to" a club
-- tactical        → Match results (including cup finals and major finals), match reports, post-match reaction or analysis, formations, tactical breakdowns, player ratings
-- club_update     → Injuries, suspensions, squad news, kit releases, merchandise, press conferences, club statements
+IMPORTANT: Only classify genuine football news. If the headline is NOT about football, respond with "tactical" as a safe default — it will be filtered later by relevance scoring.
 
-Key rule: if in doubt between breaking_news and any other category, choose the other category.
+Categories:
+- deal_done          → confirmed/completed transfer signing, "here we go", medicals done, player unveiled
+- transfer_rumour    → unconfirmed: transfer links, bids, interest, negotiations, player "linked to" a club
+- breaking_news      → confirmed breaking football event that doesn't fit other categories
+- manager_sacked     → manager dismissed, sacked, parted ways, relieved of duties
+- manager_appointed  → manager appointed, named, takes charge
+- contract_extension → player or manager signs contract extension or renewal
+- injury_fitness     → injury news, fitness updates, returns from injury, ruled out
+- club_statement     → official club announcement, statement, or confirmation
+- tactical           → match results, match reports, analysis, formations, post-match reaction
+
+Key rules:
+- A match result or cup final is NEVER deal_done or breaking_news — it is tactical
+- "Confirmed" in a match or analysis context is NOT deal_done
+- Kit releases, merchandise, commercial deals are club_statement
+- If unsure between deal_done and any other category, choose the other category
 
 Headline: {headline}
 
-Respond with ONLY the category name."""
+Respond with ONLY the category name. No explanation."""
 
 
 def classify(item: NewsItem) -> ContentType:
@@ -79,29 +119,37 @@ def classify(item: NewsItem) -> ContentType:
     except Exception as e:
         logger.warning("Groq single classify failed: %s", e)
 
-    return "club_update"
+    return "tactical"
 
 
 # ── Batch Groq classifier (10 headlines per API call) ────────────────────────
 
-_BATCH_PROMPT = """Classify each football news headline into exactly one category:
+_BATCH_PROMPT = """You are classifying football news headlines for a football YouTube channel.
 
-- breaking_news   → ONLY for confirmed/completed events: transfer signing completed, manager officially sacked or appointed, contract extension confirmed. A match result is NEVER breaking_news, even if it is a final or a championship win.
-- transfer_rumour → Unconfirmed: transfer links, rumours, bids, interest, negotiations, player "linked to" a club, speculation
-- tactical        → Match results, match reports, post-match reaction or analysis, team performance, formations, tactical breakdowns, player ratings, cup finals, tournament results
-- club_update     → Injuries, suspensions, squad announcements, kit releases, merchandise, press conferences, club statements, general club news
+IMPORTANT: Only classify genuine football news. If a headline is NOT about football, classify it as "tactical" — it will be filtered by relevance scoring later.
 
-Rules:
-- "Confirmed" in a match or analysis context does NOT make it breaking_news
-- Kit releases, merchandise, or commercial partnerships are always club_update
-- Women's football results and analysis are tactical, not breaking_news
-- If unsure between breaking_news and anything else, choose the other category
+Categories:
+- deal_done          → confirmed/completed transfer signing, "here we go", medicals done, player unveiled at new club
+- transfer_rumour    → unconfirmed: transfer links, bids, interest, negotiations, player "linked to" a club, speculation
+- breaking_news      → confirmed breaking football event that doesn't fit other specific categories
+- manager_sacked     → manager dismissed, sacked, parted ways, relieved of duties
+- manager_appointed  → manager appointed, named as head coach, takes charge
+- contract_extension → player or manager signs contract extension or renewal
+- injury_fitness     → injury news, fitness updates, player ruled out, returns from injury
+- club_statement     → official club announcement, statement, or press release
+- tactical           → match results, match reports, analysis, formations, post-match reaction, player ratings
+
+Key rules:
+- Match results and cup finals are ALWAYS tactical, never deal_done or breaking_news
+- Kit releases, merchandise, commercial deals are club_statement
+- Women's football results are tactical
+- If unsure between deal_done and anything else, choose the other category
 
 Headlines:
 {lines}
 
 Respond with ONLY a JSON object mapping number to category.
-Example: {{"1": "breaking_news", "2": "transfer_rumour"}}
+Example: {{"1": "deal_done", "2": "transfer_rumour", "3": "tactical"}}
 No explanation. No other text."""
 
 
@@ -114,7 +162,7 @@ def _groq_batch(indexed: list[tuple[int, NewsItem]]) -> dict[str, ContentType]:
         response = _groq.chat.completions.create(
             model=settings.GROQ_MODEL,
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=120,
+            max_tokens=150,
             temperature=0,
         )
         parsed: dict = json.loads(response.choices[0].message.content.strip())
@@ -122,12 +170,12 @@ def _groq_batch(indexed: list[tuple[int, NewsItem]]) -> dict[str, ContentType]:
             cat = category.lower().strip()
             for orig_idx, item in indexed:
                 if orig_idx == int(idx_str):
-                    result[item.id] = cat if cat in _VALID else "club_update"  # type: ignore[assignment]
+                    result[item.id] = cat if cat in _VALID else "tactical"  # type: ignore[assignment]
                     break
     except Exception as e:
-        logger.warning("Groq batch classify failed: %s — defaulting to club_update", e)
+        logger.warning("Groq batch classify failed: %s — defaulting to tactical", e)
         for _, item in indexed:
-            result[item.id] = "club_update"
+            result[item.id] = "tactical"
 
     return result
 
@@ -162,8 +210,7 @@ def batch_classify(items: list[NewsItem]) -> dict[str, tuple[ContentType, str]]:
 
     groq_calls = (len(needs_groq) + 9) // 10 if needs_groq else 0
     logger.info(
-        "batch_classify: %d items - %d keyword, %d Groq (%d call(s))",
+        "batch_classify: %d items — %d keyword, %d Groq (%d call(s))",
         len(items), len(items) - len(needs_groq), len(needs_groq), groq_calls,
     )
     return result
-
