@@ -12,7 +12,7 @@ import re
 from datetime import datetime, timezone
 
 from config import settings
-from core.constants import BREAKING_SIGNALS, LOW_INTEREST_SIGNALS, SOURCE_TIERS, DEFAULT_SOURCE_SCORE, STOP_WORDS
+from core.constants import BREAKING_SIGNALS, LOW_INTEREST_SIGNALS, NON_FOOTBALL_SPORT_SIGNALS, SOURCE_TIERS, DEFAULT_SOURCE_SCORE, STOP_WORDS
 from core.types import NewsItem
 
 logger = logging.getLogger(__name__)
@@ -60,6 +60,15 @@ def _interest_penalty(item: NewsItem) -> int:
     return 0
 
 
+def _non_football_penalty(item: NewsItem) -> int:
+    """Return -200 if the article is clearly about a non-football sport.
+    Large enough to guarantee the article never reaches BREAKING_SCORE_THRESHOLD."""
+    text = (item.headline + " " + item.body[:200]).lower()
+    if any(s in text for s in NON_FOOTBALL_SPORT_SIGNALS):
+        return -200
+    return 0
+
+
 def score_item(item: NewsItem) -> int:
     """0–170 quality + interest score. Higher = more likely to become a video."""
     return (
@@ -68,6 +77,7 @@ def score_item(item: NewsItem) -> int:
         + _breaking_score(item)
         + _club_score(item)
         + _interest_penalty(item)
+        + _non_football_penalty(item)
     )
 
 

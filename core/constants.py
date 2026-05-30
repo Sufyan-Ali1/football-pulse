@@ -73,6 +73,17 @@ TACTICAL_SIGNALS: list[str] = [
     "analysis", "performance", "rating",
 ]
 
+# Non-football sports — heavy penalty so these never reach BREAKING_SCORE_THRESHOLD
+NON_FOOTBALL_SPORT_SIGNALS: list[str] = [
+    "stanley cup", "nhl", "nba", "nfl", "mlb",
+    "super bowl", "superbowl", "world series",
+    "ice hockey", "basketball",
+    "formula 1", "formula one", "grand prix",
+    "ufc", " mma ", "boxing champion",
+    "rugby union", "rugby league",
+    "cricket test", "cricket match",
+]
+
 # Signals that indicate low viewer interest — used to penalise rank score
 LOW_INTEREST_SIGNALS: list[str] = [
     "how to watch",
