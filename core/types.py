@@ -66,12 +66,3 @@ class VideoMetadata:
     category_id:    str       = "17"       # 17 = Sports
     privacy_status: str       = "private"
     publish_at:     str | None = None      # ISO 8601 — triggers scheduled publish
-
-
-@dataclass
-class PipelineResult:
-    """Result returned by process/item_runner.py after processing one item."""
-    news_id:          str
-    success:          bool
-    youtube_video_id: str | None = None
-    error:            str | None = None

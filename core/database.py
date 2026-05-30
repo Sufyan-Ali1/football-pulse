@@ -139,24 +139,6 @@ def get_articles_by_ids(article_ids: list[str]) -> list[sqlite3.Row]:
 
 
 
-def get_breaking_articles() -> list[sqlite3.Row]:
-    with _conn() as c:
-        return c.execute(
-            "SELECT * FROM articles WHERE status = 'breaking'"
-            " AND timestamp >= datetime('now', '-24 hours') ORDER BY rank_score DESC"
-        ).fetchall()
-
-
-def demote_stale_breaking_articles() -> int:
-    """Reset breaking articles older than 24 hours back to pending so the daily runner picks them up."""
-    with _conn() as c:
-        cursor = c.execute(
-            "UPDATE articles SET status='pending' WHERE status='breaking'"
-            " AND timestamp < datetime('now', '-24 hours')"
-        )
-        c.commit()
-        return cursor.rowcount
-
 
 def mark_articles_used(article_ids: list[str], video_date: str) -> None:
     if not article_ids:
@@ -169,14 +151,6 @@ def mark_articles_used(article_ids: list[str], video_date: str) -> None:
         )
         c.commit()
 
-
-def mark_article_status(article_id: str, status: str) -> None:
-    with _conn() as c:
-        c.execute(
-            "UPDATE articles SET status=? WHERE id=?",
-            (status, article_id),
-        )
-        c.commit()
 
 
 def mark_articles_rejected(article_ids: list[str]) -> None:

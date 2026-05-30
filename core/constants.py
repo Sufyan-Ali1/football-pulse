@@ -55,12 +55,6 @@ TRANSFER_SIGNALS: list[str] = [
     "offer", "approach", "bid rejected", "clause", "deal",
 ]
 
-# Content types that warrant an immediate video rather than waiting for the daily runner.
-# Used in collector.py at both save-time and post-verify gates — define once here.
-BREAKING_CONTENT_TYPES: tuple[str, ...] = (
-    "breaking_news", "deal_done", "manager_sacked", "manager_appointed", "contract_extension",
-)
-
 # All valid content type strings — single source of truth for classifier and verifier validation.
 VALID_CONTENT_TYPES: list[str] = [
     "deal_done", "transfer_rumour", "breaking_news", "manager_sacked",
