@@ -9,6 +9,7 @@ WORKDIR /app
 # ffmpeg is required by moviepy for video encoding/decoding
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
+    libcairo2 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python deps first so this layer is cached separately from code changes
