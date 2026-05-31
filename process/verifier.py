@@ -48,13 +48,15 @@ Relevance score (viewer interest for a football news YouTube channel):
 - 7-8:  Strong story — interesting rumour, big match result, key injury to star player
 - 5-6:  Decent story — minor squad news, mid-table result, small club update
 - 3-4:  Weak — generic analysis, obscure club, very low viewer interest
-- 1-2:  Skip — not football, fixture lists, kit reviews, betting tips, throwbacks, merchandise, fantasy football
+- 1-2:  Skip — not football, fixture lists, kit reviews, betting tips, throwbacks, merchandise, fantasy football, pure celebration posts with no news content, fan reactions with no factual information
 
 Key rules:
 - Match results and cup finals are ALWAYS tactical, never deal_done or breaking_news
 - "Confirmed" in a match/analysis context is NOT deal_done
 - Kit releases and merchandise are club_statement, relevance 1-3
 - Non-football articles get relevance 1 regardless of category
+- Raw social media celebration posts (e.g. "🏆🏆 Team X win the trophy!! 🎉🎉") with no actual news information get relevance 2
+- Tweets/posts that contain real news (transfer confirmed, manager sacked, injury update) are valid even if they contain emojis
 
 Articles (format: "N. [current: TYPE] Headline"):
 {lines}

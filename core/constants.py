@@ -103,21 +103,21 @@ LOW_INTEREST_SIGNALS: list[str] = [
 # ── Source quality tiers (used by ranker) ─────────────────────────────────────
 
 SOURCE_TIERS: dict[str, int] = {
-    "Fabrizio Romano (Nitter)": 95,
-    "David Ornstein (Nitter)":  92,
-    "Ben Jacobs (Nitter)":      88,
-    "Laurie Whitwell (Nitter)": 85,
-    "Sky Sports Football":       90,
-    "Sky Sports Football News":  88,
-    "BBC Sport Football":        85,
-    "The Guardian Football":     80,
-    "ESPN FC":                   75,
-    "Google Alerts":             70,
-    "TalkSport":                 65,
-    "90min":                     60,
-    "Football Italia":           55,
+    "Fabrizio Romano (Nitter)": 60,
+    "David Ornstein (Nitter)":  58,
+    "Ben Jacobs (Nitter)":      56,
+    "Laurie Whitwell (Nitter)": 54,
+    "Sky Sports Football":       57,
+    "Sky Sports Football News":  55,
+    "BBC Sport Football":        54,
+    "The Guardian Football":     52,
+    "ESPN FC":                   50,
+    "Google Alerts":             48,
+    "TalkSport":                 46,
+    "90min":                     44,
+    "Football Italia":           42,
 }
-DEFAULT_SOURCE_SCORE: int = 40
+DEFAULT_SOURCE_SCORE: int = 35
 
 # ── Stop-words stripped before similarity comparison (ranker) ─────────────────
 

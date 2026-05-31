@@ -18,6 +18,7 @@ import sqlite3
 from datetime import date
 from pathlib import Path
 
+from clients.groq_client import get_groq_client
 from config import settings
 from core.database import (
     create_daily_video_record,
@@ -41,17 +42,71 @@ logger = logging.getLogger(__name__)
 
 _BATCH_SIZE      = 10   # articles pulled from DB per round
 _MAX_ROUNDS      = 3    # max verification rounds (checks up to 30 articles total)
+_CANDIDATE_COUNT = 7    # fetch extra stories before LLM dedup, then trim to MAX_STORIES_FOR_DAILY
+
+
+def _dedup_stories(articles: list[sqlite3.Row]) -> list[sqlite3.Row]:
+    """
+    Send headlines to Groq and ask it to identify duplicate/same-story articles.
+    Returns the deduplicated list — duplicates removed, originals kept.
+    """
+    if len(articles) <= 1:
+        return articles
+
+    numbered = "\n".join(
+        f"{i+1}. {a['headline'][:120]}" for i, a in enumerate(articles)
+    )
+    prompt = (
+        "You are reviewing a list of football news headlines for a YouTube channel.\n"
+        "Identify any pairs or groups that are about the EXACT SAME story or event.\n"
+        "For each duplicate group, keep only the FIRST occurrence (lowest number) and "
+        "return the numbers to REMOVE.\n\n"
+        f"Headlines:\n{numbered}\n\n"
+        "Reply with ONLY a comma-separated list of numbers to remove, or 'NONE' if no duplicates.\n"
+        "Example: 3,5  or  NONE"
+    )
+
+    try:
+        groq = get_groq_client()
+        resp = groq.chat.completions.create(
+            model=settings.GROQ_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=50,
+            temperature=0.0,
+        )
+        reply = resp.choices[0].message.content.strip()
+        logger.info("Dedup LLM reply: %r", reply)
+
+        if reply.upper() == "NONE" or not reply:
+            return articles
+
+        to_remove = set()
+        for part in reply.split(","):
+            part = part.strip()
+            if part.isdigit():
+                idx = int(part) - 1
+                if 0 <= idx < len(articles):
+                    to_remove.add(idx)
+
+        if to_remove:
+            removed_headlines = [articles[i]["headline"][:80] for i in to_remove]
+            logger.info("Dedup removed %d duplicate(s): %s", len(to_remove), removed_headlines)
+
+        return [a for i, a in enumerate(articles) if i not in to_remove]
+
+    except Exception as e:
+        logger.warning("Dedup LLM call failed — skipping dedup: %s", e)
+        return articles
 
 
 def _select_stories() -> list[sqlite3.Row]:
     """
-    Pull and verify articles until we have MAX_STORIES_FOR_DAILY candidates.
-    Articles with relevance_score < 5 are marked 'rejected' immediately so they
-    never clog future rounds. Returns up to MAX_STORIES_FOR_DAILY verified
-    articles sorted by rank_score.
+    Pull and verify articles until we have _CANDIDATE_COUNT candidates.
+    Runs an LLM dedup pass to remove same-story duplicates, then
+    trims to MAX_STORIES_FOR_DAILY. Minimum MIN_STORIES_FOR_DAILY required.
     """
     verified: list[sqlite3.Row] = []
-    needed = settings.MAX_STORIES_FOR_DAILY
+    needed = _CANDIDATE_COUNT
 
     for round_num in range(_MAX_ROUNDS):
         if len(verified) >= needed:
@@ -89,8 +144,15 @@ def _select_stories() -> list[sqlite3.Row]:
 
         verified.extend(passing)
 
-    # Sort by rank_score and return top N
-    return sorted(verified, key=lambda a: a["rank_score"] or 0, reverse=True)[:needed]
+    # Sort by rank_score, take top _CANDIDATE_COUNT
+    candidates = sorted(verified, key=lambda a: a["rank_score"] or 0, reverse=True)[:needed]
+
+    # LLM dedup pass — remove same-story duplicates
+    logger.info("Running LLM dedup on %d candidates ...", len(candidates))
+    candidates = _dedup_stories(candidates)
+
+    # Trim to final target
+    return candidates[:settings.MAX_STORIES_FOR_DAILY]
 
 
 def run_daily_video() -> None:

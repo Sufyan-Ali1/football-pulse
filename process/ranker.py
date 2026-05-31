@@ -84,7 +84,8 @@ def score_item(item: NewsItem) -> int:
 # ── Fuzzy deduplication (Jaccard similarity) ──────────────────────────────────
 
 def _words(text: str) -> set[str]:
-    tokens = re.sub(r"[^a-z0-9\s]", "", text.lower()).split()
+    clean = re.sub(r"^RT by @\w+:\s*", "", text, flags=re.IGNORECASE)
+    tokens = re.sub(r"[^a-z0-9\s]", "", clean.lower()).split()
     return {w for w in tokens if w not in STOP_WORDS and len(w) > 2}
 
 

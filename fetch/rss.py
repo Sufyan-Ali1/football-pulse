@@ -94,6 +94,8 @@ def _parse_entries(feed, source_name: str) -> list[NewsItem]:
 
         if not headline:
             continue
+        if headline.lower().startswith("rt by @"):
+            continue
         if not any(kw in (headline + " " + body).lower() for kw in keywords):
             continue
 
