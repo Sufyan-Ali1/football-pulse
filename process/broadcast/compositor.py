@@ -27,6 +27,21 @@ def make_frame_func(
 
     win_mask_arr = np.array(win_mask)
 
+    # Pre-compute deal label font + y position once (make_frame runs 24x/sec).
+    # Shrink from 44pt until text fits within the red banner (max 330px wide).
+    # Then vertically center the text inside the banner (center_y=187).
+    _deal_font = C.F_DEAL
+    _measure   = ImageDraw.Draw(Image.new("RGBA", (10, 10)))
+    if _measure.textbbox((0, 0), data["deal_label"], font=_deal_font)[2] > C.DEAL_LBL_MAX_W:
+        _sz = 42
+        while _sz >= 16:
+            _deal_font = C.load_font(_sz, bold=True)
+            if _measure.textbbox((0, 0), data["deal_label"], font=_deal_font)[2] <= C.DEAL_LBL_MAX_W:
+                break
+            _sz -= 2
+    _bb           = _measure.textbbox((0, 0), "Ag", font=_deal_font)
+    _deal_lbl_y   = C.DEAL_LBL_BANNER_CY - (_bb[3] - _bb[1]) // 2
+
     def make_frame(t: float) -> np.ndarray:
         # 1. Background — ping-pong video loop
         cycle = t % (2 * bg_clip.duration)
@@ -70,8 +85,8 @@ def make_frame_func(
                           dot_cx + dot_r, C.BRK_R_CY + dot_r],
                          fill=(255, 0, 0, 255))
 
-        draw.text((C.DEAL_LBL_X, C.DEAL_LBL_Y), data["deal_label"],
-                  fill=(255, 255, 255, 255), font=C.F_DEAL)
+        draw.text((C.DEAL_LBL_X, _deal_lbl_y), data["deal_label"],
+                  fill=(255, 255, 255, 255), font=_deal_font)
 
         # Bottom badge
         tb_brk = draw.textbbox((0, 0), "BREAKING", font=C.F_BADGE)

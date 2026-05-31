@@ -58,8 +58,11 @@ BRK_R_CX = 1746
 BRK_R_CY = 55
 
 # ── Deal label ────────────────────────────────────────────────────────────────
-DEAL_LBL_X = 1230
-DEAL_LBL_Y = 165
+DEAL_LBL_X          = 1230
+DEAL_LBL_Y          = 165   # kept for reference; compositor uses DEAL_LBL_BANNER_CY
+# Banner measured from frame.png: x=1230→1577 (347px), y=158→217 (60px tall).
+DEAL_LBL_MAX_W      = 325   # 347px - 22px right padding
+DEAL_LBL_BANNER_CY  = 185   # vertical center of the banner, shifted 2px up
 
 # ── Animation timing ──────────────────────────────────────────────────────────
 ANIM_DUR = 0.7   # seconds per headline/source wipe
