@@ -218,7 +218,7 @@ def create_multi_story_video(
             loaded = []
             settings.CLIPS_DIR.mkdir(parents=True, exist_ok=True)
             for row in rows:
-                filename = Path(row["file_path"]).name
+                filename = Path(row["file_path"].replace("\\", "/")).name
                 p = settings.CLIPS_DIR / filename
                 print(f"    Downloading {filename} ...")
                 if _drive_download(filename, p):
