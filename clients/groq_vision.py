@@ -31,7 +31,11 @@ def describe_frame(frames: list[Image.Image]) -> tuple[str, str]:
 
     Returns ('', '') on failure so callers can use a safe fallback.
     """
-    groq_key = getattr(settings, "GROQ_API_KEY", "")
+    from clients.groq_client import get_groq_client
+    try:
+        groq_key = get_groq_client()._keys[get_groq_client()._index]
+    except Exception:
+        groq_key = getattr(settings, "GROQ_API_KEY", "")
     if not groq_key:
         logger.warning("GROQ_API_KEY not set — skipping vision description")
         return "", ""

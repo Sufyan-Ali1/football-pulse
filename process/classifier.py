@@ -19,8 +19,7 @@ Strategy:
 import json
 import logging
 
-from openai import OpenAI
-
+from clients.groq_client import get_groq_client
 from config import settings
 from core.constants import (
     BREAKING_SIGNALS,
@@ -38,7 +37,7 @@ from core.types import ContentType, NewsItem
 
 logger = logging.getLogger(__name__)
 
-_groq = OpenAI(api_key=settings.GROQ_API_KEY, base_url="https://api.groq.com/openai/v1")
+_groq = get_groq_client()
 
 _VALID = VALID_CONTENT_TYPES
 

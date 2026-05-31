@@ -15,8 +15,7 @@ import json
 import logging
 import sqlite3
 
-from openai import OpenAI
-
+from clients.groq_client import get_groq_client
 from config import settings
 from core.constants import VALID_CONTENT_TYPES
 from core.database import bulk_update_article_classifications, get_articles_by_ids
@@ -24,7 +23,7 @@ from core.types import ContentType
 
 logger = logging.getLogger(__name__)
 
-_groq = OpenAI(api_key=settings.GROQ_API_KEY, base_url="https://api.groq.com/openai/v1")
+_groq = get_groq_client()
 
 _VALID = VALID_CONTENT_TYPES
 

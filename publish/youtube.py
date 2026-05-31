@@ -12,8 +12,7 @@ from pathlib import Path
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-from openai import OpenAI
-
+from clients.groq_client import get_groq_client
 from config import settings
 from core.types import NewsItem, Script, VideoMetadata
 
@@ -24,7 +23,7 @@ _SCOPES = [
     "https://www.googleapis.com/auth/youtube",
     "https://www.googleapis.com/auth/youtube.force-ssl",
 ]
-_groq = OpenAI(api_key=settings.GROQ_API_KEY, base_url="https://api.groq.com/openai/v1")
+_groq = get_groq_client()
 
 
 def _get_youtube_client():

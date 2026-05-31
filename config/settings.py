@@ -15,6 +15,10 @@ CLIPS_DIR      = TEMP_DIR / "videos" / "clips"
 
 # ── Groq ─────────────────────────────────────────────────────────────────────
 GROQ_API_KEY          = os.environ.get("GROQ_API_KEY", "")
+GROQ_API_KEY_2        = os.environ.get("GROQ_API_KEY_2", "")
+GROQ_API_KEY_3        = os.environ.get("GROQ_API_KEY_3", "")
+GROQ_API_KEY_4        = os.environ.get("GROQ_API_KEY_4", "")
+GROQ_API_KEY_5        = os.environ.get("GROQ_API_KEY_5", "")
 GROQ_MODEL            = "llama-3.3-70b-versatile"
 GROQ_VISION_MODEL     = "meta-llama/llama-4-scout-17b-16e-instruct"
 
