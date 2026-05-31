@@ -27,6 +27,23 @@ def make_frame_func(
 
     win_mask_arr = np.array(win_mask)
 
+    # Pre-compute black-bar crop region from the first frame of left_clip (once).
+    # Some Pexels clips are portrait/square encoded in a 16:9 container with black
+    # padding — detect and crop that padding before fitting to the window.
+    _left_crop: tuple | None = None
+    if left_clip is not None:
+        _sample = np.array(Image.fromarray(left_clip.get_frame(0)).convert("RGB"))
+        _thresh = 16
+        _row_mask = _sample.max(axis=(1, 2)) > _thresh
+        _col_mask = _sample.max(axis=(0, 2)) > _thresh
+        if _row_mask.any() and _col_mask.any():
+            _ry = np.where(_row_mask)[0]
+            _cx = np.where(_col_mask)[0]
+            x1, y1, x2, y2 = int(_cx[0]), int(_ry[0]), int(_cx[-1]) + 1, int(_ry[-1]) + 1
+            # Only apply crop when black bars are significant (>3% of frame)
+            if x1 > _sample.shape[1] * 0.03 or y1 > _sample.shape[0] * 0.03:
+                _left_crop = (x1, y1, x2, y2)
+
     # Pre-compute deal label font + y position once (make_frame runs 24x/sec).
     # Shrink from 44pt until text fits within the red banner (max 330px wide).
     # Then vertically center the text inside the banner (center_y=187).
@@ -55,10 +72,10 @@ def make_frame_func(
         if left_clip is not None:
             lv_t   = t % left_clip.duration
             lv_np  = left_clip.get_frame(lv_t)
-            lv_img = ImageOps.fit(
-                Image.fromarray(lv_np).convert("RGBA"),
-                (C.VID_W, C.VID_H), Image.LANCZOS,
-            )
+            lv_pil = Image.fromarray(lv_np).convert("RGBA")
+            if _left_crop is not None:
+                lv_pil = lv_pil.crop(_left_crop)
+            lv_img = ImageOps.fit(lv_pil, (C.VID_W, C.VID_H), Image.LANCZOS)
             layer  = Image.new("RGBA", (C.W, C.H), (0, 0, 0, 0))
             layer.paste(lv_img, (C.VID_X1, C.VID_Y1))
             l_arr  = np.array(layer)
