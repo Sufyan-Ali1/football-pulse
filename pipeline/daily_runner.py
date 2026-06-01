@@ -15,7 +15,7 @@ Minimum 3 stories required; if not enough accumulate, the job exits.
 """
 import logging
 import sqlite3
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 from clients.groq_client import get_groq_client
@@ -156,29 +156,36 @@ def _select_stories() -> list[sqlite3.Row]:
 
 
 def run_daily_video() -> None:
-    """Generate today's daily multi-story video from top verified pending articles."""
+    """Generate a daily multi-story video from top verified pending articles.
+    Runs twice per day — slot is determined from current UTC hour:
+      00:00–11:59 UTC → 'am'  (key: 2026-06-01_am)
+      12:00–23:59 UTC → 'pm'  (key: 2026-06-01_pm)
+    """
+    now   = datetime.now(timezone.utc)
+    slot  = "am" if now.hour < 12 else "pm"
     today = date.today().isoformat()
+    video_date = f"{today}_{slot}"
 
-    if daily_video_exists(today):
-        logger.info("Daily video already generated for %s - skipping", today)
+    if daily_video_exists(video_date):
+        logger.info("Daily video already generated for %s - skipping", video_date)
         return
 
-    logger.info("=== Daily Runner START (%s) ===================================", today)
+    logger.info("=== Daily Runner START (%s) ===================================", video_date)
 
     articles = _select_stories()
 
     if len(articles) < settings.MIN_STORIES_FOR_DAILY:
         logger.warning(
             "Only %d verified articles available - need at least %d. Skipping daily video for %s",
-            len(articles), settings.MIN_STORIES_FOR_DAILY, today,
+            len(articles), settings.MIN_STORIES_FOR_DAILY, video_date,
         )
         return
 
     article_ids = [a["id"] for a in articles]
-    create_daily_video_record(today, article_ids)
-    update_daily_video(today, "generating")
+    create_daily_video_record(video_date, article_ids)
+    update_daily_video(video_date, "generating")
 
-    logger.info("Building %d-story video for %s ...", len(articles), today)
+    logger.info("Building %d-story video for %s ...", len(articles), video_date)
 
     clip_library = get_all_clips()
     logger.info("Clip library: %d clips loaded", len(clip_library))
@@ -197,7 +204,7 @@ def run_daily_video() -> None:
 
             stories.append((script, item, vo_path))
 
-        video_output = create_multi_story_video(stories, output_name=f"daily_{today}")
+        video_output = create_multi_story_video(stories, output_name=f"daily_{video_date}")
 
         headlines = [row_to_news_item(a).headline for a in articles]
         title = f"Football News Today | {len(articles)} Stories | {today} | {settings.BRAND_NAME}"[:95]
@@ -217,8 +224,8 @@ def run_daily_video() -> None:
 
         sync_storage_to_drive()
 
-        mark_articles_used(article_ids, today)
-        update_daily_video(today, "done", video_path=f"youtube:{video_id}")
+        mark_articles_used(article_ids, video_date)
+        update_daily_video(video_date, "done", video_path=f"youtube:{video_id}")
 
         video_output.unlink(missing_ok=True)
         for _, _, vo_path in stories:
@@ -226,9 +233,9 @@ def run_daily_video() -> None:
                 Path(vo_path).unlink(missing_ok=True)
         logger.info("Local files cleaned up")
 
-        logger.info("=== Daily Runner DONE: %s (%d stories) ===", video_output.name, len(stories))
+        logger.info("=== Daily Runner DONE: %s (%d stories, slot=%s) ===", video_output.name, len(stories), slot)
 
     except Exception as e:
-        update_daily_video(today, "failed", error=f"{type(e).__name__}: {e}")
-        logger.error("=== Daily Runner FAILED for %s: %s ===", today, e)
+        update_daily_video(video_date, "failed", error=f"{type(e).__name__}: {e}")
+        logger.error("=== Daily Runner FAILED for %s: %s ===", video_date, e)
         raise

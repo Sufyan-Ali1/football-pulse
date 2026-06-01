@@ -79,7 +79,7 @@ POLL_INTERVAL_RSS = 3600  # 1 hour
 BREAKING_SCORE_THRESHOLD = int(os.environ.get("BREAKING_SCORE_THRESHOLD", "100"))
 MIN_STORIES_FOR_DAILY    = int(os.environ.get("MIN_STORIES_FOR_DAILY", "3"))
 MAX_STORIES_FOR_DAILY    = int(os.environ.get("MAX_STORIES_FOR_DAILY", "5"))
-DAILY_VIDEO_HOUR_UTC     = int(os.environ.get("DAILY_VIDEO_HOUR_UTC", "20"))
+DAILY_VIDEO_HOURS_UTC    = [7, 19]   # 7 AM and 7 PM UTC
 
 # ── Pipeline retry config ─────────────────────────────────────────────────────
 MAX_RETRIES     = 3

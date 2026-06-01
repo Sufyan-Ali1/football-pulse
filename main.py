@@ -63,22 +63,24 @@ def main() -> None:
         misfire_grace_time=60,
     )
 
-    # Job 2: generate daily multi-story video once per day
-    scheduler.add_job(
-        run_daily_video,
-        trigger=CronTrigger(hour=settings.DAILY_VIDEO_HOUR_UTC, minute=0, timezone="UTC"),
-        id="daily_video",
-        name="Daily Video Generator",
-        max_instances=1,
-        coalesce=True,
-        misfire_grace_time=3600,
-    )
+    # Job 2: generate daily multi-story video twice per day (7 AM + 7 PM UTC)
+    for hour in settings.DAILY_VIDEO_HOURS_UTC:
+        slot = "am" if hour < 12 else "pm"
+        scheduler.add_job(
+            run_daily_video,
+            trigger=CronTrigger(hour=hour, minute=0, timezone="UTC"),
+            id=f"daily_video_{slot}",
+            name=f"Daily Video Generator ({slot.upper()})",
+            max_instances=1,
+            coalesce=True,
+            misfire_grace_time=3600,
+        )
 
     logger.info(
-        "Football AutoNews Engine started. Collector every %ds, daily video at %02d:00 UTC. "
-        "Press Ctrl+C to stop.",
+        "Football AutoNews Engine started. Collector every %ds, "
+        "daily video at %s UTC. Press Ctrl+C to stop.",
         settings.POLL_INTERVAL_RSS,
-        settings.DAILY_VIDEO_HOUR_UTC,
+        " and ".join(f"{h:02d}:00" for h in settings.DAILY_VIDEO_HOURS_UTC),
     )
 
     try:
