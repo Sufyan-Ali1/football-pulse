@@ -57,12 +57,18 @@ def _dedup_stories(articles: list[sqlite3.Row]) -> list[sqlite3.Row]:
         f"{i+1}. {a['headline'][:120]}" for i, a in enumerate(articles)
     )
     prompt = (
-        "You are reviewing a list of football news headlines for a YouTube channel.\n"
-        "Identify any pairs or groups that are about the EXACT SAME story or event.\n"
-        "For each duplicate group, keep only the FIRST occurrence (lowest number) and "
-        "return the numbers to REMOVE.\n\n"
+        "You are reviewing football news headlines for a YouTube channel.\n"
+        "Your job is to find headlines that report the EXACT SAME piece of news "
+        "(e.g. two sources both saying 'Player X signs for Club Y').\n\n"
+        "IMPORTANT rules:\n"
+        "- Different moments or angles of the same match ARE different stories "
+        "(e.g. 'Havertz scores opener' vs 'Dembele equalises' vs 'PSG win on penalties' "
+        "are ALL different stories — do NOT remove any of them).\n"
+        "- Only remove a headline if it conveys the exact same news as another headline "
+        "already in the list, just worded differently or from a different source.\n"
+        "- When in doubt, keep the article (do NOT remove it).\n\n"
         f"Headlines:\n{numbered}\n\n"
-        "Reply with ONLY a comma-separated list of numbers to remove, or 'NONE' if no duplicates.\n"
+        "Reply with ONLY a comma-separated list of numbers to remove, or 'NONE'.\n"
         "Example: 3,5  or  NONE"
     )
 

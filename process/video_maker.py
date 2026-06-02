@@ -35,7 +35,8 @@ _OUTRO_VIDEO_PATH = settings.BASE_DIR / "config" / "video" / "outro.mp4"
 
 
 def _ticker_text(item: NewsItem) -> str:
-    return f"  {item.headline}  ▪  {item.source}  ▪  {_CHANNEL}  ▪  {_TAGLINE}  ▪  "
+    headline = " ".join(item.headline.split())  # collapse all whitespace/newlines to single spaces
+    return f"  {headline}  ▪  {item.source}  ▪  {_CHANNEL}  ▪  {_TAGLINE}  ▪  "
 
 
 def create_multi_story_video(
