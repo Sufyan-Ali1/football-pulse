@@ -251,7 +251,7 @@ def run_daily_video() -> None:
         video_id = upload_video(video_output, None, metadata)
         logger.info("YouTube upload: %s", video_id)
 
-        sync_storage_to_drive()
+        sync_storage_to_drive(delete_local=True)
 
         mark_articles_used(article_ids, video_date)
         update_daily_video(video_date, "done", video_path=f"youtube:{video_id}")

@@ -7,7 +7,7 @@ Tables:
   video_clips   — local stock video library (path + description + keywords)
 
 Status lifecycle:
-  articles:     pending → used | breaking → used
+  articles:     pending → used | rejected
   daily_videos: pending → generating → done | failed
 """
 import hashlib
@@ -122,7 +122,13 @@ def insert_article(
 def get_pending_articles(limit: int = 5, offset: int = 0) -> list[sqlite3.Row]:
     with _conn() as c:
         return c.execute(
-            "SELECT * FROM articles WHERE status = 'pending' ORDER BY rank_score DESC LIMIT ? OFFSET ?",
+            """SELECT * FROM articles
+               WHERE status = 'pending'
+                 AND COALESCE(timestamp, created_at) >= datetime('now', '-12 hours')
+               ORDER BY
+                 rank_score DESC,
+                 COALESCE(timestamp, created_at) DESC
+               LIMIT ? OFFSET ?""",
             (limit, offset),
         ).fetchall()
 
