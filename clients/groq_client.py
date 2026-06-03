@@ -5,13 +5,15 @@ Reads up to 5 API keys from settings (GROQ_API_KEY, GROQ_API_KEY_2 ... GROQ_API_
 
 Key selection strategy:
   - Each request starts on a RANDOM key (spreads load evenly across all keys)
-  - On 429 RateLimitError: skip that key, try another random available key
-  - On 400 organization_restricted: mark that key dead for this session, skip it
+  - On 429 per-minute rate limit: skip that key, try another random available key
+  - On 429 tokens-per-day exhaustion: mark key unavailable for the reported wait time
+  - On 400 organization_restricted: mark that key dead for 2h, skip it
   - Retries until all available keys are exhausted, then raises
 """
 import logging
 import os
 import random
+import re
 import time
 
 from openai import OpenAI, RateLimitError, BadRequestError
@@ -19,7 +21,19 @@ from openai import OpenAI, RateLimitError, BadRequestError
 logger = logging.getLogger(__name__)
 
 _BASE_URL = "https://api.groq.com/openai/v1"
-_RESTRICTED_COOLDOWN = 2 * 60 * 60   # 2 hours in seconds
+_RESTRICTED_COOLDOWN = 2 * 60 * 60   # 2 hours
+_TPD_COOLDOWN_DEFAULT = 2 * 60 * 60  # fallback if we can't parse the wait time
+
+
+def _parse_retry_seconds(message: str) -> float | None:
+    """Extract wait duration from Groq error messages like 'try again in 40m27.84s'."""
+    m = re.search(r"try again in (\d+)m([\d.]+)s", message)
+    if m:
+        return int(m.group(1)) * 60 + float(m.group(2))
+    m = re.search(r"try again in ([\d.]+)s", message)
+    if m:
+        return float(m.group(1))
+    return None
 
 
 def _load_keys() -> list[str]:
@@ -76,14 +90,22 @@ class RotatingGroqClient:
                     return self._parent._clients[idx].chat.completions.create(**kwargs)
                 except RateLimitError as e:
                     last_error = e
-                    logger.warning("Groq key %d hit rate limit — trying another", idx + 1)
-                    time.sleep(0.5)
+                    msg = str(e)
+                    if "tokens per day" in msg:
+                        wait = _parse_retry_seconds(msg) or _TPD_COOLDOWN_DEFAULT
+                        self._parent._restricted[idx] = time.monotonic() + wait
+                        logger.warning(
+                            "Groq key %d daily token limit hit — cooling down for %.0fs, trying another",
+                            idx + 1, wait,
+                        )
+                    else:
+                        logger.warning("Groq key %d hit rate limit — trying another", idx + 1)
+                    time.sleep(0.3)
                 except BadRequestError as e:
                     if "organization_restricted" in str(e):
-                        until = time.monotonic() + _RESTRICTED_COOLDOWN
-                        self._parent._restricted[idx] = until
+                        self._parent._restricted[idx] = time.monotonic() + _RESTRICTED_COOLDOWN
                         logger.warning(
-                            "Groq key %d restricted — cooling down for 2h, trying another",
+                            "Groq key %d org-restricted — cooling down for 2h, trying another",
                             idx + 1,
                         )
                         last_error = e

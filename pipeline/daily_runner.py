@@ -197,26 +197,43 @@ def run_daily_video() -> None:
     clip_library = get_all_clips()
     logger.info("Clip library: %d clips loaded", len(clip_library))
 
+    def _clean(text: str) -> str:
+        text = re.sub(r"<[^>]+>", "", text)
+        text = " ".join(text.split())
+        return text
+
+    # Build stories — skip any article whose script or voiceover fails
     stories: list[tuple[Script, NewsItem, Path | None]] = []
-    try:
-        for i, article in enumerate(articles, start=1):
-            item         = row_to_news_item(article)
-            content_type = article["content_type"]
+    for i, article in enumerate(articles, start=1):
+        item         = row_to_news_item(article)
+        content_type = article["content_type"]
 
-            logger.info("[%d/%d] Script [%s]: %s", i, len(articles), content_type, item.headline[:70])
+        logger.info("[%d/%d] Script [%s]: %s", i, len(articles), content_type, item.headline[:70])
+        try:
             script = generate_segment_script(item, content_type, clips=clip_library)
+        except Exception as e:
+            logger.warning("[%d/%d] Script failed, skipping story: %s", i, len(articles), e)
+            continue
 
-            logger.info("[%d/%d] Voiceover ...", i, len(articles))
+        logger.info("[%d/%d] Voiceover ...", i, len(articles))
+        try:
             vo_path = generate_voiceover(script, "english")
+        except Exception as e:
+            logger.warning("[%d/%d] Voiceover failed, skipping story: %s", i, len(articles), e)
+            continue
 
-            stories.append((script, item, vo_path))
+        stories.append((script, item, vo_path))
 
+    if len(stories) < settings.MIN_STORIES_FOR_DAILY:
+        logger.warning(
+            "Only %d/%d stories succeeded (need %d) — aborting %s",
+            len(stories), len(articles), settings.MIN_STORIES_FOR_DAILY, video_date,
+        )
+        update_daily_video(video_date, "failed", error=f"Only {len(stories)} stories succeeded")
+        return
+
+    try:
         video_output = create_multi_story_video(stories, output_name=f"daily_{video_date}")
-
-        def _clean(text: str) -> str:
-            text = re.sub(r"<[^>]+>", "", text)   # strip HTML tags
-            text = " ".join(text.split())           # collapse newlines/whitespace
-            return text
 
         headlines = [_clean(row_to_news_item(a).headline) for a in articles]
         title = f"Football News Today | {len(articles)} Stories | {today} | {settings.BRAND_NAME}"[:95]
@@ -250,4 +267,3 @@ def run_daily_video() -> None:
     except Exception as e:
         update_daily_video(video_date, "failed", error=f"{type(e).__name__}: {e}")
         logger.error("=== Daily Runner FAILED for %s: %s ===", video_date, e)
-        raise
