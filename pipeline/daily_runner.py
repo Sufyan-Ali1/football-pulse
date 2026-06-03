@@ -14,6 +14,7 @@ Verification loop:
 Minimum 3 stories required; if not enough accumulate, the job exits.
 """
 import logging
+import re
 import sqlite3
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -212,7 +213,12 @@ def run_daily_video() -> None:
 
         video_output = create_multi_story_video(stories, output_name=f"daily_{video_date}")
 
-        headlines = [row_to_news_item(a).headline for a in articles]
+        def _clean(text: str) -> str:
+            text = re.sub(r"<[^>]+>", "", text)   # strip HTML tags
+            text = " ".join(text.split())           # collapse newlines/whitespace
+            return text
+
+        headlines = [_clean(row_to_news_item(a).headline) for a in articles]
         title = f"Football News Today | {len(articles)} Stories | {today} | {settings.BRAND_NAME}"[:95]
         description = (
             f"Today's top football stories on {settings.BRAND_NAME}.\n\n"
