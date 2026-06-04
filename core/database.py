@@ -119,17 +119,17 @@ def insert_article(
         c.commit()
 
 
-def get_pending_articles(limit: int = 5, offset: int = 0) -> list[sqlite3.Row]:
+def get_pending_articles(limit: int = 5, offset: int = 0, max_age_hours: int = 12) -> list[sqlite3.Row]:
     with _conn() as c:
         return c.execute(
             """SELECT * FROM articles
                WHERE status = 'pending'
-                 AND COALESCE(timestamp, created_at) >= datetime('now', '-12 hours')
+                 AND COALESCE(timestamp, created_at) >= datetime('now', ? || ' hours')
                ORDER BY
                  rank_score DESC,
                  COALESCE(timestamp, created_at) DESC
                LIMIT ? OFFSET ?""",
-            (limit, offset),
+            (f"-{max_age_hours}", limit, offset),
         ).fetchall()
 
 

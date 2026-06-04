@@ -106,7 +106,7 @@ def _dedup_stories(articles: list[sqlite3.Row]) -> list[sqlite3.Row]:
         return articles
 
 
-def _select_stories() -> list[sqlite3.Row]:
+def _select_stories(max_age_hours: int = 12) -> list[sqlite3.Row]:
     """
     Pull and verify articles until we have _CANDIDATE_COUNT candidates.
     Runs an LLM dedup pass to remove same-story duplicates, then
@@ -120,7 +120,7 @@ def _select_stories() -> list[sqlite3.Row]:
             break
 
         offset = round_num * _BATCH_SIZE
-        batch = get_pending_articles(limit=_BATCH_SIZE, offset=offset)
+        batch = get_pending_articles(limit=_BATCH_SIZE, offset=offset, max_age_hours=max_age_hours)
         if not batch:
             logger.info("No more pending articles at offset %d", offset)
             break
@@ -179,7 +179,8 @@ def run_daily_video() -> None:
 
     logger.info("=== Daily Runner START (%s) ===================================", video_date)
 
-    articles = _select_stories()
+    max_age_hours = 14 if slot == "am" else 10
+    articles = _select_stories(max_age_hours=max_age_hours)
 
     if len(articles) < settings.MIN_STORIES_FOR_DAILY:
         logger.warning(
