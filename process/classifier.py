@@ -18,6 +18,7 @@ Strategy:
 """
 import json
 import logging
+import re
 
 from clients.groq_client import get_groq_client
 from config import settings
@@ -44,6 +45,14 @@ _VALID = VALID_CONTENT_TYPES
 
 # ── Keyword classifier (no API cost) ─────────────────────────────────────────
 
+def _has_breaking_signal(text: str) -> bool:
+    for signal in BREAKING_SIGNALS:
+        pattern = r"(?<![\w-])" + re.escape(signal.lower()) + r"(?![\w-])"
+        if re.search(pattern, text):
+            return True
+    return False
+
+
 def _keyword_classify(text: str) -> ContentType | None:
     t = text.lower()
     # Most specific types first to avoid false matches
@@ -59,7 +68,7 @@ def _keyword_classify(text: str) -> ContentType | None:
         return "injury_fitness"
     if any(s in t for s in CLUB_STATEMENT_SIGNALS):
         return "club_statement"
-    if any(s in t for s in BREAKING_SIGNALS):
+    if _has_breaking_signal(t):
         return "breaking_news"
     if any(s in t for s in TRANSFER_SIGNALS):
         return "transfer_rumour"

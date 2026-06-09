@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 from config import settings
 from core.constants import BREAKING_SIGNALS, LOW_INTEREST_SIGNALS, NON_FOOTBALL_SPORT_SIGNALS, SOURCE_TIERS, DEFAULT_SOURCE_SCORE, STOP_WORDS
 from core.types import NewsItem
+from process.quality_gate import assess_item_quality
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +42,11 @@ def _recency_score(item: NewsItem) -> int:
 
 def _breaking_score(item: NewsItem) -> int:
     text = (item.headline + " " + item.body[:150]).lower()
-    return 30 if any(s in text for s in BREAKING_SIGNALS) else 0
+    for signal in BREAKING_SIGNALS:
+        pattern = r"(?<![\w-])" + re.escape(signal.lower()) + r"(?![\w-])"
+        if re.search(pattern, text):
+            return 30
+    return 0
 
 
 def _club_score(item: NewsItem) -> int:
@@ -71,6 +76,7 @@ def _non_football_penalty(item: NewsItem) -> int:
 
 def score_item(item: NewsItem) -> int:
     """0–170 quality + interest score. Higher = more likely to become a video."""
+    quality = assess_item_quality(item)
     return (
         _source_score(item)
         + _recency_score(item)
@@ -78,6 +84,7 @@ def score_item(item: NewsItem) -> int:
         + _club_score(item)
         + _interest_penalty(item)
         + _non_football_penalty(item)
+        + quality.score_penalty
     )
 
 
@@ -111,5 +118,3 @@ def deduplicate_fuzzy(items: list[NewsItem], threshold: float = 0.65) -> list[Ne
     if removed:
         logger.info("Fuzzy dedup removed %d near-duplicates", removed)
     return kept
-
-

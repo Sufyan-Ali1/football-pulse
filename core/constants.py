@@ -112,7 +112,7 @@ SOURCE_TIERS: dict[str, int] = {
     "BBC Sport Football":        54,
     "The Guardian Football":     52,
     "ESPN FC":                   50,
-    "Google Alerts":             48,
+    "Google Alerts":             25,
     "TalkSport":                 46,
     "90min":                     44,
     "Football Italia":           42,

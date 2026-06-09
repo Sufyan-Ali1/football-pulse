@@ -13,7 +13,9 @@ Because classified_by is persisted, an article is NEVER sent to Groq twice.
 """
 import json
 import logging
+import re
 import sqlite3
+import html
 
 from clients.groq_client import get_groq_client
 from config import settings
@@ -26,6 +28,13 @@ logger = logging.getLogger(__name__)
 _groq = get_groq_client()
 
 _VALID = VALID_CONTENT_TYPES
+
+
+def _clean_context(text: str | None, max_chars: int = 450) -> str:
+    if not text:
+        return ""
+    text = html.unescape(re.sub(r"<[^>]+>", " ", text))
+    return " ".join(text.split())[:max_chars]
 
 _VERIFY_PROMPT = """You are quality-checking football news article classifications for a YouTube channel.
 For each article return two things: the CORRECT category, and a relevance score (1-10).
@@ -55,10 +64,12 @@ Key rules:
 - "Confirmed" in a match/analysis context is NOT deal_done
 - Kit releases and merchandise are club_statement, relevance 1-3
 - Non-football articles get relevance 1 regardless of category
+- YouTube/video promos, channel pages, live blogs, live updates, paper-talk/gossip roundups, and thin Google Alert snippets are weak source formats. Score them 1-4 unless the summary contains clear standalone reporting.
+- Google Alerts items require stronger evidence from the source URL and summary. Do not score them 7+ from a headline alone.
 - Raw social media celebration posts (e.g. "🏆🏆 Team X win the trophy!! 🎉🎉") with no actual news information get relevance 2
 - Tweets/posts that contain real news (transfer confirmed, manager sacked, injury update) are valid even if they contain emojis
 
-Articles (format: "N. [current: TYPE] Headline"):
+Articles (format: source, URL, headline, summary):
 {lines}
 
 Respond with ONLY a JSON object. Example:
@@ -74,7 +85,11 @@ def _groq_verify_batch(
     Returns {article_id: (content_type, relevance_score)}.
     """
     lines = "\n".join(
-        f"{i}. [current: {a['content_type']}] {a['headline']}"
+        f"{i}. [current: {a['content_type']}]\n"
+        f"Source: {a['source']}\n"
+        f"URL: {a['url']}\n"
+        f"Headline: {_clean_context(a['headline'], 220)}\n"
+        f"Summary: {_clean_context(a['body'], 450)}"
         for i, a in enumerate(articles, start=1)
     )
     result: dict[str, tuple[ContentType, int]] = {}
@@ -83,7 +98,7 @@ def _groq_verify_batch(
         response = _groq.chat.completions.create(
             model=settings.GROQ_MODEL,
             messages=[{"role": "user", "content": _VERIFY_PROMPT.format(lines=lines)}],
-            max_tokens=120,
+            max_tokens=250,
             temperature=0,
         )
         parsed: dict = json.loads(response.choices[0].message.content.strip())
@@ -98,9 +113,9 @@ def _groq_verify_batch(
                     max(1, min(10, rel)),
                 )
     except Exception as e:
-        logger.warning("Groq verify batch failed: %s - keeping current classifications", e)
+        logger.warning("Groq verify batch failed: %s - keeping current classifications at low relevance", e)
         for a in articles:
-            result[a["id"]] = (a["content_type"], 5)
+            result[a["id"]] = (a["content_type"], 4)
 
     return result
 
