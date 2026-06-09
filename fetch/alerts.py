@@ -25,5 +25,7 @@ def fetch_google_alerts() -> list[NewsItem]:
         if url.startswith("http")
     ]
     items = fetch_feeds_parallel(feeds)
+    for item in items:
+        item.source_type = "google_alerts"
     logger.info("fetch_google_alerts: %d items from %d alerts", len(items), len(feeds))
     return items

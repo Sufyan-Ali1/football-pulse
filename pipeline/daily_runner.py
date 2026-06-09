@@ -32,6 +32,7 @@ from core.database import (
     update_daily_video,
 )
 from core.types import NewsItem, Script, VideoMetadata
+from process.quality_gate import assess_article_row_quality
 from process.script_gen import generate_segment_script
 from process.verifier import verify_and_reclassify
 from process.video_maker import create_multi_story_video
@@ -44,6 +45,23 @@ logger = logging.getLogger(__name__)
 _BATCH_SIZE      = 10   # articles pulled from DB per round
 _MAX_ROUNDS      = 3    # max verification rounds (checks up to 30 articles total)
 _CANDIDATE_COUNT = 7    # fetch extra stories before LLM dedup, then trim to MAX_STORIES_FOR_DAILY
+_MIN_RELEVANCE_SCORE = 6
+_MIN_GOOGLE_ALERTS_RELEVANCE_SCORE = 7
+
+
+def _daily_rejection_reason(article: sqlite3.Row) -> str | None:
+    quality = assess_article_row_quality(article)
+    if not quality.allowed:
+        return quality.reason
+
+    score = article["relevance_score"]
+    if score is None:
+        return "missing_relevance_score"
+    if score < _MIN_RELEVANCE_SCORE:
+        return f"low_relevance_{score}"
+    if article["source"] == "Google Alerts" and score < _MIN_GOOGLE_ALERTS_RELEVANCE_SCORE:
+        return f"low_google_alerts_relevance_{score}"
+    return None
 
 
 def _dedup_stories(articles: list[sqlite3.Row]) -> list[sqlite3.Row]:
@@ -114,12 +132,12 @@ def _select_stories(max_age_hours: int = 12) -> list[sqlite3.Row]:
     """
     verified: list[sqlite3.Row] = []
     needed = _CANDIDATE_COUNT
+    offset = 0
 
     for round_num in range(_MAX_ROUNDS):
         if len(verified) >= needed:
             break
 
-        offset = round_num * _BATCH_SIZE
         batch = get_pending_articles(limit=_BATCH_SIZE, offset=offset, max_age_hours=max_age_hours)
         if not batch:
             logger.info("No more pending articles at offset %d", offset)
@@ -133,23 +151,27 @@ def _select_stories(max_age_hours: int = 12) -> list[sqlite3.Row]:
 
         fresh = verify_and_reclassify(batch)
 
-        # Filter right here — reject low-relevance articles so they never appear again
+        # Filter right here so weak formats never appear again.
         passing, rejected = [], []
+        reject_counts: dict[str, int] = {}
         for a in fresh:
-            score = a["relevance_score"]
-            if score is not None and score < 5:
+            reason = _daily_rejection_reason(a)
+            if reason:
                 rejected.append(a)
+                reject_counts[reason] = reject_counts.get(reason, 0) + 1
             else:
                 passing.append(a)
 
         if rejected:
             mark_articles_rejected([a["id"] for a in rejected])
+            breakdown = "  ".join(f"{k}:{v}" for k, v in sorted(reject_counts.items()))
             logger.info(
-                "Round %d: rejected %d low-relevance articles (score < 5), kept %d",
-                round_num + 1, len(rejected), len(passing),
+                "Round %d: rejected %d quality/relevance articles (%s), kept %d",
+                round_num + 1, len(rejected), breakdown, len(passing),
             )
 
         verified.extend(passing)
+        offset += len(passing)
 
     # Sort by rank_score, take top _CANDIDATE_COUNT
     candidates = sorted(verified, key=lambda a: a["rank_score"] or 0, reverse=True)[:needed]
@@ -181,6 +203,25 @@ def run_daily_video() -> None:
 
     max_age_hours = 14 if slot == "am" else 10
     articles = _select_stories(max_age_hours=max_age_hours)
+
+    final_articles, final_rejected = [], []
+    final_reject_counts: dict[str, int] = {}
+    for article in articles:
+        reason = _daily_rejection_reason(article)
+        if reason:
+            final_rejected.append(article)
+            final_reject_counts[reason] = final_reject_counts.get(reason, 0) + 1
+        else:
+            final_articles.append(article)
+
+    if final_rejected:
+        mark_articles_rejected([a["id"] for a in final_rejected])
+        breakdown = "  ".join(f"{k}:{v}" for k, v in sorted(final_reject_counts.items()))
+        logger.info(
+            "Final quality gate rejected %d article(s) before video build (%s)",
+            len(final_rejected), breakdown,
+        )
+        articles = final_articles
 
     if len(articles) < settings.MIN_STORIES_FOR_DAILY:
         logger.warning(

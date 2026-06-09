@@ -15,6 +15,7 @@ from core.database import (
 )
 from fetch.alerts import fetch_google_alerts
 from fetch.rss import fetch_all_rss
+from process.quality_gate import assess_item_quality
 from process.ranker import deduplicate_fuzzy, score_item
 from process.classifier import batch_classify
 
@@ -50,9 +51,30 @@ def run_collector() -> None:
         logger.info("=== Collector DONE (%.1fs) - nothing new ===", time.monotonic() - t0)
         return
 
-    # ── Fuzzy dedup ───────────────────────────────────────────────────────────
-    unique = deduplicate_fuzzy(new_items)
-    logger.info("Dedup: %d -> %d unique (removed %d near-duplicates)", len(new_items), len(unique), len(new_items) - len(unique))
+    # ── Quality gate + fuzzy dedup ────────────────────────────────────────────
+    quality_counts: dict[str, int] = {}
+    quality_kept = []
+    for item in new_items:
+        quality = assess_item_quality(item)
+        if quality.allowed:
+            quality_kept.append(item)
+            continue
+        quality_counts[quality.reason] = quality_counts.get(quality.reason, 0) + 1
+        logger.info("Quality rejected [%s]: %s", quality.reason, item.headline[:100])
+
+    if quality_counts:
+        breakdown = "  ".join(f"{k}:{v}" for k, v in sorted(quality_counts.items()))
+        logger.info(
+            "Quality gate: %d -> %d kept (%s)",
+            len(new_items), len(quality_kept), breakdown,
+        )
+
+    if not quality_kept:
+        logger.info("=== Collector DONE (%.1fs) - no quality items ===", time.monotonic() - t0)
+        return
+
+    unique = deduplicate_fuzzy(quality_kept)
+    logger.info("Dedup: %d -> %d unique (removed %d near-duplicates)", len(quality_kept), len(unique), len(quality_kept) - len(unique))
 
     # ── Classify ──────────────────────────────────────────────────────────────
     logger.info("Classifying %d articles ...", len(unique))
