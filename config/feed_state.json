@@ -12,7 +12,7 @@
     "skip_until": null
   },
   "https://www.theguardian.com/football/rss": {
-    "etag": "W/\"hash2434348048376457217\"",
+    "etag": "W/\"hash691769890804286199\"",
     "last_modified": "",
     "failures": 0,
     "skip_until": null
@@ -25,19 +25,19 @@
   },
   "https://www.90min.com/feed": {
     "etag": "",
-    "last_modified": "Fri, 22 May 2026 10:52:33 GMT",
+    "last_modified": "Sat, 13 Jun 2026 09:20:28 GMT",
     "failures": 0,
     "skip_until": null
   },
   "https://talksport.com/feed/": {
-    "etag": "W/\"9054abf8896495f71b9a27084186cd61\"",
-    "last_modified": "Fri, 22 May 2026 10:48:15 GMT",
+    "etag": "W/\"6a5b5aa75b39bd731535548322d8a080\"",
+    "last_modified": "Sat, 13 Jun 2026 09:17:25 GMT",
     "failures": 0,
     "skip_until": null
   },
   "https://www.football-italia.net/rss.xml": {
-    "etag": "W/\"a25dd712ca0f2c2c2af7f843c36b9e00\"",
-    "last_modified": "Fri, 22 May 2026 10:50:50 GMT",
+    "etag": "W/\"2a725fcc4240d7153dd62b526fad8d88\"",
+    "last_modified": "Sat, 13 Jun 2026 09:13:03 GMT",
     "failures": 0,
     "skip_until": null
   },
@@ -63,6 +63,36 @@
     "etag": "",
     "last_modified": "",
     "failures": 0,
+    "skip_until": null
+  },
+  "https://www.skysports.com/rss/11095": {
+    "failures": 0,
+    "etag": "",
+    "last_modified": "",
+    "skip_until": null
+  },
+  "https://nitter.net/David_Ornstein/rss": {
+    "failures": 0,
+    "etag": "",
+    "last_modified": "",
+    "skip_until": null
+  },
+  "https://nitter.net/FabrizioRomano/rss": {
+    "failures": 0,
+    "etag": "",
+    "last_modified": "",
+    "skip_until": null
+  },
+  "https://nitter.net/lauriewhitwell/rss": {
+    "failures": 0,
+    "etag": "",
+    "last_modified": "",
+    "skip_until": null
+  },
+  "https://nitter.net/JacobsBen/rss": {
+    "failures": 0,
+    "etag": "",
+    "last_modified": "",
     "skip_until": null
   }
 }

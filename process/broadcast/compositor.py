@@ -100,7 +100,7 @@ def make_frame_func(
             dot_cx = txt_x - dot_r - 30
             draw.ellipse([dot_cx - dot_r, C.BRK_R_CY - dot_r,
                           dot_cx + dot_r, C.BRK_R_CY + dot_r],
-                         fill=(255, 0, 0, 255))
+                         fill=(*C.RIGHT_PANEL_ACCENT, 255))
 
         draw.text((C.DEAL_LBL_X, _deal_lbl_y), data["deal_label"],
                   fill=(255, 255, 255, 255), font=_deal_font)
@@ -121,7 +121,7 @@ def make_frame_func(
         # Separator lines (always visible)
         for sy in C.SEP_Y:
             draw.line([(C.SEP_X1, sy), (C.SEP_X2, sy)],
-                      fill=(200, 0, 0, 255), width=3)
+                      fill=(*C.RIGHT_PANEL_ACCENT, 255), width=3)
 
         # 5. Animated text — headline white wipe (t=0.0–0.7s)
         bb1   = draw.textbbox((C.HL_X, C.HL_Y), data["headline_white"], font=C.F_HL1)
@@ -139,7 +139,7 @@ def make_frame_func(
         if frac2 > 0:
             tmp = Image.new("RGBA", (C.W, C.H), (0, 0, 0, 0))
             ImageDraw.Draw(tmp).text((C.HL_X, hl2_y), data["headline_red"],
-                                     fill=(220, 0, 0, 255), font=C.F_HL2)
+                                     fill=(*C.HEADLINE_ACCENT, 255), font=C.F_HL2)
             composite_revealed(img, tmp, C.HL_X, bb2[2], frac2)
 
         # Source wipe (t=1.4–2.1s)
@@ -161,7 +161,8 @@ def make_frame_func(
                 dtmp = ImageDraw.Draw(tmp)
                 if is_first:
                     draw_circle_icon(dtmp, C.CIRC_X, dp_cy, C.CIRC_R,
-                                     dp_pt["icon_fill"], icon_type=dp_i)
+                                     dp_pt["icon_fill"], icon_type=dp_i,
+                                     solid=dp_pt.get("icon_solid", True))
                 draw_wrapped(dtmp, C.TEXT_X, line_y, ln, C.F_PT, C.TEXT_W,
                              fill=(255, 255, 255, 255),
                              highlight=dp_pt.get("highlight"),

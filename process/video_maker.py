@@ -9,6 +9,7 @@ Single-story and multi-story videos both use create_multi_story_video().
 Pass a list of one tuple for a single-story video.
 """
 import logging
+import math
 from datetime import datetime
 from pathlib import Path
 
@@ -111,11 +112,12 @@ def create_multi_story_video(
     _LOGO_H    = 520
     _TILT      = 0.55   # "/" bar angle
     _PAD       = 600    # off-screen padding
+    _LOGO_SHIFT_X = 40
     _STRIPES   = [
-        (  0,  90, (130,  0,  0), 1.00),
-        ( 80,  55, (195,  0,  0), 1.00),
-        (140,  22, (225, 25, 25), 1.00),
-        (163,   6, (255, 90, 90), 1.00),
+        (0,   90, (28, 67, 10), 1.00),
+        (80,  55, (41, 97, 14), 1.00),
+        (140, 22, (58, 128, 20), 1.00),
+        (163,  6, (92, 168, 36), 1.00),
     ]
 
     _logo_img: Image.Image | None = None
@@ -123,6 +125,11 @@ def create_multi_story_video(
         _raw = Image.open(_LOGO_PATH).convert("RGBA")
         _scale = _LOGO_H / _raw.height
         _logo_img = _raw.resize((int(_raw.width * _scale), _LOGO_H), Image.LANCZOS)
+        _logo_img = _logo_img.rotate(
+            math.degrees(math.atan(_TILT)),
+            resample=Image.BICUBIC,
+            expand=True,
+        )
         logger.info("Transition logo loaded: %dx%d", _logo_img.width, _logo_img.height)
 
     def _logo_sweep_clip(
@@ -169,7 +176,7 @@ def create_multi_story_video(
             if _logo_img is None:
                 return out
 
-            px = int(cx) - lw // 2
+            px = int(cx + _LOGO_SHIFT_X) - lw // 2
             py = int(cy) - lh // 2
             fade = min(1.0, min(p, 1.0 - p) / 0.12)
             if fade <= 0.0:

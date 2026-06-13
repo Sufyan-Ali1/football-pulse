@@ -59,6 +59,35 @@ Return VALID JSON with exactly these keys:
 
 JSON only. No markdown, no explanation."""
 
+_WORLD_CUP_METADATA_PROMPT = """You are an SEO expert for a football YouTube channel called "{brand_name}".
+
+Generate YouTube metadata for a MULTI-STORY FIFA World Cup roundup video.
+
+Channel tone:
+- credible football newsroom
+- exciting, curiosity-driven, but not spammy
+- hook + facts style
+
+Video focus:
+- FIFA World Cup and directly related coverage only
+- use the strongest storylines as hook points
+
+Stories covered:
+{stories}
+
+Return VALID JSON with exactly these keys:
+- "title": one compelling YouTube title, max 95 chars, must mention World Cup or FIFA World Cup naturally
+- "description": 300-500 word description with a strong 2-3 line hook at the top, then readable bullet-style coverage summary, then hashtags at the end
+- "tags": List of 15 relevant tags (strings), heavily focused on FIFA World Cup topics
+
+Title requirements:
+- use hook + facts style
+- no generic phrasing like "Football News Today | 5 Stories | Date"
+- no fake claims
+- prioritize the biggest 1-3 World Cup angles
+
+JSON only. No markdown, no explanation."""
+
 
 def generate_metadata(item: NewsItem, script: Script) -> VideoMetadata:
     prompt = _METADATA_PROMPT.format(
@@ -87,6 +116,88 @@ def generate_metadata(item: NewsItem, script: Script) -> VideoMetadata:
             title=item.headline[:95],
             description=f"{item.headline}\n\nSource: {item.source}\n\n{settings.BRAND_NAME} – {settings.BRAND_TAGLINE}",
             tags=["football", "football news", "transfer news", settings.BRAND_NAME.lower()],
+        )
+
+
+def generate_multi_story_metadata(
+    items: list[NewsItem],
+    scripts: list[Script],
+    focus_mode: str = "",
+) -> VideoMetadata:
+    if not items:
+        raise ValueError("generate_multi_story_metadata requires at least one item")
+
+    story_lines = []
+    for idx, item in enumerate(items, start=1):
+        script_text = scripts[idx - 1].text if idx - 1 < len(scripts) else ""
+        story_lines.append(
+            f"{idx}. Headline: {item.headline}\n"
+            f"   Source: {item.source}\n"
+            f"   Script summary: {script_text[:280]}"
+        )
+    stories_block = "\n".join(story_lines)
+
+    is_world_cup = focus_mode == "world_cup"
+    prompt = (
+        _WORLD_CUP_METADATA_PROMPT.format(
+            brand_name=settings.BRAND_NAME,
+            stories=stories_block,
+        )
+        if is_world_cup
+        else _METADATA_PROMPT.format(
+            brand_name=settings.BRAND_NAME,
+            content_type="multi_story_roundup",
+            script_text="\n".join(s.text[:250] for s in scripts),
+        )
+    )
+
+    top_headline = items[0].headline
+    if is_world_cup:
+        fallback_title = f"FIFA World Cup Latest: {top_headline}"[:95]
+        fallback_description = (
+            "Latest FIFA World Cup headlines in one fast roundup.\n\n"
+            + "\n".join(f"- {item.headline}" for item in items)
+            + f"\n\n{settings.BRAND_NAME} - {settings.BRAND_TAGLINE}"
+        )
+        fallback_tags = [
+            "fifa world cup",
+            "world cup",
+            "world cup news",
+            "football world cup",
+            settings.BRAND_NAME.lower(),
+        ]
+    else:
+        fallback_title = top_headline[:95]
+        fallback_description = (
+            "Top football stories in this roundup.\n\n"
+            + "\n".join(f"- {item.headline}" for item in items)
+            + f"\n\n{settings.BRAND_NAME} - {settings.BRAND_TAGLINE}"
+        )
+        fallback_tags = ["football", "football news", settings.BRAND_NAME.lower()]
+
+    try:
+        resp = _groq.chat.completions.create(
+            model=settings.GROQ_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=900,
+            temperature=0.65,
+            response_format={"type": "json_object"},
+        )
+        data = json.loads(resp.choices[0].message.content)
+        description = str(data.get("description", "")).strip()[:5000]
+        if description:
+            description += f"\n\n{settings.BRAND_NAME} - {settings.BRAND_TAGLINE}"
+        else:
+            description = fallback_description
+        title = str(data.get("title", "")).strip()[:95] or fallback_title
+        tags = [str(tag) for tag in data.get("tags", []) if tag][:30] or fallback_tags
+        return VideoMetadata(title=title, description=description, tags=tags)
+    except Exception as e:
+        logger.warning("Multi-story metadata generation failed: %s - using fallback", e)
+        return VideoMetadata(
+            title=fallback_title,
+            description=fallback_description,
+            tags=fallback_tags,
         )
 
 

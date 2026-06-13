@@ -12,6 +12,7 @@ TEMP_DIR       = BASE_DIR / "temp"
 VOICEOVERS_DIR = TEMP_DIR / "voiceover"
 VIDEOS_DIR     = TEMP_DIR / "videos" / "final"
 CLIPS_DIR      = TEMP_DIR / "videos" / "clips"
+THUMBNAILS_DIR = TEMP_DIR / "thumbnails"
 
 # ── Groq ─────────────────────────────────────────────────────────────────────
 GROQ_API_KEY          = os.environ.get("GROQ_API_KEY", "")
@@ -34,6 +35,8 @@ TWITTER_BEARER_TOKEN   = os.environ.get("TWITTER_BEARER_TOKEN", "")
 # ── Google OAuth (shared client for YouTube + Drive) ─────────────────────────
 GOOGLE_CLIENT_ID     = os.environ.get("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
+GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "").strip()
+GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1").strip()
 
 # ── YouTube ───────────────────────────────────────────────────────────────────
 YOUTUBE_REFRESH_TOKEN = os.environ.get("YOUTUBE_REFRESH_TOKEN", "")
@@ -49,6 +52,14 @@ GDRIVE_FOLDER_ID     = os.environ.get("GOOGLE_DRIVE_FOLDER_ID", "")
 # ── Brand ─────────────────────────────────────────────────────────────────────
 BRAND_NAME    = os.environ.get("BRAND_NAME", "Football Credo Hub")
 BRAND_TAGLINE = os.environ.get("BRAND_TAGLINE", "Football News. Every Second.")
+CONTENT_FOCUS = os.environ.get("CONTENT_FOCUS", "").strip().lower()
+
+# Thumbnail generation
+THUMBNAIL_ENABLED    = os.environ.get("THUMBNAIL_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+THUMBNAIL_MODEL      = os.environ.get("THUMBNAIL_MODEL", "imagen-4.0-fast-generate-001").strip()
+THUMBNAIL_WIDTH      = int(os.environ.get("THUMBNAIL_WIDTH", "1280"))
+THUMBNAIL_HEIGHT     = int(os.environ.get("THUMBNAIL_HEIGHT", "720"))
+THUMBNAIL_CANDIDATES = max(1, int(os.environ.get("THUMBNAIL_CANDIDATES", "2")))
 
 # ── Club colours (hex) for branding overlays ─────────────────────────────────
 CLUB_COLOURS: dict[str, str] = {

@@ -43,10 +43,12 @@ def draw_wrapped(draw: ImageDraw.ImageDraw, x: int, y: int, text: str, font,
 
 
 def draw_circle_icon(draw: ImageDraw.ImageDraw, cx: int, cy: int,
-                     r: int, fill: tuple, icon_type: int = 0) -> None:
+                     r: int, fill: tuple, icon_type: int = 0,
+                     solid: bool = True) -> None:
     """Draw a coloured circle icon with a decorative inner shape."""
-    draw.ellipse([cx-r, cy-r, cx+r, cy+r], fill=(*fill, 255))
-    draw.ellipse([cx-r, cy-r, cx+r, cy+r], outline=(200, 0, 0, 255), width=3)
+    face = (*fill, 255) if solid else (0, 0, 0, 0)
+    draw.ellipse([cx-r, cy-r, cx+r, cy+r], fill=face)
+    draw.ellipse([cx-r, cy-r, cx+r, cy+r], outline=(*fill, 255), width=3)
     s = r // 2
     if icon_type == 0:
         pts = [(cx, cy-s), (cx+s, cy-s//2),

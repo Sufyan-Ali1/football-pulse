@@ -9,6 +9,10 @@ from PIL import ImageFont
 W, H = 1920, 1080
 FPS  = 24
 
+# Right-panel accent used by the blinking dot, separators, and point icons
+RIGHT_PANEL_ACCENT = (0x54, 0xB7, 0x1D)
+HEADLINE_ACCENT = RIGHT_PANEL_ACCENT
+
 # ── Left video window ─────────────────────────────────────────────────────────
 VID_X1, VID_Y1 = 86,  465
 VID_X2, VID_Y2 = 1110, 937

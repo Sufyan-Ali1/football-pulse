@@ -4,7 +4,7 @@ Also usable standalone for any code that needs to prepare broadcast data.
 """
 from . import constants as C
 
-_ICON_FILLS = [(160, 0, 0), (30, 30, 30), (30, 30, 30)]
+_ICON_FILLS = [C.RIGHT_PANEL_ACCENT, C.RIGHT_PANEL_ACCENT, C.RIGHT_PANEL_ACCENT]
 
 _SPLIT_KEYWORDS = [
     " SIGN", " SIGNS", " CONFIRM", " CONFIRMS",
@@ -100,7 +100,12 @@ def build_data_dict(
     """
     hw, hr = split_headline(script.display_headline)
     deal_points = [
-        {"text": p, "highlight": None, "icon_fill": _ICON_FILLS[i]}
+        {
+            "text": p,
+            "highlight": None,
+            "icon_fill": _ICON_FILLS[i],
+            "icon_solid": i == 0,
+        }
         for i, p in enumerate(script.display_points[:3])
     ]
     return {
