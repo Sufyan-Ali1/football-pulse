@@ -7,6 +7,7 @@ Root folder:    settings.GDRIVE_FOLDER_ID  (folder shared with your Google accou
 """
 import io
 import logging
+import time
 from pathlib import Path
 
 from config import settings
@@ -151,8 +152,16 @@ def sync_storage_to_drive(delete_local: bool = False) -> dict:
                 stats["uploaded"] += 1
 
                 if delete_local:
-                    f.unlink()
-                    print(f"    [GDrive] Local copy deleted: {name}")
+                    for _attempt in range(3):
+                        try:
+                            f.unlink()
+                            print(f"    [GDrive] Local copy deleted: {name}")
+                            break
+                        except PermissionError:
+                            if _attempt < 2:
+                                time.sleep(2)
+                            else:
+                                print(f"    [GDrive] Could not delete local copy (file still in use): {name}")
 
             except Exception as exc:
                 logger.warning("Upload failed %s: %s", name, exc)

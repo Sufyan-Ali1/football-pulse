@@ -265,7 +265,7 @@ def upload_video(
         try:
             youtube.thumbnails().set(
                 videoId=video_id,
-                media_body=MediaFileUpload(str(thumbnail_path), mimetype="image/jpeg"),
+                media_body=MediaFileUpload(str(thumbnail_path), mimetype="image/png"),
             ).execute()
             logger.info("Thumbnail attached to %s", video_id)
         except Exception as e:

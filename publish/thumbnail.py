@@ -1,8 +1,12 @@
 """
 AI thumbnail generation for YouTube uploads.
 
-The Vertex Imagen output is treated as the final thumbnail artifact. The code
-does not overlay local branding/text or generate fallback thumbnails.
+Flow:
+  1. Groq receives all news stories and writes a complete, detailed Gemini image prompt
+     that describes hook text, player, layout, effects, and logo placement.
+  2. Gemini 2.0 Flash (Vertex AI) receives the prompt + the actual logo.png image
+     and generates the complete 1280x720 thumbnail in one shot.
+  3. The result is resized/cropped to exact canvas size and saved.
 """
 from __future__ import annotations
 
@@ -25,50 +29,67 @@ from core.types import NewsItem, Script
 
 logger = logging.getLogger(__name__)
 
-_VERTEX_IMAGEN_API_URL = (
-    "https://{location}-aiplatform.googleapis.com/v1/"
-    "projects/{project}/locations/{location}/publishers/google/models/{model}:predict"
-)
 _CANVAS_SIZE = (settings.THUMBNAIL_WIDTH, settings.THUMBNAIL_HEIGHT)
-_LOGO_PATH = settings.BASE_DIR / "config" / "images" / "logo.png"
-_RATE_LIMIT_RETRY_DELAYS = (4, 10)
-_groq = get_groq_client()
+_LOGO_PATH   = settings.BASE_DIR / "config" / "images" / "logo.png"
+_groq        = get_groq_client()
 
-_THUMBNAIL_PLAN_PROMPT = """You are the thumbnail strategist for a football YouTube channel called "{brand_name}".
+# Gemini model on Vertex AI that supports image input + image output
+_GEMINI_MODEL = settings.THUMBNAIL_GEMINI_MODEL
 
-Your task is to write one production-ready image-generation prompt for a COMPLETE football YouTube thumbnail.
+# ── Groq planner prompt ───────────────────────────────────────────────────────
+
+_THUMBNAIL_PLAN_PROMPT = """You are the thumbnail creative director for a football YouTube channel called "{brand_name}".
+
+Your task: write ONE complete, production-ready image generation prompt for Gemini that will produce a premium clickbait-style football YouTube thumbnail.
+
+A Football Pulse logo image is attached. The prompt MUST instruct Gemini to place that exact logo in the bottom-right corner of the thumbnail.
 
 Inputs:
 - Focus mode: {focus_mode}
 - Stories:
 {stories_block}
-- Logo reference available locally: {logo_reference}
 
-Return VALID JSON with exactly this key:
-- "image_prompt": one detailed premium prompt for a COMPLETE Vertex Imagen thumbnail image
+Return VALID JSON with exactly one key:
+- "image_prompt": the complete Gemini image generation prompt (minimum 300 words, describe everything)
 
-Rules:
-- Pick the strongest and most clickable angle across all stories, not just story 1.
-- The image_prompt is the only required output. Do not summarize the news separately.
-- The image_prompt must include everything Imagen needs:
-  - the strongest thumbnail angle
-  - 1 or 2 relevant famous football subjects
-  - their expression, pose, and visual importance
-  - the correct story framing such as shock, rivalry, injury, confirmation, squad update, or match alert
-  - the football setting and World Cup context when relevant
-  - premium sports-broadcast composition guidance
-  - black, neon-green, and white Football Pulse visual mood
-  - dramatic lighting, stadium atmosphere, smoke, broadcast HUD/tactical elements if helpful
-  - the exact visible hook text that should appear inside the thumbnail image
-  - text placement guidance so the hook remains large and readable on mobile
-- The image_prompt must instruct the model to create the COMPLETE thumbnail, not only a background.
-- The image_prompt must instruct the model to place the Football Pulse brand mark/logo in the lower-right corner, matching the provided logo reference as closely as possible.
-- The image_prompt must explicitly say no watermark.
-- Prefer globally recognizable players only when they are relevant to the chosen angle.
-- Do not invent unrelated players or false facts.
+The image_prompt MUST cover ALL of these sections in detail:
 
-JSON only. No markdown, no explanation."""
+━━ 1. HOOK TEXT ━━
+Pick the single most clickbait-worthy 2-6 word hook from the stories (ALL CAPS).
+Stack it on 2 lines maximum (e.g. "HUGE FIFA\\nUPDATE!" or "WORLD CUP\\nSHOCKER!").
+Describe it as: massive bold Impact/condensed white text, neon green glow shadow behind each letter, thick black stroke outline, positioned in the center-right zone of the image, text height roughly 35-40% of total image height so it dominates the frame and is readable on mobile.
 
+━━ 2. SUBJECT ━━
+Choose 1 (or 2 for rivalry stories) globally famous football player(s) directly relevant to the story.
+Describe: full name, pose (waist-up, looking at camera or reacting with strong visible emotion matching the story — shock/celebration/anger/determination), sharp focus, dramatic front-right directional stadium lighting, slight motion blur on background only.
+Player fills the left 35-40% of the frame.
+
+━━ 3. LAYOUT & COMPOSITION ━━
+- Left 38%: player, brightly lit, sharp
+- Center-right 56%: very dark clean zone — deep black to dark forest-green vertical gradient — so the white hook text sits on a dark background and is maximally readable
+- Bottom-right corner (about 12% of image height): the Football Pulse logo from the provided reference image, placed here with a subtle neon green circular glow around it
+- 16:9 aspect ratio, 1280x720
+
+━━ 4. BACKGROUND ━━
+Dark football stadium at night. Out-of-focus crowd bokeh lights. Dramatic green floodlights. Atmospheric smoke and haze. Adds depth without competing with the text.
+
+━━ 5. VISUAL EFFECTS ━━
+Neon green (#39FF14) particle sparks and energy streaks emanating from the player toward the center of the frame. Thin broadcast HUD lines at the edges. Subtle green glow/aura around the player for separation. High contrast cinematic sports broadcast look. Premium YouTube thumbnail quality.
+
+━━ 6. LOGO ━━
+"In the bottom-right corner, place the Football Pulse logo exactly as shown in the provided reference image. Size: approximately 12-14% of the total image height. Add a subtle soft neon green circular glow around the logo for visibility against the dark background."
+
+━━ 7. ABSOLUTE RULES ━━
+- Do NOT include any watermarks
+- Do NOT add any text other than the hook text described above
+- Do NOT invent players unrelated to the story
+- Do NOT use bright or busy backgrounds that compete with text readability
+- Do NOT add extra logos or branding beyond the Football Pulse logo in the corner
+
+JSON only. No markdown. No explanation outside the JSON."""
+
+
+# ── Public entry points ───────────────────────────────────────────────────────
 
 def create_roundup_thumbnail(
     items: list[NewsItem],
@@ -86,271 +107,179 @@ def create_roundup_thumbnail(
     output_dir = settings.THUMBNAILS_DIR / output_stem
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    plan = _build_thumbnail_plan(items, scripts, focus_mode)
-    prompt = str(plan["image_prompt"]).strip()
-    logger.info("Thumbnail prompt start for '%s'", items[0].headline[:90])
-    logger.info("Vertex Imagen prompt:\n%s", prompt)
-    logger.info("Thumbnail prompt ready (%d chars)", len(prompt))
-
-    generated_path = _generate_vertex_imagen_image(prompt, output_dir, output_stem)
-    if not generated_path:
-        logger.warning("AI thumbnail generation failed for %s", output_stem)
+    prompt = _build_thumbnail_prompt_via_groq(items, scripts, focus_mode)
+    if not prompt:
+        logger.warning("Thumbnail prompt generation failed for %s", output_stem)
         return None
 
-    logger.info("Thumbnail image selected: %s", generated_path.name)
+    logger.info("Sending to Gemini for thumbnail generation ...")
+    image = _generate_gemini_image(prompt, _LOGO_PATH)
+    if not image:
+        logger.warning("Gemini thumbnail generation failed for %s", output_stem)
+        return None
+
     final_path = output_dir / f"{output_stem}_thumbnail.png"
-    _finalize_generated_thumbnail(generated_path, final_path)
-    logger.info("Thumbnail saved without local overlays: %s", final_path)
+    _save_thumbnail(image, final_path)
+    logger.info("Thumbnail saved: %s", final_path)
     return final_path
 
 
-def create_test_thumbnail_from_prompt(
-    prompt: str,
-    output_stem: str = "test_thumbnail",
-    hook_text: str = "HUGE WORLD CUP UPDATE",
-    kicker: str = "FIFA WORLD CUP",
-    source_label: str = "Football Pulse",
-) -> Path | None:
-    del hook_text, kicker, source_label
+# ── Groq: build the Gemini prompt ────────────────────────────────────────────
 
-    if not settings.THUMBNAIL_ENABLED:
-        logger.info("Thumbnail generation disabled")
-        return None
-
-    output_dir = settings.THUMBNAILS_DIR / output_stem
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    logger.info("Test thumbnail prompt ready (%d chars)", len(prompt))
-    logger.info("Vertex Imagen prompt:\n%s", prompt)
-    generated_path = _generate_vertex_imagen_image(
-        prompt,
-        output_dir,
-        output_stem,
-        candidate_count=1,
-    )
-    if not generated_path:
-        logger.warning("Test thumbnail AI image generation failed for %s", output_stem)
-        return None
-
-    logger.info("Test thumbnail image selected: %s", generated_path.name)
-    final_path = output_dir / f"{output_stem}_thumbnail.png"
-    _finalize_generated_thumbnail(generated_path, final_path)
-    logger.info("Test thumbnail saved without local overlays: %s", final_path)
-    return final_path
-
-
-def _build_thumbnail_prompt(item: NewsItem, script: Script | None, focus_mode: str) -> str:
-    story_text = script.text if script else item.body
-    body_snippet = _sanitize_prompt_text(story_text)[:420]
-    headline = _sanitize_prompt_text(item.headline)
-    hook_text = _extract_hook_text(item, script, focus_mode)[:28]
-    focus_line = (
-        "Topic focus: FIFA World Cup breaking football news. "
-        if focus_mode == "world_cup"
-        else "Topic focus: breaking football news. "
-    )
-    logo_hint = (
-        "Use the provided Football Pulse logo reference as the lower-right corner brand mark. "
-        if _LOGO_PATH.exists()
-        else "Reserve the lower-right corner for a Football Pulse style brand mark. "
-    )
-    return (
-        "Create a dramatic 16:9 COMPLETE YouTube thumbnail for a football breaking-news video. "
-        f"{focus_line}"
-        f'The thumbnail must visibly show the hook text "{hook_text}" in big, bold, highly readable lettering. '
-        "Use a premium sports-broadcast style, sharp subject focus, stadium atmosphere, high contrast, "
-        "clean composition, dynamic energy, and mobile-friendly text placement. "
-        f"{logo_hint}"
-        "Do not add any watermark. "
-        "Color direction: deep blacks, dark greens, vivid green highlights, subtle white accents. "
-        f"Headline context: {headline}. "
-        f"Story context: {body_snippet}"
-    )
-
-
-def _build_thumbnail_plan(
+def _build_thumbnail_prompt_via_groq(
     items: list[NewsItem],
     scripts: list[Script],
     focus_mode: str,
-) -> dict:
-    lead_item = items[0]
-    lead_script = scripts[0] if scripts else None
-    fallback = {
-        "image_prompt": _build_thumbnail_prompt(lead_item, lead_script, focus_mode),
-    }
-
+) -> str | None:
     story_lines = []
     for idx, item in enumerate(items, start=1):
         script = scripts[idx - 1] if idx - 1 < len(scripts) else None
-        summary = _sanitize_prompt_text(script.text if script else item.body)[:260]
+        summary = _sanitize(script.text if script else item.body)[:300]
         story_lines.append(
             f"{idx}. Headline: {item.headline}\n"
             f"   Source: {item.source}\n"
             f"   Summary: {summary}"
         )
 
-    prompt = _THUMBNAIL_PLAN_PROMPT.format(
+    groq_prompt = _THUMBNAIL_PLAN_PROMPT.format(
         brand_name=settings.BRAND_NAME,
         focus_mode=focus_mode or "general_football",
         stories_block="\n".join(story_lines),
-        logo_reference="Football Pulse logo file is available for reference." if _LOGO_PATH.exists() else "No local logo file available.",
     )
-    logger.info("Groq thumbnail planner prompt:\n%s", prompt)
+    logger.info("Groq thumbnail planner prompt:\n%s", groq_prompt)
 
     try:
         response = _groq.chat.completions.create(
             model=settings.GROQ_MODEL,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=900,
-            temperature=0.55,
+            messages=[{"role": "user", "content": groq_prompt}],
+            max_tokens=1200,
+            temperature=0.6,
             response_format={"type": "json_object"},
         )
-        raw_content = response.choices[0].message.content
-        logger.info("Groq thumbnail planner raw response:\n%s", raw_content)
-        data = json.loads(raw_content)
-        image_prompt = str(data.get("image_prompt", "")).strip() or fallback["image_prompt"]
-        logger.info("Groq thumbnail planner selected image prompt:\n%s", image_prompt)
-        return {"image_prompt": image_prompt}
+        raw = response.choices[0].message.content
+        logger.info("Groq thumbnail planner response:\n%s", raw)
+        data = json.loads(raw)
+        prompt = str(data.get("image_prompt", "")).strip()
+        if not prompt:
+            raise ValueError("image_prompt key is empty")
+        logger.info("Gemini image prompt (%d chars):\n%s", len(prompt), prompt)
+        return prompt
     except Exception as exc:
-        logger.warning("Thumbnail plan generation failed: %s - using fallback prompt only", exc)
-        logger.info("Groq thumbnail planner fallback image prompt:\n%s", fallback["image_prompt"])
-        return fallback
-
-
-def _generate_vertex_imagen_image(
-    prompt: str,
-    output_dir: Path,
-    output_stem: str,
-    candidate_count: int | None = None,
-) -> Path | None:
-    if not settings.GOOGLE_CLOUD_PROJECT:
-        logger.warning("Vertex thumbnail generation skipped: GOOGLE_CLOUD_PROJECT missing")
+        logger.warning("Groq thumbnail planner failed: %s", exc)
         return None
 
-    total_candidates = candidate_count or settings.THUMBNAIL_CANDIDATES
-    generated_paths: list[Path] = []
-    for index in range(total_candidates):
-        logger.info("Thumbnail API call %d/%d start", index + 1, total_candidates)
-        try:
-            image = _call_vertex_imagen_api(prompt)
-            candidate_path = output_dir / f"{output_stem}_candidate_{index + 1}.png"
-            image.save(candidate_path, format="PNG")
-            logger.info("Thumbnail API call %d saved: %s", index + 1, candidate_path.name)
-            generated_paths.append(candidate_path)
-        except Exception as exc:
-            logger.warning("Thumbnail API call %d failed: %s", index + 1, exc)
-    return generated_paths[0] if generated_paths else None
 
+# ── Gemini: generate the image ────────────────────────────────────────────────
 
-def _call_vertex_imagen_api(prompt: str) -> Image.Image:
-    payload = _build_google_image_payload(prompt)
-    url = _VERTEX_IMAGEN_API_URL.format(
-        location=settings.GOOGLE_CLOUD_LOCATION,
-        project=settings.GOOGLE_CLOUD_PROJECT,
-        model=settings.THUMBNAIL_MODEL,
+def _generate_gemini_image(prompt: str, logo_path: Path | None = None) -> Image.Image | None:
+    """Call Gemini 2.0 Flash on Vertex AI with prompt + logo, return PIL image."""
+    if not settings.GOOGLE_CLOUD_PROJECT:
+        logger.warning("Gemini thumbnail skipped: GOOGLE_CLOUD_PROJECT not set")
+        return None
+
+    url = (
+        f"https://{settings.GOOGLE_CLOUD_LOCATION}-aiplatform.googleapis.com/v1/"
+        f"projects/{settings.GOOGLE_CLOUD_PROJECT}/locations/{settings.GOOGLE_CLOUD_LOCATION}/"
+        f"publishers/google/models/{_GEMINI_MODEL}:generateContent"
     )
-    token = _get_vertex_access_token()
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json",
+
+    parts: list[dict] = [{"text": prompt}]
+
+    if logo_path and logo_path.exists():
+        logo_b64 = base64.b64encode(logo_path.read_bytes()).decode("utf-8")
+        mime = "image/png" if logo_path.suffix.lower() == ".png" else "image/jpeg"
+        parts.append({"inlineData": {"mimeType": mime, "data": logo_b64}})
+        logger.info("Logo attached to Gemini request: %s", logo_path.name)
+    else:
+        logger.warning("Logo not found at %s — generating without logo reference", logo_path)
+
+    payload = {
+        "contents": [{"role": "user", "parts": parts}],
+        "generationConfig": {"responseModalities": ["IMAGE", "TEXT"]},
     }
 
-    for attempt in range(len(_RATE_LIMIT_RETRY_DELAYS) + 1):
-        response = requests.post(url, headers=headers, json=payload, timeout=90)
+    token = _get_vertex_access_token()
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+
+    for attempt in range(3):
+        resp = requests.post(url, headers=headers, json=payload, timeout=180)
         try:
-            response.raise_for_status()
-            data = response.json()
-            image_bytes = _extract_image_bytes(data)
-            return Image.open(io.BytesIO(image_bytes)).convert("RGB")
-        except requests.HTTPError as exc:
-            status = response.status_code
-            body = _format_google_error_body(response)
-            if status == 429 and attempt < len(_RATE_LIMIT_RETRY_DELAYS):
-                delay = _RATE_LIMIT_RETRY_DELAYS[attempt]
-                logger.warning(
-                    "Vertex Imagen rate-limited for model %s. Retry %d in %ss. Response: %s",
-                    settings.THUMBNAIL_MODEL,
-                    attempt + 1,
-                    delay,
-                    body,
-                )
+            resp.raise_for_status()
+        except requests.HTTPError:
+            status = resp.status_code
+            if status == 429 and attempt < 2:
+                delay = (attempt + 1) * 10
+                logger.warning("Gemini rate-limited — retrying in %ds", delay)
                 time.sleep(delay)
                 continue
-            raise RuntimeError(
-                f"Vertex Imagen API {status} for model {settings.THUMBNAIL_MODEL}: {body}"
-            ) from exc
+            logger.error("Gemini API %d: %s", status, resp.text[:800])
+            return None
 
-    raise RuntimeError(f"Vertex Imagen API failed for model {settings.THUMBNAIL_MODEL}")
+        data = resp.json()
+        image = _extract_image_from_gemini_response(data)
+        if image:
+            return image
+        logger.warning("Gemini returned no image on attempt %d: %s", attempt + 1, str(data)[:400])
+        break
 
+    return None
+
+
+def _extract_image_from_gemini_response(data: dict) -> Image.Image | None:
+    """Pull the generated image out of a Gemini generateContent response."""
+    for candidate in data.get("candidates", []):
+        for part in candidate.get("content", {}).get("parts", []):
+            inline = part.get("inlineData") or part.get("inline_data") or {}
+            b64    = inline.get("data", "")
+            mime   = inline.get("mimeType", "")
+            if b64 and "image" in mime:
+                return Image.open(io.BytesIO(base64.b64decode(b64))).convert("RGB")
+    return None
+
+
+# ── Save ──────────────────────────────────────────────────────────────────────
+
+def _save_thumbnail(image: Image.Image, output_path: Path) -> None:
+    final = _cover_resize(image, _CANVAS_SIZE)
+    final.save(output_path, format="PNG", optimize=True)
+
+
+# ── Auth ──────────────────────────────────────────────────────────────────────
 
 def _get_vertex_access_token() -> str:
     creds, project = google_auth_default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
     if not settings.GOOGLE_CLOUD_PROJECT and project:
-        logger.info("Using ADC project for Vertex thumbnail generation: %s", project)
+        logger.info("Using ADC project: %s", project)
     if not creds.valid:
         creds.refresh(GoogleAuthRequest())
     token = getattr(creds, "token", None)
     if not token:
         raise RuntimeError(
-            "Vertex auth failed. Set GOOGLE_APPLICATION_CREDENTIALS or run "
-            "'gcloud auth application-default login'."
+            "Vertex auth failed. Run 'gcloud auth application-default login'."
         )
     return token
 
 
-def _build_google_image_payload(prompt: str) -> dict:
-    return {
-        "instances": [
-            {
-                "prompt": prompt,
-            }
-        ],
-        "parameters": {
-            "sampleCount": 1,
-            "aspectRatio": "16:9",
-            "personGeneration": "allow_adult",
-        },
-    }
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+def _cover_resize(image: Image.Image, size: tuple[int, int]) -> Image.Image:
+    tw, th = size
+    scale   = max(tw / image.width, th / image.height)
+    resized = image.resize(
+        (max(1, int(image.width * scale)), max(1, int(image.height * scale))),
+        Image.LANCZOS,
+    )
+    left = max(0, (resized.width - tw) // 2)
+    top  = max(0, (resized.height - th) // 2)
+    return resized.crop((left, top, left + tw, top + th))
 
 
-def _extract_image_bytes(data: dict) -> bytes:
-    predictions = data.get("predictions") or []
-    for prediction in predictions:
-        bytes_base64 = (
-            prediction.get("bytesBase64Encoded")
-            or prediction.get("bytes_base64_encoded")
-            or prediction.get("image", {}).get("imageBytes")
-        )
-        if bytes_base64:
-            return base64.b64decode(bytes_base64)
-    raise ValueError("Imagen response did not include generated image bytes")
-
-
-def _format_google_error_body(response: requests.Response) -> str:
-    try:
-        data = response.json()
-    except ValueError:
-        return response.text[:500].strip() or "<empty response body>"
-    error = data.get("error")
-    if isinstance(error, dict):
-        message = error.get("message", "")
-        status = error.get("status", "")
-        details = error.get("details", [])
-        details_text = f" details={details}" if details else ""
-        return f"{status}: {message}{details_text}".strip()
-    return str(data)[:500]
-
-
-def _finalize_generated_thumbnail(generated_path: Path, output_path: Path) -> None:
-    with Image.open(generated_path) as generated:
-        final = _cover_resize(generated.convert("RGB"), _CANVAS_SIZE)
-        final.save(output_path, format="PNG", optimize=True)
+def _sanitize(text: str) -> str:
+    return re.sub(r"\s+", " ", (text or "").replace("\n", " ")).strip()
 
 
 def _extract_hook_text(item: NewsItem, script: Script | None, focus_mode: str) -> str:
-    source = item.headline
-    if script and script.display_headline:
-        source = script.display_headline
+    source  = script.display_headline if (script and script.display_headline) else item.headline
     cleaned = re.sub(r"\s+", " ", source).strip()
     cleaned = re.sub(r"\b(FIFA WORLD CUP|WORLD CUP|BREAKING NEWS)\b[:\- ]*", "", cleaned, flags=re.I).strip()
     cleaned = cleaned.replace("|", " ")
@@ -358,16 +287,3 @@ def _extract_hook_text(item: NewsItem, script: Script | None, focus_mode: str) -
     if focus_mode == "world_cup" and "world cup" not in cleaned.lower():
         cleaned = f"World Cup: {cleaned}"
     return cleaned[:70].upper()
-
-
-def _cover_resize(image: Image.Image, size: tuple[int, int]) -> Image.Image:
-    target_w, target_h = size
-    scale = max(target_w / image.width, target_h / image.height)
-    resized = image.resize((max(1, int(image.width * scale)), max(1, int(image.height * scale))), Image.LANCZOS)
-    left = max(0, (resized.width - target_w) // 2)
-    top = max(0, (resized.height - target_h) // 2)
-    return resized.crop((left, top, left + target_w, top + target_h))
-
-
-def _sanitize_prompt_text(text: str) -> str:
-    return re.sub(r"\s+", " ", (text or "").replace("\n", " ")).strip()

@@ -59,13 +59,160 @@
       "name": "Laurie Whitwell (Nitter)",
       "url": "https://nitter.net/lauriewhitwell/rss",
       "active": true
+    },
+    {
+      "name": "FIFA World Cup (Nitter)",
+      "url": "https://nitter.net/FIFAWorldCup/rss",
+      "active": false
+    },
+    {
+      "name": "FIFA (Nitter)",
+      "url": "https://nitter.net/FIFAcom/rss",
+      "active": true
+    },
+    {
+      "name": "BBC World Cup",
+      "url": "https://feeds.bbci.co.uk/sport/football/world-cup/rss.xml",
+      "active": true
+    },
+    {
+      "name": "Guardian World Cup 2026",
+      "url": "https://www.theguardian.com/football/world-cup-2026/rss",
+      "active": true
+    },
+    {
+      "name": "ESPN World Cup",
+      "url": "https://www.espn.com/espn/rss/worldcup/news",
+      "active": false
+    },
+    {
+      "name": "CBS Sports Soccer",
+      "url": "https://www.cbssports.com/rss/headlines/soccer/",
+      "active": true
+    },
+    {
+      "name": "Reuters Sports",
+      "url": "https://feeds.reuters.com/reuters/sportsNews",
+      "active": false
+    },
+    {
+      "name": "Bleacher Report Soccer",
+      "url": "https://bleacherreport.com/articles/feed?tag_id=60",
+      "active": false
+    },
+    {
+      "name": "Sports Illustrated Soccer",
+      "url": "https://www.si.com/rss/si_soccer.rss",
+      "active": false
+    },
+    {
+      "name": "Goal.com",
+      "url": "https://www.goal.com/feeds/en/news",
+      "active": false
+    },
+    {
+      "name": "Mirror Football",
+      "url": "https://www.mirror.co.uk/sport/football/rss.xml",
+      "active": true
+    },
+    {
+      "name": "GiveMeSport",
+      "url": "https://www.givemesport.com/feed/",
+      "active": true
+    },
+    {
+      "name": "Football365",
+      "url": "https://www.football365.com/feed",
+      "active": false
+    },
+    {
+      "name": "FourFourTwo",
+      "url": "https://www.fourfourtwo.com/rss",
+      "active": true
+    },
+    {
+      "name": "Eurosport Football",
+      "url": "https://www.eurosport.com/football/rss.xml",
+      "active": false
+    },
+    {
+      "name": "AS English",
+      "url": "https://en.as.com/tag/football/rss/",
+      "active": false
+    },
+    {
+      "name": "Marca English",
+      "url": "https://www.marca.com/en/rss/football.xml",
+      "active": true
+    },
+    {
+      "name": "UEFA News",
+      "url": "https://www.uefa.com/rssfeed/",
+      "active": false
+    },
+    {
+      "name": "Tribal Football",
+      "url": "https://www.tribalfootball.com/feed",
+      "active": false
+    },
+    {
+      "name": "Transfer News Live",
+      "url": "https://www.transfernews.live/feed/",
+      "active": false
+    },
+    {
+      "name": "Football Transfers",
+      "url": "https://www.football-transfers.com/feed",
+      "active": false
+    },
+    {
+      "name": "FIFA World Cup 2026 Official News",
+      "url": "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/news",
+      "active": false
+    },
+    {
+      "name": "FOX Sports Soccer",
+      "url": "https://www.foxsports.com/rss-feeds",
+      "active": false
+    },
+    {
+      "name": "MLS Soccer News",
+      "url": "https://www.mlssoccer.com/news/",
+      "active": false
+    },
+    {
+      "name": "Concacaf News",
+      "url": "https://www.concacaf.com/news/",
+      "active": false
+    },
+    {
+      "name": "Canada Soccer Pressroom",
+      "url": "https://news.canadasoccer.com/",
+      "active": false
+    },
+    {
+      "name": "CNA FIFA World Cup 2026",
+      "url": "https://www.channelnewsasia.com/football-world-cup-2026/news",
+      "active": false
+    },
+    {
+      "name": "Yahoo Sports Soccer",
+      "url": "https://sports.yahoo.com/soccer/",
+      "active": false
     }
   ],
   "google_alert_rss_urls": [
     "https://www.google.com/alerts/feeds/04458690083290690691/3188954713599048507",
     "https://www.google.com/alerts/feeds/04458690083290690691/12409202703152718690",
     "https://www.google.com/alerts/feeds/04458690083290690691/8163779025542539356",
-    "https://www.google.com/alerts/feeds/04458690083290690691/13863871064075040308"
+    "https://www.google.com/alerts/feeds/04458690083290690691/13863871064075040308",
+    "https://www.google.com/alerts/feeds/04458690083290690691/4189539587306572044",
+    "https://www.google.com/alerts/feeds/04458690083290690691/5995346451657290975",
+    "https://www.google.com/alerts/feeds/04458690083290690691/17634033987358906154",
+    "https://www.google.com/alerts/feeds/04458690083290690691/11503485378743114946",
+    "https://www.google.com/alerts/feeds/04458690083290690691/9302302284508015470",
+    "https://www.google.com/alerts/feeds/04458690083290690691/10783939614465077099",
+    "https://www.google.com/alerts/feeds/04458690083290690691/3250700962313379525"
   ],
   "filter_keywords": [
     "transfer", "signing", "deal", "contract", "loan", "fee",

@@ -40,6 +40,15 @@ def _ticker_text(item: NewsItem) -> str:
     return f"  {headline}  ▪  {item.source}  ▪  {_CHANNEL}  ▪  {_TAGLINE}  ▪  "
 
 
+def _fit_clip(clip, target_w: int, target_h: int):
+    """Scale-to-cover then center-crop a VideoFileClip to target dimensions."""
+    scale = max(target_w / clip.w, target_h / clip.h)
+    clip = clip.resize(scale)
+    x1 = (clip.w - target_w) / 2
+    y1 = (clip.h - target_h) / 2
+    return clip.crop(x1=x1, y1=y1, x2=x1 + target_w, y2=y1 + target_h)
+
+
 def create_multi_story_video(
     stories: list[tuple[Script, NewsItem, Path | None]],
     output_name: str = "multi_story_breaking",
@@ -85,6 +94,7 @@ def create_multi_story_video(
     if include_intro_outro:
         if _INTRO_VIDEO_PATH.exists():
             intro_clip = _VFC(str(_INTRO_VIDEO_PATH))
+            intro_clip = _fit_clip(intro_clip, _BC.W, _BC.H)
             _INTRO_DUR = intro_clip.duration
             if intro_clip.audio:
                 audio_clips.append(intro_clip.audio.set_start(0.0))
@@ -228,12 +238,15 @@ def create_multi_story_video(
             for row in rows:
                 filename = Path(row["file_path"].replace("\\", "/")).name
                 p = settings.CLIPS_DIR / filename
-                print(f"    Downloading {filename} ...")
-                if _drive_download(filename, p):
+                if p.exists():
+                    print(f"    Clip found locally: {filename}")
+                    loaded.append((p, _load_video_clip(str(p))))
+                elif _drive_download(filename, p):
+                    print(f"    Clip downloaded from Drive: {filename}")
                     _downloaded_clips.append(p)
                     loaded.append((p, _load_video_clip(str(p))))
                 else:
-                    print(f"    Clip not available on Drive: {p.name}")
+                    print(f"    Clip not available locally or on Drive: {p.name}")
             if loaded:
                 left_path = loaded[0][0]
                 if len(loaded) == 1:
@@ -314,6 +327,7 @@ def create_multi_story_video(
     if include_intro_outro:
         if _OUTRO_VIDEO_PATH.exists():
             outro_clip = _VFC(str(_OUTRO_VIDEO_PATH))
+            outro_clip = _fit_clip(outro_clip, _BC.W, _BC.H)
             _OUTRO_DUR = outro_clip.duration
             if outro_clip.audio:
                 audio_clips.append(outro_clip.audio.set_start(t_offset))
@@ -350,6 +364,17 @@ def create_multi_story_video(
         )
     finally:
         final.close()
+        # Close all individual clips so Windows releases file handles before Drive sync
+        for clip, audio_clip, _ in built:
+            try:
+                clip.close()
+            except Exception:
+                pass
+            if audio_clip:
+                try:
+                    audio_clip.close()
+                except Exception:
+                    pass
         for p in _downloaded_clips:
             try:
                 p.unlink()

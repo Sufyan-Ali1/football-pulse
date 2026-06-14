@@ -11,7 +11,7 @@ DATABASE_DIR   = BASE_DIR / "database"
 TEMP_DIR       = BASE_DIR / "temp"
 VOICEOVERS_DIR = TEMP_DIR / "voiceover"
 VIDEOS_DIR     = TEMP_DIR / "videos" / "final"
-CLIPS_DIR      = TEMP_DIR / "videos" / "clips"
+CLIPS_DIR      = BASE_DIR / "config" / "clips"
 THUMBNAILS_DIR = TEMP_DIR / "thumbnails"
 
 # ── Groq ─────────────────────────────────────────────────────────────────────
@@ -55,11 +55,10 @@ BRAND_TAGLINE = os.environ.get("BRAND_TAGLINE", "Football News. Every Second.")
 CONTENT_FOCUS = os.environ.get("CONTENT_FOCUS", "").strip().lower()
 
 # Thumbnail generation
-THUMBNAIL_ENABLED    = os.environ.get("THUMBNAIL_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
-THUMBNAIL_MODEL      = os.environ.get("THUMBNAIL_MODEL", "imagen-4.0-fast-generate-001").strip()
-THUMBNAIL_WIDTH      = int(os.environ.get("THUMBNAIL_WIDTH", "1280"))
-THUMBNAIL_HEIGHT     = int(os.environ.get("THUMBNAIL_HEIGHT", "720"))
-THUMBNAIL_CANDIDATES = max(1, int(os.environ.get("THUMBNAIL_CANDIDATES", "2")))
+THUMBNAIL_ENABLED      = os.environ.get("THUMBNAIL_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+THUMBNAIL_GEMINI_MODEL = os.environ.get("THUMBNAIL_GEMINI_MODEL", "gemini-2.5-flash-image").strip()
+THUMBNAIL_WIDTH        = int(os.environ.get("THUMBNAIL_WIDTH", "1280"))
+THUMBNAIL_HEIGHT       = int(os.environ.get("THUMBNAIL_HEIGHT", "720"))
 
 # ── Club colours (hex) for branding overlays ─────────────────────────────────
 CLUB_COLOURS: dict[str, str] = {

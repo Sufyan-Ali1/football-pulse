@@ -2,7 +2,7 @@
   "https://feeds.bbci.co.uk/sport/football/rss.xml": {
     "etag": "",
     "last_modified": "",
-    "failures": 0,
+    "failures": 2,
     "skip_until": null
   },
   "https://www.skysports.com/rss/12040": {
@@ -12,7 +12,7 @@
     "skip_until": null
   },
   "https://www.theguardian.com/football/rss": {
-    "etag": "W/\"hash691769890804286199\"",
+    "etag": "W/\"hash-8457384364980078861\"",
     "last_modified": "",
     "failures": 0,
     "skip_until": null
@@ -25,19 +25,19 @@
   },
   "https://www.90min.com/feed": {
     "etag": "",
-    "last_modified": "Sat, 13 Jun 2026 09:20:28 GMT",
+    "last_modified": "Sun, 14 Jun 2026 06:17:34 GMT",
     "failures": 0,
     "skip_until": null
   },
   "https://talksport.com/feed/": {
-    "etag": "W/\"6a5b5aa75b39bd731535548322d8a080\"",
-    "last_modified": "Sat, 13 Jun 2026 09:17:25 GMT",
+    "etag": "W/\"be6936edd7a44d444f55bf078b41d687\"",
+    "last_modified": "Sun, 14 Jun 2026 06:23:05 GMT",
     "failures": 0,
     "skip_until": null
   },
   "https://www.football-italia.net/rss.xml": {
-    "etag": "W/\"2a725fcc4240d7153dd62b526fad8d88\"",
-    "last_modified": "Sat, 13 Jun 2026 09:13:03 GMT",
+    "etag": "W/\"cab58f200e284d27dd63272a7fc72c7a\"",
+    "last_modified": "Sun, 14 Jun 2026 03:06:11 GMT",
     "failures": 0,
     "skip_until": null
   },
@@ -93,6 +93,186 @@
     "failures": 0,
     "etag": "",
     "last_modified": "",
+    "skip_until": null
+  },
+  "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/news": {
+    "etag": "W/\"1340-MllqIwwlKt94kQp4JgpSJED6HgE\"",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.foxsports.com/rss-feeds": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.channelnewsasia.com/football-world-cup-2026/news": {
+    "etag": "\"1781415484-gzip\"",
+    "last_modified": "Sun, 14 Jun 2026 05:38:04 GMT",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.concacaf.com/news/": {
+    "etag": "\"8rqmmruquva4mx\"",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://news.canadasoccer.com/": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://sports.yahoo.com/soccer/": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.mlssoccer.com/news/": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.goal.com/feeds/en/news": {
+    "failures": 1
+  },
+  "https://www.football365.com/feed": {
+    "failures": 1
+  },
+  "https://www.mirror.co.uk/sport/football/rss.xml": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.marca.com/en/rss/football.xml": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.eurosport.com/football/rss.xml": {
+    "failures": 1
+  },
+  "https://www.uefa.com/rssfeed/": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.fourfourtwo.com/rss": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.football-transfers.com/feed": {
+    "failures": 1
+  },
+  "https://www.givemesport.com/feed/": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.tribalfootball.com/feed": {
+    "failures": 1
+  },
+  "https://en.as.com/tag/football/rss/": {
+    "failures": 1
+  },
+  "https://www.transfernews.live/feed/": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://feeds.reuters.com/reuters/sportsNews": {
+    "failures": 1
+  },
+  "https://nitter.net/FIFAWorldCup/rss": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://nitter.net/FIFAcom/rss": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.theguardian.com/football/world-cup-2026/rss": {
+    "etag": "W/\"hash-6496171062327931276\"",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.cbssports.com/rss/headlines/soccer/": {
+    "etag": "W/\"7a8b100028531e23d242401f271911b6\"",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://feeds.bbci.co.uk/sport/football/world-cup/rss.xml": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 2,
+    "skip_until": null
+  },
+  "https://www.si.com/rss/si_soccer.rss": {
+    "failures": 1
+  },
+  "https://bleacherreport.com/articles/feed?tag_id=60": {
+    "failures": 1
+  },
+  "https://www.espn.com/espn/rss/worldcup/news": {
+    "failures": 1
+  },
+  "https://www.google.com/alerts/feeds/04458690083290690691/11503485378743114946": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.google.com/alerts/feeds/04458690083290690691/9302302284508015470": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.google.com/alerts/feeds/04458690083290690691/4189539587306572044": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.google.com/alerts/feeds/04458690083290690691/17634033987358906154": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.google.com/alerts/feeds/04458690083290690691/5995346451657290975": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.google.com/alerts/feeds/04458690083290690691/10783939614465077099": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
+    "skip_until": null
+  },
+  "https://www.google.com/alerts/feeds/04458690083290690691/3250700962313379525": {
+    "etag": "",
+    "last_modified": "",
+    "failures": 0,
     "skip_until": null
   }
 }
