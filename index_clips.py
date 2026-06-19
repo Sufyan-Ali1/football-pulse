@@ -5,9 +5,8 @@ Scans a folder for .mp4 files, sends each to Groq Vision for a description
 and keywords, then saves the result to the video_clips DB table.
 
 Usage:
-    python index_clips.py                          # index new clips only
-    python index_clips.py storage/my_clips/        # custom folder
-    python index_clips.py --reindex                # re-run vision on clips that failed (filename as description)
+    python index_clips.py <folder>                 # index new clips in a specific folder
+    python index_clips.py <folder> --reindex       # re-run vision on clips that failed (filename as description)
 """
 import logging
 import sys
@@ -19,7 +18,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger("index_clips")
 
-from config import settings
 from core.database import get_all_clips, update_video_clip_description
 from process.clip_indexer import _load_clip_info
 from process.clip_indexer import index_clip
@@ -121,7 +119,11 @@ def index_new(folder: Path) -> None:
 def main() -> None:
     reindex = "--reindex" in sys.argv
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    folder = Path(args[0]) if args else settings.CLIPS_DIR
+    if not args:
+        print("Usage: python index_clips.py <folder> [--reindex]")
+        sys.exit(1)
+
+    folder = Path(args[0])
 
     if not folder.exists() and not reindex:
         print(f"Folder not found: {folder}")

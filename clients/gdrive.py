@@ -174,11 +174,11 @@ def sync_storage_to_drive(delete_local: bool = False) -> dict:
     return stats
 
 
-_CLIPS_FOLDER_PATH = ["Clips", "pexels"]
+_CLIPS_FOLDER_PATH = ["Clips"]
 
 
 def download_clip(filename: str, local_path: Path) -> bool:
-    """Download a Pexels clip by filename from Drive/Clips/pexels/ to local_path."""
+    """Download a clip by filename from Drive/Clips/ to local_path."""
     service = _get_service()
     folder_id = settings.GDRIVE_FOLDER_ID
     for part in _CLIPS_FOLDER_PATH:

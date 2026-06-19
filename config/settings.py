@@ -11,7 +11,6 @@ DATABASE_DIR   = BASE_DIR / "database"
 TEMP_DIR       = BASE_DIR / "temp"
 VOICEOVERS_DIR = TEMP_DIR / "voiceover"
 VIDEOS_DIR     = TEMP_DIR / "videos" / "final"
-CLIPS_DIR      = BASE_DIR / "config" / "clips"
 THUMBNAILS_DIR = TEMP_DIR / "thumbnails"
 
 # ── Groq ─────────────────────────────────────────────────────────────────────

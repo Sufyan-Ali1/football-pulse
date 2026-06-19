@@ -16,6 +16,9 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+if not hasattr(Image, "ANTIALIAS"):
+    Image.ANTIALIAS = Image.Resampling.LANCZOS  # type: ignore[attr-defined]
+
 from config import settings
 from core.types import NewsItem, Script
 from core.database import get_clips_by_ids
@@ -33,6 +36,10 @@ logger = logging.getLogger(__name__)
 
 _INTRO_VIDEO_PATH = settings.BASE_DIR / "config" / "video" / "intro.mp4"
 _OUTRO_VIDEO_PATH = settings.BASE_DIR / "config" / "video" / "outro.mp4"
+
+
+def _clip_filename(file_path: str) -> str:
+    return str(file_path).replace("\\", "/").rstrip("/").split("/")[-1]
 
 
 def _ticker_text(item: NewsItem) -> str:
@@ -234,19 +241,25 @@ def create_multi_story_video(
             from clients.gdrive import download_clip as _drive_download
             rows = get_clips_by_ids(script.selected_clip_ids)
             loaded = []
-            settings.CLIPS_DIR.mkdir(parents=True, exist_ok=True)
+            drive_clip_dir = settings.TEMP_DIR / "drive_clips"
+            drive_clip_dir.mkdir(parents=True, exist_ok=True)
             for row in rows:
-                filename = Path(row["file_path"].replace("\\", "/")).name
-                p = settings.CLIPS_DIR / filename
-                if p.exists():
-                    print(f"    Clip found locally: {filename}")
-                    loaded.append((p, _load_video_clip(str(p))))
-                elif _drive_download(filename, p):
+                filename = _clip_filename(str(row["file_path"]))
+                download_path = drive_clip_dir / filename
+
+                # Never reuse a prior local copy here. Clips must come from Drive.
+                if download_path.exists():
+                    try:
+                        download_path.unlink()
+                    except Exception:
+                        pass
+
+                if _drive_download(filename, download_path):
                     print(f"    Clip downloaded from Drive: {filename}")
-                    _downloaded_clips.append(p)
-                    loaded.append((p, _load_video_clip(str(p))))
+                    _downloaded_clips.append(download_path)
+                    loaded.append((download_path, _load_video_clip(str(download_path))))
                 else:
-                    print(f"    Clip not available locally or on Drive: {p.name}")
+                    print(f"    Clip not available on Drive: {filename}")
             if loaded:
                 left_path = loaded[0][0]
                 if len(loaded) == 1:

@@ -3,12 +3,9 @@ Generate a premium 1080p AI intro video using Google Veo 3.1 Standard
 through Vertex AI and save to config/video/intro.mp4.
 
 Prompt is read from:
-    config/prompts/intro_prompt.txt
+    config/prompts/prompt.txt
 
-Recommended:
-    For perfect logo/text quality, do NOT let Veo generate your logo/text.
-    Generate the cinematic football background with Veo, then overlay logo/tagline
-    later using FFmpeg or MoviePy.
+The only image reference sent to Veo is the Football Pulse logo.
 
 Usage:
     venv\\Scripts\\python scripts\\generate_intro.py
@@ -37,7 +34,7 @@ from publish.thumbnail import _get_vertex_access_token
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
-_PROMPT_PATH = ROOT / "config" / "prompts" / "intro_prompt.txt"
+_PROMPT_PATH = ROOT / "config" / "prompts" / "prompt.txt"
 _LOGO_PATH = ROOT / "config" / "images" / "logo.png"
 _DEFAULT_OUT = ROOT / "config" / "video" / "intro.mp4"
 
@@ -67,22 +64,12 @@ def _encode_image(path: Path) -> tuple[str, str]:
     return base64.b64encode(path.read_bytes()).decode("utf-8"), _guess_mime_type(path)
 
 
-def _build_payload(
-    prompt: str,
-    start_frame: Path | None,
-    end_frame: Path | None,
-) -> dict[str, Any]:
+def _build_payload(prompt: str, logo_path: Path) -> dict[str, Any]:
     instance: dict[str, Any] = {"prompt": prompt}
 
-    if start_frame:
-        b64, mime = _encode_image(start_frame)
-        instance["image"] = {"bytesBase64Encoded": b64, "mimeType": mime}
-        logger.info("Start frame attached: %s", start_frame.name)
-
-    if end_frame:
-        b64, mime = _encode_image(end_frame)
-        instance["lastFrame"] = {"bytesBase64Encoded": b64, "mimeType": mime}
-        logger.info("End frame attached: %s", end_frame.name)
+    b64, mime = _encode_image(logo_path)
+    instance["image"] = {"bytesBase64Encoded": b64, "mimeType": mime}
+    logger.info("Logo attached: %s", logo_path.name)
 
     return {
         "instances": [instance],
@@ -284,8 +271,6 @@ def _extract_video_bytes(result: dict[str, Any], token: str | None = None) -> by
 
 def generate_intro(
     output_path: Path,
-    start_frame: Path | None = None,
-    end_frame: Path | None = None,
 ) -> None:
     if not settings.GOOGLE_CLOUD_PROJECT:
         logger.error("GOOGLE_CLOUD_PROJECT is not set in .env")
@@ -307,16 +292,12 @@ def generate_intro(
     logger.info("Prompt loaded (%d chars)", len(prompt))
     logger.info("Prompt:\n%s", prompt)
 
-    if start_frame and not start_frame.exists():
-        logger.error("Start frame not found: %s", start_frame)
-        sys.exit(1)
-
-    if end_frame and not end_frame.exists():
-        logger.error("End frame not found: %s", end_frame)
-        sys.exit(1)
-
     token = _get_vertex_access_token()
-    payload = _build_payload(prompt, start_frame, end_frame)
+    if not _LOGO_PATH.exists():
+        logger.error("Logo not found: %s", _LOGO_PATH)
+        sys.exit(1)
+
+    payload = _build_payload(prompt, _LOGO_PATH)
 
     logger.info(
         "Submitting Veo job: model=%s, duration=%ds, aspectRatio=%s, resolution=%s",
@@ -339,11 +320,9 @@ def main() -> int:
         description="Generate 1080p intro/outro video using Google Veo"
     )
     parser.add_argument("--output", type=Path, default=_DEFAULT_OUT, help="Output video path")
-    parser.add_argument("--start-frame", type=Path, default=None, help="Path to start frame image")
-    parser.add_argument("--end-frame", type=Path, default=None, help="Path to end frame image")
     args = parser.parse_args()
 
-    generate_intro(args.output, args.start_frame, args.end_frame)
+    generate_intro(args.output)
     return 0
 
 

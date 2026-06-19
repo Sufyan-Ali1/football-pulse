@@ -2,7 +2,8 @@ FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1
+    PIP_NO_CACHE_DIR=1 \
+    PYTHONPATH=/app
 
 WORKDIR /app
 
@@ -23,11 +24,12 @@ COPY . .
 RUN mkdir -p database \
              temp/voiceover \
              temp/videos/final \
-             temp/videos/clips \
+             temp/drive_clips \
+             config/video \
              logs
 
 # Run as a non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
-CMD ["python", "main.py"]
+CMD ["python", "-u", "main.py"]

@@ -14,6 +14,7 @@ Verification loop:
 Minimum 3 stories required; if not enough accumulate, the job exits.
 """
 import logging
+import json
 import re
 import sqlite3
 from datetime import date, datetime, timezone
@@ -64,6 +65,25 @@ _WORLD_CUP_PATTERNS = [
         r"\bworld cup final\b",
     ]
 ]
+
+
+def _metadata_sidecar_path(video_output: Path) -> Path:
+    return video_output.with_suffix(".metadata.json")
+
+
+def _save_video_metadata(video_output: Path, metadata) -> Path:
+    metadata_path = _metadata_sidecar_path(video_output)
+    payload = {
+        "title": metadata.title,
+        "description": metadata.description,
+        "tags": metadata.tags,
+        "category_id": metadata.category_id,
+        "privacy_status": metadata.privacy_status,
+        "publish_at": metadata.publish_at,
+    }
+    metadata_path.write_text(json.dumps(payload, ensure_ascii=True, indent=2), encoding="utf-8")
+    logger.info("Saved upload metadata: %s", metadata_path)
+    return metadata_path
 
 
 def _daily_rejection_reason(article: sqlite3.Row) -> str | None:
@@ -321,6 +341,7 @@ def run_daily_video() -> None:
             focus_mode=settings.CONTENT_FOCUS,
         )
         metadata.privacy_status = "public"
+        metadata_path = _save_video_metadata(video_output, metadata)
         thumbnail_path = create_roundup_thumbnail(
             selected_items,
             selected_scripts,
@@ -337,6 +358,7 @@ def run_daily_video() -> None:
         update_daily_video(video_date, "done", video_path=f"youtube:{video_id}")
 
         video_output.unlink(missing_ok=True)
+        metadata_path.unlink(missing_ok=True)
         if thumbnail_path:
             thumb_dir = Path(thumbnail_path).parent
             for thumb_file in thumb_dir.glob("*"):
