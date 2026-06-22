@@ -29,6 +29,16 @@ def _looks_like_filename(desc: str) -> bool:
     return desc.startswith("pexels_") or (len(desc) < 10 and "_" in desc)
 
 
+def _db_file_path(path: Path) -> str:
+    """Match the path format used by process.clip_indexer.index_clip()."""
+    from config import settings
+
+    try:
+        return str(path.resolve().relative_to(settings.BASE_DIR))
+    except ValueError:
+        return str(path)
+
+
 def reindex_failed(folder: Path) -> None:
     """Re-run Groq Vision on clips whose description is just their filename."""
     all_clips = get_all_clips()
@@ -86,7 +96,7 @@ def index_new(folder: Path) -> None:
         return
 
     already_indexed = {r["file_path"] for r in get_all_clips()}
-    pending = [p for p in mp4s if str(p) not in already_indexed]
+    pending = [p for p in mp4s if _db_file_path(p) not in already_indexed]
 
     print(f"\nClip indexer")
     print(f"  Folder         : {folder}")

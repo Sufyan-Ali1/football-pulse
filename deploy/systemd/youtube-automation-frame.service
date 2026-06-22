@@ -1,0 +1,16 @@
+[Unit]
+Description=YouTube Automation live frame server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/youtube-automation/Youtube_Automation
+EnvironmentFile=/root/youtube-automation/Youtube_Automation/.env
+ExecStart=/root/youtube-automation/Youtube_Automation/venv/bin/python -m livestream.live_score_server --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+
+[Install]
+WantedBy=multi-user.target

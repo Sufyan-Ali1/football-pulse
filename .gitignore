@@ -1,5 +1,6 @@
 .env
 venv
+experiments/
 config/secrets/
 config/youtube_client_secrets.json
 config/youtube_token.json

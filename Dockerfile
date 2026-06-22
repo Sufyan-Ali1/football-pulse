@@ -8,6 +8,7 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /app
 
 # ffmpeg is required by moviepy for video encoding/decoding
+# libcairo2 is required by CairoSVG/cairocffi used by asset generation
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     libcairo2 \
@@ -15,7 +16,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install Python deps first so this layer is cached separately from code changes
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN python -m pip install --upgrade pip && \
+    pip install -r requirements.txt
 
 # Copy application source (credentials and runtime dirs are excluded via .dockerignore)
 COPY . .
@@ -31,5 +33,8 @@ RUN mkdir -p database \
 # Run as a non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD python -c "import core.database, pipeline.collector, pipeline.daily_runner; print('ok')" || exit 1
 
 CMD ["python", "-u", "main.py"]

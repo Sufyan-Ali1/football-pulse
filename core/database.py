@@ -14,7 +14,7 @@ import hashlib
 import json
 import logging
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from core.types import NewsItem
@@ -22,6 +22,7 @@ from core.types import NewsItem
 logger = logging.getLogger(__name__)
 
 _DB_PATH = Path(__file__).resolve().parent.parent / "database" / "articles.db"
+_CLIP_REUSE_COOLDOWN_DAYS = 14
 
 
 def _conn() -> sqlite3.Connection:
@@ -55,6 +56,8 @@ def init_db() -> None:
         for migration in [
             "ALTER TABLE articles ADD COLUMN classified_by TEXT DEFAULT 'keyword'",
             "ALTER TABLE articles ADD COLUMN relevance_score INTEGER DEFAULT NULL",
+            "ALTER TABLE video_clips ADD COLUMN is_used INTEGER DEFAULT 0",
+            "ALTER TABLE video_clips ADD COLUMN last_used_at TEXT",
         ]:
             try:
                 c.execute(migration)
@@ -81,7 +84,9 @@ def init_db() -> None:
                 duration      REAL,
                 width         INTEGER,
                 height        INTEGER,
-                downloaded_at TEXT NOT NULL
+                downloaded_at TEXT NOT NULL,
+                is_used       INTEGER DEFAULT 0,
+                last_used_at  TEXT
             )
         """)
         c.commit()
@@ -277,6 +282,72 @@ def get_all_clips() -> list[sqlite3.Row]:
         return c.execute(
             "SELECT * FROM video_clips ORDER BY downloaded_at DESC"
         ).fetchall()
+
+
+def _parse_db_datetime(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def release_expired_video_clips() -> int:
+    """Reset clips whose cooldown period has ended."""
+    now = datetime.now(timezone.utc)
+    released = 0
+    with _conn() as c:
+        rows = c.execute(
+            "SELECT id, last_used_at FROM video_clips WHERE is_used = 1"
+        ).fetchall()
+        for row in rows:
+            last_used_at = _parse_db_datetime(row["last_used_at"])
+            if not last_used_at:
+                c.execute(
+                    "UPDATE video_clips SET is_used = 0, last_used_at = NULL WHERE id = ?",
+                    (row["id"],),
+                )
+                released += 1
+                continue
+            if now - last_used_at >= timedelta(days=_CLIP_REUSE_COOLDOWN_DAYS):
+                c.execute(
+                    "UPDATE video_clips SET is_used = 0, last_used_at = NULL WHERE id = ?",
+                    (row["id"],),
+                )
+                released += 1
+        c.commit()
+    return released
+
+
+def get_available_clips() -> list[sqlite3.Row]:
+    """Return clips that are not within the cooldown window."""
+    release_expired_video_clips()
+    with _conn() as c:
+        return c.execute(
+            """SELECT * FROM video_clips
+               WHERE COALESCE(is_used, 0) = 0
+               ORDER BY downloaded_at DESC"""
+        ).fetchall()
+
+
+def mark_video_clips_used(clip_ids: list[str]) -> None:
+    """Mark clips as used and start their cooldown window."""
+    if not clip_ids:
+        return
+    placeholders = ",".join("?" * len(clip_ids))
+    used_at = datetime.now(timezone.utc).isoformat()
+    with _conn() as c:
+        c.execute(
+            f"""UPDATE video_clips
+                SET is_used = 1, last_used_at = ?
+                WHERE id IN ({placeholders})""",
+            [used_at] + clip_ids,
+        )
+        c.commit()
 
 
 def get_clips_by_ids(ids: list[str]) -> list[sqlite3.Row]:

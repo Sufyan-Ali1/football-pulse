@@ -26,10 +26,11 @@ from config import settings
 from core.database import (
     create_daily_video_record,
     daily_video_exists,
-    get_all_clips,
+    get_available_clips,
     get_pending_articles,
     mark_articles_rejected,
     mark_articles_used,
+    mark_video_clips_used,
     row_to_news_item,
     update_daily_video,
 )
@@ -65,6 +66,13 @@ _WORLD_CUP_PATTERNS = [
         r"\bworld cup final\b",
     ]
 ]
+
+
+def _remove_used_clips_from_pool(clips: list, used_clip_ids: list[str]) -> list:
+    if not used_clip_ids:
+        return clips
+    used_ids = set(used_clip_ids)
+    return [clip for clip in clips if clip["id"] not in used_ids]
 
 
 def _metadata_sidecar_path(video_output: Path) -> Path:
@@ -298,8 +306,8 @@ def run_daily_video() -> None:
 
     logger.info("Building %d-story video for %s ...", len(articles), video_date)
 
-    clip_library = get_all_clips()
-    logger.info("Clip library: %d clips loaded", len(clip_library))
+    clip_library = get_available_clips()
+    logger.info("Clip library: %d available clips loaded", len(clip_library))
 
     stories: list[tuple[Script, NewsItem, Path | None]] = []
     for i, article in enumerate(articles, start=1):
@@ -321,6 +329,7 @@ def run_daily_video() -> None:
             continue
 
         stories.append((script, item, vo_path))
+        clip_library = _remove_used_clips_from_pool(clip_library, script.selected_clip_ids)
 
     if len(stories) < settings.MIN_STORIES_FOR_DAILY:
         logger.warning(
@@ -335,6 +344,7 @@ def run_daily_video() -> None:
 
         selected_items = [item for _, item, _ in stories]
         selected_scripts = [script for script, _, _ in stories]
+        used_article_ids = [item.id for _, item, _ in stories]
         metadata = generate_multi_story_metadata(
             selected_items,
             selected_scripts,
@@ -354,7 +364,13 @@ def run_daily_video() -> None:
 
         sync_storage_to_drive(delete_local=True)
 
-        mark_articles_used(article_ids, video_date)
+        mark_articles_used(used_article_ids, video_date)
+        used_clip_ids = [
+            clip_id
+            for script, _, _ in stories
+            for clip_id in script.selected_clip_ids
+        ]
+        mark_video_clips_used(used_clip_ids)
         update_daily_video(video_date, "done", video_path=f"youtube:{video_id}")
 
         video_output.unlink(missing_ok=True)

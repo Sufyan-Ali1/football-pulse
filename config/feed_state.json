@@ -2,7 +2,7 @@
   "https://feeds.bbci.co.uk/sport/football/rss.xml": {
     "etag": "",
     "last_modified": "",
-    "failures": 2,
+    "failures": 0,
     "skip_until": null
   },
   "https://www.skysports.com/rss/12040": {
@@ -12,7 +12,7 @@
     "skip_until": null
   },
   "https://www.theguardian.com/football/rss": {
-    "etag": "W/\"hash-8457384364980078861\"",
+    "etag": "W/\"hash-3495978671684255108\"",
     "last_modified": "",
     "failures": 0,
     "skip_until": null
@@ -25,19 +25,19 @@
   },
   "https://www.90min.com/feed": {
     "etag": "",
-    "last_modified": "Sun, 14 Jun 2026 06:17:34 GMT",
+    "last_modified": "Sat, 20 Jun 2026 12:47:46 GMT",
     "failures": 0,
     "skip_until": null
   },
   "https://talksport.com/feed/": {
-    "etag": "W/\"be6936edd7a44d444f55bf078b41d687\"",
-    "last_modified": "Sun, 14 Jun 2026 06:23:05 GMT",
+    "etag": "W/\"c6758d06e656daaa6d2fd6faa9652602\"",
+    "last_modified": "Sat, 20 Jun 2026 13:05:10 GMT",
     "failures": 0,
     "skip_until": null
   },
   "https://www.football-italia.net/rss.xml": {
-    "etag": "W/\"cab58f200e284d27dd63272a7fc72c7a\"",
-    "last_modified": "Sun, 14 Jun 2026 03:06:11 GMT",
+    "etag": "W/\"c5372a5c9b50359bbc94626bd6ca2f31\"",
+    "last_modified": "Sat, 20 Jun 2026 12:58:35 GMT",
     "failures": 0,
     "skip_until": null
   },
@@ -207,13 +207,13 @@
     "skip_until": null
   },
   "https://www.theguardian.com/football/world-cup-2026/rss": {
-    "etag": "W/\"hash-6496171062327931276\"",
+    "etag": "W/\"hash4745812290796196977\"",
     "last_modified": "",
     "failures": 0,
     "skip_until": null
   },
   "https://www.cbssports.com/rss/headlines/soccer/": {
-    "etag": "W/\"7a8b100028531e23d242401f271911b6\"",
+    "etag": "W/\"f123fa36d4de8d05a66600cfee72fb39\"",
     "last_modified": "",
     "failures": 0,
     "skip_until": null
@@ -221,7 +221,7 @@
   "https://feeds.bbci.co.uk/sport/football/world-cup/rss.xml": {
     "etag": "",
     "last_modified": "",
-    "failures": 2,
+    "failures": 0,
     "skip_until": null
   },
   "https://www.si.com/rss/si_soccer.rss": {

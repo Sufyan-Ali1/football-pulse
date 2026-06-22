@@ -6,11 +6,15 @@ auto-generates SEO metadata via Groq, and schedules publish time.
 """
 import json
 import logging
+import socket
+import ssl
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
 from clients.groq_client import get_groq_client
 from config import settings
@@ -23,6 +27,8 @@ _SCOPES = [
     "https://www.googleapis.com/auth/youtube",
     "https://www.googleapis.com/auth/youtube.force-ssl",
 ]
+_RETRIABLE_HTTP_STATUS_CODES = {500, 502, 503, 504}
+_UPLOAD_MAX_RETRIES = 6
 _groq = get_groq_client()
 
 
@@ -42,6 +48,47 @@ def _get_youtube_client():
     )
     creds.refresh(Request())
     return build("youtube", "v3", credentials=creds)
+
+
+def _is_retriable_upload_error(exc: Exception) -> bool:
+    if isinstance(exc, HttpError):
+        return getattr(getattr(exc, "resp", None), "status", None) in _RETRIABLE_HTTP_STATUS_CODES
+    return isinstance(
+        exc,
+        (
+            TimeoutError,
+            socket.timeout,
+            ssl.SSLError,
+            ConnectionError,
+            OSError,
+        ),
+    )
+
+
+def _execute_resumable_upload(request, title: str) -> dict:
+    response = None
+    attempt = 0
+
+    while response is None:
+        try:
+            _, response = request.next_chunk(num_retries=3)
+        except Exception as exc:
+            if not _is_retriable_upload_error(exc) or attempt >= _UPLOAD_MAX_RETRIES:
+                raise
+            sleep_seconds = min(2 ** attempt, 32)
+            attempt += 1
+            logger.warning(
+                "Transient YouTube upload error for '%s' (attempt %d/%d): %s. Retrying in %ss",
+                title,
+                attempt,
+                _UPLOAD_MAX_RETRIES,
+                exc,
+                sleep_seconds,
+            )
+            time.sleep(sleep_seconds)
+            continue
+
+    return response
 
 
 # ── Metadata generation ───────────────────────────────────────────────────────
@@ -254,9 +301,7 @@ def upload_video(
 
     media    = MediaFileUpload(str(video_path), mimetype="video/mp4", resumable=True)
     request  = youtube.videos().insert(part="snippet,status", body=body, media_body=media)
-    response = None
-    while response is None:
-        _, response = request.next_chunk()
+    response = _execute_resumable_upload(request, metadata.title)
 
     video_id = response["id"]
     logger.info("YouTube upload complete: %s | '%s'", video_id, metadata.title)

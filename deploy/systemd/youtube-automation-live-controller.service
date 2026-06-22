@@ -1,0 +1,17 @@
+[Unit]
+Description=YouTube Automation livestream controller
+After=network.target youtube-automation-frame.service
+Requires=youtube-automation-frame.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/youtube-automation/Youtube_Automation
+EnvironmentFile=/root/youtube-automation/Youtube_Automation/.env
+ExecStart=/root/youtube-automation/Youtube_Automation/venv/bin/python -m livestream.live_stream_controller
+Restart=always
+RestartSec=10
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target
