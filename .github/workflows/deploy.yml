@@ -1,17 +1,56 @@
 name: Deploy to DigitalOcean
 
 on:
+  pull_request:
   push:
     branches:
       - main
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg libcairo2
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run tests when present
+        run: |
+          if [ -d tests ]; then
+            python -m pytest -q tests
+          else
+            echo "No tests/ directory present; skipping pytest."
+          fi
+
+      - name: Verify runtime imports
+        run: |
+          python -c "import core.database; print('core.database ok')"
+          python -c "import publish.thumbnail; print('publish.thumbnail ok')"
+          python -c "import process.video_maker; print('process.video_maker ok')"
+          python -c "import pipeline.daily_runner; print('pipeline.daily_runner ok')"
+
+      - name: Build Docker image
+        run: docker build -t youtube-automation:deploy-check .
+
       - name: Deploy to server
+        if: github.event_name != 'pull_request'
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DIGITALOCEAN_HOST }}
@@ -25,6 +64,7 @@ jobs:
             docker inspect --format='{{.State.Health.Status}}' football-autonews
 
       - name: Verify deployed container health
+        if: github.event_name != 'pull_request'
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DIGITALOCEAN_HOST }}
