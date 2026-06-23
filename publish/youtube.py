@@ -29,7 +29,6 @@ _SCOPES = [
 ]
 _RETRIABLE_HTTP_STATUS_CODES = {500, 502, 503, 504}
 _UPLOAD_MAX_RETRIES = 6
-_groq = get_groq_client()
 
 
 def _get_youtube_client():
@@ -143,7 +142,8 @@ def generate_metadata(item: NewsItem, script: Script) -> VideoMetadata:
         script_text=script.text[:800],
     )
     try:
-        resp = _groq.chat.completions.create(
+        groq_client = get_groq_client()
+        resp = groq_client.chat.completions.create(
             model=settings.GROQ_MODEL,
             messages=[{"role": "user", "content": prompt}],
             max_tokens=800,
@@ -223,7 +223,8 @@ def generate_multi_story_metadata(
         fallback_tags = ["football", "football news", settings.BRAND_NAME.lower()]
 
     try:
-        resp = _groq.chat.completions.create(
+        groq_client = get_groq_client()
+        resp = groq_client.chat.completions.create(
             model=settings.GROQ_MODEL,
             messages=[{"role": "user", "content": prompt}],
             max_tokens=900,
