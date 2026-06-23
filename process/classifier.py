@@ -38,8 +38,6 @@ from core.types import ContentType, NewsItem
 
 logger = logging.getLogger(__name__)
 
-_groq = get_groq_client()
-
 _VALID = VALID_CONTENT_TYPES
 
 
@@ -114,7 +112,8 @@ def classify(item: NewsItem) -> ContentType:
         return result
 
     try:
-        response = _groq.chat.completions.create(
+        groq_client = get_groq_client()
+        response = groq_client.chat.completions.create(
             model=settings.GROQ_MODEL,
             messages=[{"role": "user", "content": _SINGLE_PROMPT.format(headline=item.headline)}],
             max_tokens=10,
@@ -167,7 +166,8 @@ def _groq_batch(indexed: list[tuple[int, NewsItem]]) -> dict[str, ContentType]:
     result: dict[str, ContentType] = {}
 
     try:
-        response = _groq.chat.completions.create(
+        groq_client = get_groq_client()
+        response = groq_client.chat.completions.create(
             model=settings.GROQ_MODEL,
             messages=[{"role": "user", "content": prompt}],
             max_tokens=150,

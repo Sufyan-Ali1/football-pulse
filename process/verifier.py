@@ -25,8 +25,6 @@ from core.types import ContentType
 
 logger = logging.getLogger(__name__)
 
-_groq = get_groq_client()
-
 _VALID = VALID_CONTENT_TYPES
 
 
@@ -95,7 +93,8 @@ def _groq_verify_batch(
     result: dict[str, tuple[ContentType, int]] = {}
 
     try:
-        response = _groq.chat.completions.create(
+        groq_client = get_groq_client()
+        response = groq_client.chat.completions.create(
             model=settings.GROQ_MODEL,
             messages=[{"role": "user", "content": _VERIFY_PROMPT.format(lines=lines)}],
             max_tokens=250,

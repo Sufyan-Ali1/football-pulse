@@ -17,8 +17,6 @@ from core.types import ContentType, NewsItem, Script
 
 logger = logging.getLogger(__name__)
 
-_groq = get_groq_client()
-
 _PROMPTS_DIR = Path(__file__).resolve().parent.parent / "config" / "prompts"
 
 def _load_prompt() -> str:
@@ -107,7 +105,8 @@ def generate_segment_script(
             f"The script field MUST be at least 100 words. Write more detail."
             if attempt > 0 else ""
         )
-        response = _groq.chat.completions.create(
+        groq_client = get_groq_client()
+        response = groq_client.chat.completions.create(
             model=settings.GROQ_MODEL,
             messages=[{"role": "user", "content": prompt + retry_note}],
             max_tokens=1000,

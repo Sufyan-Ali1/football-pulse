@@ -23,7 +23,6 @@ _EVENT_PRIORITY = {
     "var": 92,
     "substitution": 72,
 }
-_groq = get_groq_client()
 
 
 @dataclass(slots=True)
@@ -210,7 +209,8 @@ def build_dossier(data: dict[str, Any], now_ts: int | None = None) -> MatchDossi
     )
 
     try:
-        response = _groq.chat.completions.create(
+        groq_client = get_groq_client()
+        response = groq_client.chat.completions.create(
             model=settings.GROQ_MODEL,
             messages=[{"role": "user", "content": prompt}],
             max_tokens=800,
@@ -608,7 +608,8 @@ def write_commentary(intent: CommentaryIntent, state: CommentaryState) -> str:
         "Return plain text only."
     )
     try:
-        response = _groq.chat.completions.create(
+        groq_client = get_groq_client()
+        response = groq_client.chat.completions.create(
             model=settings.GROQ_MODEL,
             messages=[{"role": "user", "content": prompt}],
             max_tokens=260,
