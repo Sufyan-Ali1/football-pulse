@@ -2,6 +2,7 @@
 venv
 experiments/
 config/secrets/
+vertex_service_account.json
 config/youtube_client_secrets.json
 config/youtube_token.json
 config/google_cloud_service_account.json
