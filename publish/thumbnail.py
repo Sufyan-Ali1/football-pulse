@@ -31,7 +31,6 @@ logger = logging.getLogger(__name__)
 
 _CANVAS_SIZE = (settings.THUMBNAIL_WIDTH, settings.THUMBNAIL_HEIGHT)
 _LOGO_PATH   = settings.BASE_DIR / "config" / "images" / "logo.png"
-_groq        = get_groq_client()
 
 # Gemini model on Vertex AI that supports image input + image output
 _GEMINI_MODEL = settings.THUMBNAIL_GEMINI_MODEL
@@ -149,7 +148,8 @@ def _build_thumbnail_prompt_via_groq(
     logger.info("Groq thumbnail planner prompt:\n%s", groq_prompt)
 
     try:
-        response = _groq.chat.completions.create(
+        groq_client = get_groq_client()
+        response = groq_client.chat.completions.create(
             model=settings.GROQ_MODEL,
             messages=[{"role": "user", "content": groq_prompt}],
             max_tokens=1200,
