@@ -3,12 +3,13 @@ Script generator — Step 4.
 
 Generates 20-30 second segment scripts for multi-story videos.
 Each call returns script text, display headline, panel label,
-3 bullet points, and 3 video clip IDs — all in one Groq call.
+3 bullet points, and a bounded set of relevant video clip IDs.
 
 Prompt templates live in config/prompts/.
 """
 import json
 import logging
+import re
 from pathlib import Path
 
 from clients.groq_client import get_groq_client
@@ -42,6 +43,96 @@ def _estimate_duration(wc: int) -> int:
     return round(wc / 2.5)  # ~2.5 words/second for news delivery
 
 
+def _clip_duration_seconds(clip: dict) -> float:
+    duration = clip["duration"]
+    if isinstance(duration, (int, float)) and duration > 0:
+        return float(duration)
+    return 6.0
+
+
+def _story_terms(item: NewsItem, content_type: ContentType) -> set[str]:
+    text = " ".join(
+        [
+            item.headline or "",
+            item.body[:400] or "",
+            item.source or "",
+            content_type,
+        ]
+    ).lower()
+    return {
+        term
+        for term in re.findall(r"[a-z0-9']+", text)
+        if len(term) >= 3
+    }
+
+
+def _clip_relevance_score(clip: dict, story_terms: set[str]) -> tuple[int, float]:
+    clip_text = " ".join(
+        [
+            clip["description"] or "",
+            clip["keywords"] or "",
+        ]
+    ).lower()
+    clip_terms = {
+        term
+        for term in re.findall(r"[a-z0-9']+", clip_text)
+        if len(term) >= 3
+    }
+    overlap = len(story_terms & clip_terms)
+    return overlap, _clip_duration_seconds(clip)
+
+
+def _select_covering_clip_ids(
+    llm_video_ids: list[str],
+    clips: list,
+    target_duration_seconds: int,
+    item: NewsItem,
+    content_type: ContentType,
+) -> list[str]:
+    if not clips or target_duration_seconds <= 0:
+        return []
+
+    clip_by_id = {str(clip["id"]): clip for clip in clips}
+    selected_ids: list[str] = []
+    total_duration = 0.0
+
+    for clip_id in llm_video_ids:
+        clip = clip_by_id.get(clip_id)
+        if not clip or clip_id in selected_ids:
+            continue
+        selected_ids.append(clip_id)
+        total_duration += _clip_duration_seconds(clip)
+        if total_duration >= target_duration_seconds:
+            return selected_ids
+
+    story_terms = _story_terms(item, content_type)
+    remaining = [
+        clip for clip in clips
+        if str(clip["id"]) not in selected_ids
+    ]
+    ranked_remaining = sorted(
+        remaining,
+        key=lambda clip: _clip_relevance_score(clip, story_terms),
+        reverse=True,
+    )
+
+    for clip in ranked_remaining:
+        clip_id = str(clip["id"])
+        selected_ids.append(clip_id)
+        total_duration += _clip_duration_seconds(clip)
+        if total_duration >= target_duration_seconds:
+            break
+
+    logger.info(
+        "Clip coverage for '%s': %.1fs / target %ss using %d clip(s)",
+        item.headline[:60],
+        total_duration,
+        target_duration_seconds,
+        len(selected_ids),
+    )
+    return selected_ids
+
+
 
 def generate_segment_script(
     item: NewsItem,
@@ -50,7 +141,7 @@ def generate_segment_script(
 ) -> Script:
     """25-30 second segment script for multi-story videos (~80 words).
 
-    Also selects up to 3 clip IDs from the local library in one Groq call.
+    Also selects enough unique clip IDs to cover the story runtime.
     Pass clips= to reuse an already-fetched library (avoids repeated DB reads
     when generating scripts for multiple stories in one run).
     """
@@ -63,7 +154,7 @@ def generate_segment_script(
 
     if clips:
         clip_lines = "\n".join(
-            f"ID: {c['id']} | Description: {c['description']} | Keywords: {c['keywords'] or ''}"
+            f"ID: {c['id']} | Duration: {_clip_duration_seconds(c):.2f}s | Description: {c['description']} | Keywords: {c['keywords'] or ''}"
             for c in clips
         )
         clip_block = f"\n\nAVAILABLE VIDEO CLIPS:\n{clip_lines}"
@@ -82,7 +173,7 @@ def generate_segment_script(
         '    "<point 2 — one detailed fact relevant to this story, 15-20 words>",\n'
         '    "<point 3 — one detailed fact relevant to this story, 15-20 words>"\n'
         '  ],\n'
-        '  "video_ids": ["<id1>", "<id2>", "<id3>"]\n'
+        '  "video_ids": ["<id1>", "<id2>", "<id3>", "..."]\n'
         '}\n'
         "headline: clean formatted version of the story for on-screen display.\n"
         "panel_label examples by story type:\n"
@@ -93,8 +184,9 @@ def generate_segment_script(
         "  injury/squad news   → SQUAD UPDATE (list player, timeline, impact)\n"
         "  club statement      → CLUB NEWS (list what was confirmed, when, next steps)\n"
         "points: 3 short bullet facts shown on screen — match the panel_label context, NOT script sentences.\n"
-        "video_ids: 3 clip IDs that best match this story visually, in order of appearance. "
-        "If fewer than 3 clips are available include as many as possible. If none, use []."
+        "video_ids: return 4 to 8 UNIQUE clip IDs that best match this story visually, in preferred usage order. "
+        "Do not repeat clip IDs. If fewer than 4 relevant clips exist, return as many unique clips as possible. "
+        "If none fit, use []."
     )
 
     _MIN_WORDS = 50
@@ -124,16 +216,23 @@ def generate_segment_script(
     display_headline = str(data.get("headline", "")).strip()
     panel_label      = str(data.get("panel_label", "")).strip().upper()
     display_points   = [str(p) for p in data.get("points", []) if p][:3]
-    video_ids        = [str(v) for v in data.get("video_ids", []) if v][:3]
-
     wc = _word_count(text)
+    estimated_duration = _estimate_duration(wc)
+    llm_video_ids = [str(v) for v in data.get("video_ids", []) if v]
+    video_ids = _select_covering_clip_ids(
+        llm_video_ids,
+        clips,
+        estimated_duration,
+        item,
+        content_type,
+    )
     logger.info(
         "Segment script: %s | %d words | clips=%s | %s",
         content_type, wc, video_ids, item.headline[:60],
     )
     return Script(
         news_id=item.id, script_type=content_type, format="segment",
-        text=text, word_count=wc, estimated_duration_seconds=_estimate_duration(wc),
+        text=text, word_count=wc, estimated_duration_seconds=estimated_duration,
         selected_clip_ids=video_ids,
         display_headline=display_headline,
         panel_label=panel_label,

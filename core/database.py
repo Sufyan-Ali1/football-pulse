@@ -89,6 +89,24 @@ def init_db() -> None:
                 last_used_at  TEXT
             )
         """)
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS match_videos (
+                fixture_id           INTEGER PRIMARY KEY,
+                match_date           TEXT,
+                league_name          TEXT,
+                home_team            TEXT,
+                away_team            TEXT,
+                status               TEXT DEFAULT 'pending',
+                video_path           TEXT,
+                youtube_id           TEXT,
+                error                TEXT,
+                facts_json           TEXT,
+                script_text          TEXT,
+                finished_detected_at TEXT,
+                created_at           TEXT NOT NULL,
+                updated_at           TEXT NOT NULL
+            )
+        """)
         c.commit()
 
 
@@ -230,6 +248,85 @@ def daily_video_exists(video_date: str) -> bool:
         return c.execute(
             "SELECT 1 FROM daily_videos WHERE video_date=? AND status IN ('done','generating')",
             (video_date,),
+        ).fetchone() is not None
+
+
+# ── Match videos ──────────────────────────────────────────────────────────────
+
+def get_match_video(fixture_id: int) -> sqlite3.Row | None:
+    with _conn() as c:
+        return c.execute(
+            "SELECT * FROM match_videos WHERE fixture_id=?",
+            (fixture_id,),
+        ).fetchone()
+
+
+def create_match_video_record(
+    fixture_id: int,
+    match_date: str,
+    league_name: str,
+    home_team: str,
+    away_team: str,
+    finished_detected_at: str | None = None,
+) -> None:
+    now = datetime.now(timezone.utc).isoformat()
+    with _conn() as c:
+        c.execute(
+            """INSERT OR IGNORE INTO match_videos
+               (fixture_id, match_date, league_name, home_team, away_team,
+                status, finished_detected_at, created_at, updated_at)
+               VALUES (?,?,?,?,?,?,?,?,?)""",
+            (
+                fixture_id,
+                match_date,
+                league_name,
+                home_team,
+                away_team,
+                "pending",
+                finished_detected_at or now,
+                now,
+                now,
+            ),
+        )
+        c.commit()
+
+
+def update_match_video(
+    fixture_id: int,
+    status: str,
+    video_path: str | None = None,
+    youtube_id: str | None = None,
+    error: str | None = None,
+    facts_json: str | None = None,
+    script_text: str | None = None,
+) -> None:
+    with _conn() as c:
+        c.execute(
+            """UPDATE match_videos
+               SET status=?, video_path=?, youtube_id=?, error=?,
+                   facts_json=COALESCE(?, facts_json),
+                   script_text=COALESCE(?, script_text),
+                   updated_at=?
+               WHERE fixture_id=?""",
+            (
+                status,
+                video_path,
+                youtube_id,
+                error,
+                facts_json,
+                script_text,
+                datetime.now(timezone.utc).isoformat(),
+                fixture_id,
+            ),
+        )
+        c.commit()
+
+
+def match_video_in_progress_or_done(fixture_id: int) -> bool:
+    with _conn() as c:
+        return c.execute(
+            "SELECT 1 FROM match_videos WHERE fixture_id=? AND status IN ('generating','done')",
+            (fixture_id,),
         ).fetchone() is not None
 
 

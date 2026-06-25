@@ -146,6 +146,26 @@ MIN_STORIES_FOR_DAILY    = int(os.environ.get("MIN_STORIES_FOR_DAILY", "2"))
 MAX_STORIES_FOR_DAILY    = int(os.environ.get("MAX_STORIES_FOR_DAILY", "5"))
 DAILY_VIDEO_HOURS_UTC    = [9, 19]   # 9 AM and 7 PM UTC
 
+# Post-match summary video config
+POST_MATCH_ENABLED = os.environ.get("POST_MATCH_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+POST_MATCH_TARGET_LEAGUE_ID = int(os.environ.get("POST_MATCH_TARGET_LEAGUE_ID", str(LIVESTREAM_TARGET_LEAGUE_ID)))
+POST_MATCH_TARGET_SEASON = int(os.environ.get("POST_MATCH_TARGET_SEASON", str(LIVESTREAM_TARGET_SEASON)))
+POST_MATCH_TIMEZONE = os.environ.get("POST_MATCH_TIMEZONE", LIVE_SCORE_TIMEZONE).strip() or "UTC"
+POST_MATCH_CHECK_INTERVAL_SECONDS = int(os.environ.get("POST_MATCH_CHECK_INTERVAL_SECONDS", "300"))
+POST_MATCH_LOOKBACK_DAYS = int(os.environ.get("POST_MATCH_LOOKBACK_DAYS", "1"))
+POST_MATCH_LOOKAHEAD_DAYS = int(os.environ.get("POST_MATCH_LOOKAHEAD_DAYS", "0"))
+POST_MATCH_LOOKAHEAD_HOURS = int(os.environ.get("POST_MATCH_LOOKAHEAD_HOURS", "24"))
+POST_MATCH_NO_FIXTURE_SLEEP_SECONDS = int(os.environ.get("POST_MATCH_NO_FIXTURE_SLEEP_SECONDS", "86400"))
+POST_MATCH_PREMATCH_LEAD_SECONDS = int(os.environ.get("POST_MATCH_PREMATCH_LEAD_SECONDS", "600"))
+POST_MATCH_LIVE_EARLY_CHECK_MINUTE = int(os.environ.get("POST_MATCH_LIVE_EARLY_CHECK_MINUTE", "45"))
+POST_MATCH_LIVE_LATE_CHECK_MINUTE = int(os.environ.get("POST_MATCH_LIVE_LATE_CHECK_MINUTE", "80"))
+POST_MATCH_LIVE_FINAL_POLL_SECONDS = int(os.environ.get("POST_MATCH_LIVE_FINAL_POLL_SECONDS", "300"))
+POST_MATCH_SETTLE_SECONDS = int(os.environ.get("POST_MATCH_SETTLE_SECONDS", "600"))
+POST_MATCH_UPLOAD_ENABLED = os.environ.get("POST_MATCH_UPLOAD_ENABLED", "true").strip().lower() in {"1", "true", "yes", "on"}
+POST_MATCH_PRIVACY_STATUS = os.environ.get("POST_MATCH_PRIVACY_STATUS", "public").strip().lower()
+POST_MATCH_VERBOSE_LOGS = os.environ.get("POST_MATCH_VERBOSE_LOGS", "false").strip().lower() in {"1", "true", "yes", "on"}
+POST_MATCH_DEBUG_DIR = os.environ.get("POST_MATCH_DEBUG_DIR", str(TEMP_DIR / "post_match_debug"))
+
 # ── Pipeline retry config ─────────────────────────────────────────────────────
 MAX_RETRIES     = 3
 RETRY_BACKOFF   = 2  # exponential backoff base (seconds)
