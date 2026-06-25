@@ -27,7 +27,8 @@ from process.match_facts import extract_match_facts, is_finished_fixture
 from process.match_script_gen import (
     build_match_metadata,
     build_match_news_item,
-    generate_match_script,
+    combine_match_script_parts,
+    generate_match_script_parts,
 )
 from process.video_maker import create_multi_story_video
 from process.voiceover import generate_voiceover
@@ -211,11 +212,27 @@ def _save_video_metadata(video_output: Path, metadata) -> Path:
     return metadata_path
 
 
+def _part_news_item(base_item, script, index: int, total: int):
+    label = script.panel_label.replace("_", " ").title() if script.panel_label else f"Part {index}"
+    headline = f"{base_item.headline} - {label}"
+    return type(base_item)(
+        id=script.news_id,
+        headline=headline,
+        body=script.text,
+        url=base_item.url,
+        source=base_item.source,
+        source_type=base_item.source_type,
+        timestamp=base_item.timestamp,
+        raw={"fixture_part": index, "fixture_parts_total": total, "section": script.panel_label},
+    )
+
+
 def _generate_fixture_video(fixture_id: int) -> None:
     logger.info("Post-match video generation started for fixture %s", fixture_id)
     _write_debug_artifact(fixture_id, "step_00_generation_started", {"fixture_id": fixture_id})
     update_match_video(fixture_id, "generating")
     vo_path: Path | None = None
+    vo_paths: list[Path] = []
     video_output: Path | None = None
     metadata_path: Path | None = None
 
@@ -230,7 +247,8 @@ def _generate_fixture_video(fixture_id: int) -> None:
         clips = get_available_clips()
         _write_debug_artifact(fixture_id, "step_03_available_clips", {"count": len(clips), "clips": clips})
         logger.info("Post-match step fixture %s: generating section-wise LLM script", fixture_id)
-        script = generate_match_script(facts, clips=clips)
+        script_parts = generate_match_script_parts(facts, clips=clips)
+        script = combine_match_script_parts(facts, script_parts)
         _write_debug_artifact(
             fixture_id,
             "step_04_final_script",
@@ -241,18 +259,37 @@ def _generate_fixture_video(fixture_id: int) -> None:
                 "selected_clip_ids": script.selected_clip_ids,
                 "display_headline": script.display_headline,
                 "display_points": script.display_points,
+                "parts": [
+                    {
+                        "news_id": part.news_id,
+                        "panel_label": part.panel_label,
+                        "text": part.text,
+                        "word_count": part.word_count,
+                        "estimated_duration_seconds": part.estimated_duration_seconds,
+                        "selected_clip_ids": part.selected_clip_ids,
+                    }
+                    for part in script_parts
+                ],
             },
         )
         item = build_match_news_item(facts)
         _write_debug_artifact(fixture_id, "step_05_news_item", item.__dict__)
 
-        logger.info("Post-match step fixture %s: generating voiceover", fixture_id)
-        vo_path = generate_voiceover(script, "english")
-        _write_debug_artifact(fixture_id, "step_06_voiceover", {"path": str(vo_path)})
+        logger.info("Post-match step fixture %s: generating %d section voiceover(s)", fixture_id, len(script_parts))
+        stories = []
+        for index, part in enumerate(script_parts, start=1):
+            vo_path = generate_voiceover(part, "english")
+            vo_paths.append(vo_path)
+            stories.append((part, _part_news_item(item, part, index, len(script_parts)), vo_path))
+        _write_debug_artifact(
+            fixture_id,
+            "step_06_voiceovers",
+            [{"news_id": part.news_id, "path": str(path)} for part, _, path in stories],
+        )
         output_name = f"match_{fixture_id}_{date.today().isoformat()}"
         logger.info("Post-match step fixture %s: rendering final video", fixture_id)
         video_output = create_multi_story_video(
-            [(script, item, vo_path)],
+            stories,
             output_name=output_name,
         )
         _write_debug_artifact(fixture_id, "step_07_video_rendered", {"path": str(video_output)})
@@ -270,7 +307,7 @@ def _generate_fixture_video(fixture_id: int) -> None:
             _write_debug_artifact(fixture_id, "step_09_youtube_upload_response", {"youtube_id": youtube_id})
             logger.info("Post-match YouTube upload complete for fixture %s: %s", fixture_id, youtube_id)
 
-        used_clip_ids = list(script.selected_clip_ids)
+        used_clip_ids = sorted({clip_id for part in script_parts for clip_id in part.selected_clip_ids})
         logger.info("Post-match step fixture %s: marking %d selected clip(s) as used", fixture_id, len(used_clip_ids))
         mark_video_clips_used(used_clip_ids)
         update_match_video(
@@ -296,8 +333,8 @@ def _generate_fixture_video(fixture_id: int) -> None:
         if settings.POST_MATCH_UPLOAD_ENABLED:
             video_output.unlink(missing_ok=True)
             metadata_path.unlink(missing_ok=True)
-        if vo_path:
-            vo_path.unlink(missing_ok=True)
+        for path in vo_paths:
+            path.unlink(missing_ok=True)
 
         logger.info("Post-match video done for fixture %s", fixture_id)
     except Exception as exc:
@@ -308,8 +345,8 @@ def _generate_fixture_video(fixture_id: int) -> None:
             metadata_path.unlink(missing_ok=True)
         if video_output:
             video_output.unlink(missing_ok=True)
-        if vo_path:
-            vo_path.unlink(missing_ok=True)
+        for path in vo_paths:
+            path.unlink(missing_ok=True)
 
 
 def _process_finished_fixture(fixture: dict, force: bool = False) -> bool:

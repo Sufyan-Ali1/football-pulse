@@ -27,6 +27,18 @@ _SECTION_SPECS = [
     ("closing", "Close with a short assessment. Do not invent next fixtures or milestones."),
 ]
 
+_SECTION_LABELS = {
+    "opening_hook": "Opening Hook",
+    "match_result": "Match Result",
+    "first_half": "First Half",
+    "second_half": "Second Half",
+    "goals_recap": "Goals Recap",
+    "turning_points": "Turning Points",
+    "top_performers": "Top Performers",
+    "stats_analysis": "Match Stats",
+    "closing": "Final Word",
+}
+
 
 def _debug_enabled() -> bool:
     return bool(getattr(settings, "POST_MATCH_VERBOSE_LOGS", False))
@@ -186,8 +198,8 @@ def _fallback_section(section: str, facts: MatchFacts) -> str:
     return ""
 
 
-def generate_match_script(facts: MatchFacts, clips: list | None = None) -> Script:
-    sections: list[str] = []
+def _generate_section_texts(facts: MatchFacts) -> list[tuple[str, str]]:
+    sections: list[tuple[str, str]] = []
     for section, instruction in _SECTION_SPECS:
         if _should_skip_section(facts, section):
             continue
@@ -203,29 +215,54 @@ def generate_match_script(facts: MatchFacts, clips: list | None = None) -> Scrip
             text = _fallback_section(section, facts)
         if text:
             _write_debug_artifact(facts.fixture_id, f"section_{section}_text", {"section": section, "text": text})
-            sections.append(text)
+            sections.append((section, text))
 
     if not sections:
         sections = [
-            _fallback_section("opening_hook", facts),
-            _fallback_section("match_result", facts),
-            _fallback_section("closing", facts),
+            ("opening_hook", _fallback_section("opening_hook", facts)),
+            ("match_result", _fallback_section("match_result", facts)),
+            ("closing", _fallback_section("closing", facts)),
         ]
+    return [(section, text) for section, text in sections if text]
 
-    text = "\n\n".join(section for section in sections if section).strip()
+
+def _make_match_script(
+    facts: MatchFacts,
+    text: str,
+    selected_clip_ids: list[str],
+    *,
+    news_id: str,
+    script_format: str,
+    panel_label: str,
+) -> Script:
     wc = _word_count(text)
     estimated_duration = _estimate_duration(wc)
-    script = Script(
-        news_id=f"match_{facts.fixture_id}",
+    return Script(
+        news_id=news_id,
         script_type="tactical",
-        format="match",
+        format=script_format,
         text=text,
         word_count=wc,
         estimated_duration_seconds=estimated_duration,
-        selected_clip_ids=select_match_clip_ids(facts, clips or [], estimated_duration),
+        selected_clip_ids=selected_clip_ids,
         display_headline=f"{facts.home_team.upper()} {facts.scoreline} {facts.away_team.upper()}",
-        panel_label="MATCH STATS",
+        panel_label=panel_label,
         display_points=build_display_points(facts),
+    )
+
+
+def generate_match_script(facts: MatchFacts, clips: list | None = None) -> Script:
+    sections = _generate_section_texts(facts)
+    text = "\n\n".join(section_text for _, section_text in sections).strip()
+    wc = _word_count(text)
+    estimated_duration = _estimate_duration(wc)
+    script = _make_match_script(
+        facts,
+        text,
+        select_match_clip_ids(facts, clips or [], estimated_duration),
+        news_id=f"match_{facts.fixture_id}",
+        script_format="match",
+        panel_label="MATCH STATS",
     )
     logger.info("Match script generated for fixture %s: %d words", facts.fixture_id, wc)
     _write_debug_artifact(
@@ -238,6 +275,70 @@ def generate_match_script(facts: MatchFacts, clips: list | None = None) -> Scrip
         },
     )
     return script
+
+
+def generate_match_script_parts(facts: MatchFacts, clips: list | None = None) -> list[Script]:
+    sections = _generate_section_texts(facts)
+    available_clips = clips or []
+    used_clip_ids: set[str] = set()
+    scripts: list[Script] = []
+
+    for index, (section, text) in enumerate(sections, start=1):
+        wc = _word_count(text)
+        estimated_duration = _estimate_duration(wc)
+        selected_clip_ids = select_match_clip_ids(
+            facts,
+            available_clips,
+            estimated_duration,
+            exclude_clip_ids=used_clip_ids,
+        )
+        used_clip_ids.update(selected_clip_ids)
+        scripts.append(
+            _make_match_script(
+                facts,
+                text,
+                selected_clip_ids,
+                news_id=f"match_{facts.fixture_id}_{index:02d}_{section}",
+                script_format="match_part",
+                panel_label=_SECTION_LABELS.get(section, "Match Summary").upper(),
+            )
+        )
+
+    logger.info(
+        "Match script parts generated for fixture %s: %d part(s), %d total words",
+        facts.fixture_id,
+        len(scripts),
+        sum(script.word_count for script in scripts),
+    )
+    _write_debug_artifact(
+        facts.fixture_id,
+        "script_parts",
+        [
+            {
+                "news_id": script.news_id,
+                "panel_label": script.panel_label,
+                "word_count": script.word_count,
+                "estimated_duration_seconds": script.estimated_duration_seconds,
+                "selected_clip_ids": script.selected_clip_ids,
+                "text": script.text,
+            }
+            for script in scripts
+        ],
+    )
+    return scripts
+
+
+def combine_match_script_parts(facts: MatchFacts, scripts: list[Script]) -> Script:
+    text = "\n\n".join(script.text for script in scripts if script.text).strip()
+    selected_clip_ids = sorted({clip_id for script in scripts for clip_id in script.selected_clip_ids})
+    return _make_match_script(
+        facts,
+        text,
+        selected_clip_ids,
+        news_id=f"match_{facts.fixture_id}",
+        script_format="match",
+        panel_label="MATCH STATS",
+    )
 
 
 def build_display_points(facts: MatchFacts) -> list[str]:
@@ -285,16 +386,22 @@ def _clip_score(clip: dict, terms: set[str]) -> tuple[int, float]:
     return len(terms & clip_terms), _clip_duration_seconds(clip)
 
 
-def select_match_clip_ids(facts: MatchFacts, clips: list, target_duration_seconds: int) -> list[str]:
+def select_match_clip_ids(
+    facts: MatchFacts,
+    clips: list,
+    target_duration_seconds: int,
+    exclude_clip_ids: set[str] | None = None,
+) -> list[str]:
     if not clips or target_duration_seconds <= 0:
         return []
+    exclude_clip_ids = exclude_clip_ids or set()
     terms = _match_terms(facts)
     ranked = sorted(clips, key=lambda clip: _clip_score(clip, terms), reverse=True)
     selected: list[str] = []
     total_duration = 0.0
     for clip in ranked:
         clip_id = str(clip["id"])
-        if clip_id in selected:
+        if clip_id in selected or clip_id in exclude_clip_ids:
             continue
         selected.append(clip_id)
         total_duration += _clip_duration_seconds(clip)

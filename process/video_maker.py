@@ -22,7 +22,7 @@ if not hasattr(Image, "ANTIALIAS"):
 from config import settings
 from core.types import NewsItem, Script
 from core.database import get_clips_by_ids
-from process.broadcast.assets import load_background, load_frame_and_mask, load_video_clip as _load_video_clip
+from process.broadcast.assets import load_background, load_frame_and_mask
 from process.broadcast.compositor import make_frame_func as _broadcast_make_frame
 from process.broadcast.ticker import build_ticker as _build_ticker
 from process.broadcast.animations import build_dp_anim as _build_dp_anim
@@ -54,6 +54,37 @@ def _fit_clip(clip, target_w: int, target_h: int):
     x1 = (clip.w - target_w) / 2
     y1 = (clip.h - target_h) / 2
     return clip.crop(x1=x1, y1=y1, x2=x1 + target_w, y2=y1 + target_h)
+
+
+class _ClipSequence:
+    """Lightweight looping sequence that avoids MoviePy concatenation memory overhead."""
+
+    def __init__(self, clips: list) -> None:
+        self.clips = [clip for clip in clips if getattr(clip, "duration", 0)]
+        self.duration = sum(float(clip.duration) for clip in self.clips)
+        self._bounds: list[tuple[float, float, object]] = []
+        offset = 0.0
+        for clip in self.clips:
+            end = offset + float(clip.duration)
+            self._bounds.append((offset, end, clip))
+            offset = end
+
+    def get_frame(self, t: float):
+        if not self._bounds or self.duration <= 0:
+            raise ValueError("No clips available in sequence")
+        local_t = t % self.duration
+        for start, end, clip in self._bounds:
+            if local_t < end:
+                return clip.get_frame(max(0.0, local_t - start))
+        start, _, clip = self._bounds[-1]
+        return clip.get_frame(max(0.0, local_t - start))
+
+    def close(self) -> None:
+        for clip in self.clips:
+            try:
+                clip.close()
+            except Exception:
+                pass
 
 
 def create_multi_story_video(
@@ -216,7 +247,7 @@ def create_multi_story_video(
         return VideoClip(_make_frame, duration=dur)
 
     # ── Pass 1: build all story clips ────────────────────────────────────────
-    built: list[tuple] = []   # (VideoClip, audio_clip, duration)
+    built: list[tuple] = []   # (VideoClip, audio_clip, duration, left_clip)
     _downloaded_clips: list[Path] = []  # cleaned up after render
 
     for idx, (script, item, vo_path) in enumerate(stories):
@@ -257,7 +288,7 @@ def create_multi_story_video(
                 if _drive_download(filename, download_path):
                     print(f"    Clip downloaded from Drive: {filename}")
                     _downloaded_clips.append(download_path)
-                    loaded.append((download_path, _load_video_clip(str(download_path))))
+                    loaded.append((download_path, _VFC(str(download_path))))
                 else:
                     print(f"    Clip not available on Drive: {filename}")
             if loaded:
@@ -266,10 +297,9 @@ def create_multi_story_video(
                     left_clip = loaded[0][1]
                     print(f"    Clip: {loaded[0][0].name}")
                 else:
-                    from moviepy.editor import concatenate_videoclips
-                    left_clip = concatenate_videoclips([c for _, c in loaded], method="compose")
+                    left_clip = _ClipSequence([c for _, c in loaded])
                     names = ", ".join(p.name for p, _ in loaded)
-                    print(f"    Clips ({len(loaded)}): {names}")
+                    print(f"    Clips ({len(loaded)} looped sequence): {names}")
             else:
                 print("    No clips available — left panel empty")
         else:
@@ -288,7 +318,7 @@ def create_multi_story_video(
         clip = VideoClip(make_frame, duration=duration)
         print(f"    Broadcast frame ready ({duration:.1f}s @ {_BC.FPS}fps)")
 
-        built.append((clip, audio_clip, duration))
+        built.append((clip, audio_clip, duration, left_clip))
         print(f"  [OK] Story {idx+1} built")
 
     # ── Pass 2: assemble ──────────────────────────────────────────────────────
@@ -303,15 +333,15 @@ def create_multi_story_video(
     # visible at t=0) so there is no double headline render after the wipe.
     _TRANSITION_SFX_PATH = settings.BASE_DIR / "config" / "audio" / "transition.mp3"
 
-    for idx, (clip, audio_clip, duration) in enumerate(built):
+    for idx, (clip, audio_clip, duration, _) in enumerate(built):
         video_clips.append(clip)
         if audio_clip:
             audio_clips.append(audio_clip.set_start(t_offset))
         t_offset += duration
 
         if idx < total - 1:
-            old_clip, _, old_dur = built[idx]
-            new_clip             = built[idx + 1][0]
+            old_clip, _, old_dur, _ = built[idx]
+            new_clip                = built[idx + 1][0]
 
             # Old side: continues live from old_dur — ticker keeps scrolling
             # New side: static frame at t=0 — empty slate, headline not yet visible
@@ -372,17 +402,23 @@ def create_multi_story_video(
             audio=has_audio,
             audio_codec="aac" if has_audio else None,
             ffmpeg_params=["-preset", "ultrafast"],
+            threads=2,
             verbose=False,
             logger=None,
         )
     finally:
         final.close()
         # Close all individual clips so Windows releases file handles before Drive sync
-        for clip, audio_clip, _ in built:
+        for clip, audio_clip, _, left_clip in built:
             try:
                 clip.close()
             except Exception:
                 pass
+            if left_clip:
+                try:
+                    left_clip.close()
+                except Exception:
+                    pass
             if audio_clip:
                 try:
                     audio_clip.close()
