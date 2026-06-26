@@ -15,6 +15,7 @@ THUMBNAILS_DIR = TEMP_DIR / "thumbnails"
 
 # ── Groq ─────────────────────────────────────────────────────────────────────
 GROQ_API_KEY          = os.environ.get("GROQ_API_KEY", "")
+GROQ_API_KEY_1        = os.environ.get("GROQ_API_KEY_1", "")
 GROQ_API_KEY_2        = os.environ.get("GROQ_API_KEY_2", "")
 GROQ_API_KEY_3        = os.environ.get("GROQ_API_KEY_3", "")
 GROQ_API_KEY_4        = os.environ.get("GROQ_API_KEY_4", "")

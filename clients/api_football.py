@@ -287,6 +287,12 @@ def normalize_fixture_players(rows: dict[str, Any]) -> dict[str, Any]:
         games = statistics.get("games") or {}
         shots = statistics.get("shots") or {}
         goals = statistics.get("goals") or {}
+        passes = statistics.get("passes") or {}
+        tackles = statistics.get("tackles") or {}
+        duels = statistics.get("duels") or {}
+        dribbles = statistics.get("dribbles") or {}
+        fouls = statistics.get("fouls") or {}
+        penalty = statistics.get("penalty") or {}
         cards = statistics.get("cards") or {}
         players.append(
             {
@@ -300,7 +306,26 @@ def normalize_fixture_players(rows: dict[str, Any]) -> dict[str, Any]:
                 "shots_total": shots.get("total"),
                 "shots_on": shots.get("on"),
                 "goals_total": goals.get("total"),
+                "goals_conceded": goals.get("conceded"),
+                "saves": goals.get("saves"),
                 "assists": goals.get("assists"),
+                "passes_total": passes.get("total"),
+                "key_passes": passes.get("key"),
+                "pass_accuracy": passes.get("accuracy"),
+                "tackles": tackles.get("total"),
+                "blocks": tackles.get("blocks"),
+                "interceptions": tackles.get("interceptions"),
+                "duels_total": duels.get("total"),
+                "duels_won": duels.get("won"),
+                "dribbles_attempts": dribbles.get("attempts"),
+                "dribbles_success": dribbles.get("success"),
+                "fouls_drawn": fouls.get("drawn"),
+                "fouls_committed": fouls.get("committed"),
+                "penalty_won": penalty.get("won"),
+                "penalty_committed": penalty.get("commited") or penalty.get("committed"),
+                "penalty_scored": penalty.get("scored"),
+                "penalty_missed": penalty.get("missed"),
+                "penalty_saved": penalty.get("saved"),
                 "yellow": cards.get("yellow"),
                 "red": cards.get("red"),
             }

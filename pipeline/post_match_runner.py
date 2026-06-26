@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import logging
+import subprocess
 import time
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -39,6 +40,7 @@ logger = logging.getLogger(__name__)
 _LIVE_STATUSES = {"1H", "HT", "2H", "ET", "BT", "P", "SUSP", "INT", "LIVE"}
 _NOT_STARTED_STATUSES = {"NS", "TBD"}
 _RECENT_MATCH_LOOKBACK_HOURS = 6
+_POST_MATCH_GROUP_1_LABELS = {"OPENING HOOK", "MATCH RESULT", "FIRST HALF", "SECOND HALF"}
 
 
 def _debug_enabled() -> bool:
@@ -227,6 +229,113 @@ def _part_news_item(base_item, script, index: int, total: int):
     )
 
 
+def _split_post_match_story_groups(stories: list[tuple]) -> list[list[tuple]]:
+    group_1 = [story for story in stories if story[0].panel_label in _POST_MATCH_GROUP_1_LABELS]
+    group_2 = [story for story in stories if story[0].panel_label not in _POST_MATCH_GROUP_1_LABELS]
+    return [group for group in (group_1, group_2) if group]
+
+
+def _ffmpeg_bin() -> str:
+    return getattr(settings, "LIVESTREAM_FFMPEG_BIN", "ffmpeg") or "ffmpeg"
+
+
+def _concat_rendered_groups(group_paths: list[Path], output_name: str) -> Path:
+    if not group_paths:
+        raise ValueError("No rendered post-match groups to concatenate")
+    if len(group_paths) == 1:
+        output_path = settings.VIDEOS_DIR / f"{output_name}.mp4"
+        if group_paths[0] != output_path:
+            group_paths[0].replace(output_path)
+        return output_path
+
+    output_path = settings.VIDEOS_DIR / f"{output_name}.mp4"
+    concat_file = settings.TEMP_DIR / f"{output_name}_concat.txt"
+    concat_file.parent.mkdir(parents=True, exist_ok=True)
+    lines = []
+    for path in group_paths:
+        safe_path = str(path.resolve()).replace("'", "'\\''")
+        lines.append(f"file '{safe_path}'")
+    concat_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    cmd = [
+        _ffmpeg_bin(),
+        "-y",
+        "-f",
+        "concat",
+        "-safe",
+        "0",
+        "-i",
+        str(concat_file),
+        "-c",
+        "copy",
+        str(output_path),
+    ]
+    logger.info("Concatenating %d post-match group video(s) into %s", len(group_paths), output_path.name)
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as exc:
+        logger.warning("Stream-copy concat failed, retrying with re-encode: %s", exc.stderr[-1000:])
+        cmd = [
+            _ffmpeg_bin(),
+            "-y",
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            str(concat_file),
+            "-c:v",
+            "libx264",
+            "-preset",
+            "ultrafast",
+            "-crf",
+            "18",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "192k",
+            str(output_path),
+        ]
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    finally:
+        concat_file.unlink(missing_ok=True)
+
+    for path in group_paths:
+        if path != output_path:
+            path.unlink(missing_ok=True)
+    return output_path
+
+
+def _render_post_match_groups(stories: list[tuple], output_name: str) -> Path:
+    groups = _split_post_match_story_groups(stories)
+    if len(groups) <= 1:
+        return create_multi_story_video(stories, output_name=output_name)
+
+    group_paths: list[Path] = []
+    try:
+        for index, group in enumerate(groups, start=1):
+            group_output_name = f"{output_name}_group_{index}"
+            logger.info(
+                "Rendering post-match group %d/%d with %d section(s)",
+                index,
+                len(groups),
+                len(group),
+            )
+            group_paths.append(
+                create_multi_story_video(
+                    group,
+                    output_name=group_output_name,
+                    include_intro=(index == 1),
+                    include_outro=(index == len(groups)),
+                )
+            )
+        return _concat_rendered_groups(group_paths, output_name)
+    except Exception:
+        for path in group_paths:
+            path.unlink(missing_ok=True)
+        raise
+
+
 def _generate_fixture_video(fixture_id: int) -> None:
     logger.info("Post-match video generation started for fixture %s", fixture_id)
     _write_debug_artifact(fixture_id, "step_00_generation_started", {"fixture_id": fixture_id})
@@ -287,11 +396,8 @@ def _generate_fixture_video(fixture_id: int) -> None:
             [{"news_id": part.news_id, "path": str(path)} for part, _, path in stories],
         )
         output_name = f"match_{fixture_id}_{date.today().isoformat()}"
-        logger.info("Post-match step fixture %s: rendering final video", fixture_id)
-        video_output = create_multi_story_video(
-            stories,
-            output_name=output_name,
-        )
+        logger.info("Post-match step fixture %s: rendering final video in grouped sections", fixture_id)
+        video_output = _render_post_match_groups(stories, output_name)
         _write_debug_artifact(fixture_id, "step_07_video_rendered", {"path": str(video_output)})
         logger.info("Post-match step fixture %s: building YouTube metadata", fixture_id)
         metadata = build_match_metadata(facts)

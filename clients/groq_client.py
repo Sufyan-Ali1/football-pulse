@@ -1,7 +1,7 @@
 """
 Rotating Groq client.
 
-Reads up to 5 API keys from settings (GROQ_API_KEY, GROQ_API_KEY_2 ... GROQ_API_KEY_5).
+Reads API keys from environment (GROQ_API_KEY, GROQ_API_KEY_1 ... GROQ_API_KEY_5).
 
 Key selection strategy:
   - Each request starts on a RANDOM key (spreads load evenly across all keys)
@@ -38,13 +38,17 @@ def _parse_retry_seconds(message: str) -> float | None:
 
 def _load_keys() -> list[str]:
     keys = []
-    primary = os.environ.get("GROQ_API_KEY", "")
-    if primary:
-        keys.append(primary)
+    seen = set()
+    for name in ["GROQ_API_KEY", "GROQ_API_KEY_1"]:
+        key = os.environ.get(name, "")
+        if key and key not in seen:
+            keys.append(key)
+            seen.add(key)
     for i in range(2, 6):
         k = os.environ.get(f"GROQ_API_KEY_{i}", "")
-        if k:
+        if k and k not in seen:
             keys.append(k)
+            seen.add(k)
     return keys
 
 
