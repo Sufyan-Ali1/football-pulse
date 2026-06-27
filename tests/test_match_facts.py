@@ -14,6 +14,7 @@ def _sample_match_data():
             "venue": {"name": "Test Stadium", "city": "Test City"},
             "status": {"short": "FT"},
             "league": {
+                "id": 99,
                 "name": "Test League",
                 "type": "League",
                 "round": "Regular Season - 1",
@@ -64,24 +65,48 @@ def _sample_match_data():
             },
         ],
         "statistics": {
-            "Home FC": {"possession": "55%", "shots": "12"},
-            "Away FC": {"possession": "45%", "shots": "8"},
+            "Home FC": {"possession": "55%", "shots": "12", "shots_on_goal": "5", "corners": "4", "pass_accuracy": "88%"},
+            "Away FC": {"possession": "45%", "shots": "8", "shots_on_goal": "3", "corners": "2", "pass_accuracy": "84%"},
         },
+        "lineups": [
+            {
+                "team_id": 1,
+                "team_name": "Home FC",
+                "formation": "4-3-3",
+                "coach": "Home Coach",
+                "start_xi": [{"name": f"Home Player {i}", "number": i, "pos": "M"} for i in range(1, 12)],
+            },
+            {
+                "team_id": 2,
+                "team_name": "Away FC",
+                "formation": "4-2-3-1",
+                "coach": "Away Coach",
+                "start_xi": [{"name": f"Away Player {i}", "number": i, "pos": "M"} for i in range(1, 12)],
+            },
+        ],
         "players": [
             {
                 "team_name": "Home FC",
                 "players": [
-                    {"name": "Late Winner", "rating": "8.5", "goals_total": 1, "assists": 0, "shots_on": 2, "minutes": 90},
-                    {"name": "Home Creator", "rating": "7.8", "goals_total": 0, "assists": 1, "shots_on": 1, "minutes": 90},
+                    {"name": "Late Winner", "pos": "F", "rating": "8.5", "goals_total": 1, "assists": 0, "shots_on": 2, "minutes": 90},
+                    {"name": "Home Creator", "pos": "M", "rating": "7.8", "goals_total": 0, "assists": 1, "shots_on": 1, "key_passes": 4, "minutes": 90},
                 ],
             },
             {
                 "team_name": "Away FC",
                 "players": [
-                    {"name": "Away Scorer", "rating": "7.2", "goals_total": 1, "assists": 0, "shots_on": 1, "minutes": 90},
+                    {"name": "Away Scorer", "pos": "F", "rating": "7.2", "goals_total": 1, "assists": 0, "shots_on": 1, "minutes": 90},
                 ],
             },
         ],
+        "standings": {
+            "title": "Test League Table",
+            "group": "Group A",
+            "rows": [
+                {"rank": 1, "team_id": 1, "team_name": "Home FC", "points": 6, "goals_diff": 2, "played": 2, "win": 2, "draw": 0, "lose": 0},
+                {"rank": 2, "team_id": 2, "team_name": "Away FC", "points": 3, "goals_diff": 0, "played": 2, "win": 1, "draw": 0, "lose": 1},
+            ],
+        },
     }
 
 
@@ -104,8 +129,16 @@ def test_extract_match_facts_normalizes_core_match_data():
     assert facts.second_half_goals == {"home": 1, "away": 1}
     assert len(facts.goals) == 3
     assert len(facts.red_cards) == 1
-    assert facts.important_events[-1]["player"] == "Away Defender"
+    assert any(event["player"] == "Away Defender" for event in facts.important_events)
+    assert any(event["player"] == "Late Winner" and "winning_goal" in event.get("importance_tags", []) for event in facts.important_events)
     assert facts.top_players[0]["name"] == "Late Winner"
+    assert facts.player_of_match["name"] == "Late Winner"
+    assert facts.match_result_type == "late_winner"
+    assert facts.lineups_summary["home"]["formation"] == "4-3-3"
+    assert facts.standings_summary["group"] == "Group A"
+    assert facts.standings_summary["home"]["rank"] == 1
+    assert facts.stats_insights["dominant_team"] == "Home FC"
+    assert facts.stats_insights["clinical_team"] == "Home FC"
 
 
 def test_display_points_and_clip_selection_cover_duration():

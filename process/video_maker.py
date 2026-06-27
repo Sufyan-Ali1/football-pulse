@@ -42,8 +42,8 @@ def _clip_filename(file_path: str) -> str:
     return str(file_path).replace("\\", "/").rstrip("/").split("/")[-1]
 
 
-def _ticker_text(item: NewsItem) -> str:
-    headline = " ".join(item.headline.split())  # collapse all whitespace/newlines to single spaces
+def _ticker_text(script: Script, item: NewsItem) -> str:
+    headline = " ".join((script.display_ticker or item.headline).split())
     return f"  {headline}  ▪  {item.source}  ▪  {_CHANNEL}  ▪  {_TAGLINE}  ▪  "
 
 
@@ -91,6 +91,8 @@ def create_multi_story_video(
     stories: list[tuple[Script, NewsItem, Path | None]],
     output_name: str = "multi_story_breaking",
     include_intro_outro: bool = True,
+    include_intro: bool | None = None,
+    include_outro: bool | None = None,
 ) -> Path:
     """Render one or more news stories into a single broadcast video.
 
@@ -105,6 +107,11 @@ def create_multi_story_video(
         AudioFileClip,
         CompositeAudioClip,
     )
+
+    if include_intro is None:
+        include_intro = include_intro_outro
+    if include_outro is None:
+        include_outro = include_intro_outro
 
     output_path = settings.VIDEOS_DIR / f"{output_name}.mp4"
     settings.VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
@@ -129,7 +136,7 @@ def create_multi_story_video(
 
     # Intro
     t_offset = 0.0
-    if include_intro_outro:
+    if include_intro:
         if _INTRO_VIDEO_PATH.exists():
             intro_clip = _VFC(str(_INTRO_VIDEO_PATH))
             intro_clip = _fit_clip(intro_clip, _BC.W, _BC.H)
@@ -306,7 +313,7 @@ def create_multi_story_video(
             print("    No clip IDs in script — left panel empty")
 
         print("  Step 3/3 — Building broadcast frame")
-        ticker_text          = _ticker_text(item)
+        ticker_text          = _ticker_text(script, item)
         data                 = _build_broadcast_data(script, item, None, left_path, ticker_text)
         ticker_img, ticker_w = _build_ticker(data)
         dp_anim              = _build_dp_anim(data)
@@ -367,7 +374,7 @@ def create_multi_story_video(
         print(f"  [OK] Story {idx+1} queued  (running total: {t_offset:.1f}s)")
 
     # Outro
-    if include_intro_outro:
+    if include_outro:
         if _OUTRO_VIDEO_PATH.exists():
             outro_clip = _VFC(str(_OUTRO_VIDEO_PATH))
             outro_clip = _fit_clip(outro_clip, _BC.W, _BC.H)
