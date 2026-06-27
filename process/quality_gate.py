@@ -53,12 +53,20 @@ _LIVE_URL_PATTERNS = (
     re.compile(r"/sport/live(?:/|$)", re.I),
 )
 
+_STRICT_NON_FOOTBALL_PATTERNS = (
+    re.compile(r"\b(nba|nfl|nhl|mlb|stanley cup|super bowl|world series)\b", re.I),
+    re.compile(r"\b(college football|penn state football|iowa football|michigan football|washington football)\b", re.I),
+    re.compile(r"\b(wisconsin football|post-hype players|manning passing academy|bluegrass prospect)\b", re.I),
+    re.compile(r"\b(kentucky wildcats|mississippi state football|lsu)\b", re.I),
+    re.compile(r"\bfootball alliance\b", re.I),
+)
+
+_CONTEXTUAL_NON_FOOTBALL_PATTERNS = (
+    re.compile(r"\b(heavyweight|boxing|boxer|ufc|mma)\b", re.I),
+    re.compile(r"\b(cricket|wicket|bowler|batter|mccullum|jofra archer)\b", re.I),
+)
+
 _BAD_TEXT_PATTERNS = (
-    (re.compile(r"\b(heavyweight|boxing|boxer|ufc|mma)\b", re.I), "non_football_sport"),
-    (re.compile(r"\b(cricket|wicket|bowler|batter|mccullum|jofra archer)\b", re.I), "non_football_sport"),
-    (re.compile(r"\b(nba|nfl|nhl|mlb|stanley cup|super bowl|world series)\b", re.I), "non_football_sport"),
-    (re.compile(r"\b(college football|penn state football|iowa football|michigan football|washington football)\b", re.I), "non_football_sport"),
-    (re.compile(r"\b(wisconsin football|post-hype players|manning passing academy|bluegrass prospect)\b", re.I), "non_football_sport"),
     (re.compile(r"\btransfer centre live\b", re.I), "transfer_centre_live"),
     (re.compile(r"\blive updates?\b", re.I), "live_updates"),
     (re.compile(r"\blive blog\b", re.I), "live_blog"),
@@ -147,6 +155,14 @@ def _has_football_signal(text: str) -> bool:
     return any(pattern.search(text) for pattern in _FOOTBALL_SIGNAL_PATTERNS)
 
 
+def _non_football_reason(text: str) -> str | None:
+    if any(pattern.search(text) for pattern in _STRICT_NON_FOOTBALL_PATTERNS):
+        return "non_football_sport"
+    if not _has_football_signal(text) and any(pattern.search(text) for pattern in _CONTEXTUAL_NON_FOOTBALL_PATTERNS):
+        return "non_football_sport"
+    return None
+
+
 def assess_item_quality(item: NewsItem) -> QualityAssessment:
     """Assess a fetched NewsItem before it is stored or ranked."""
     source = (item.source or "").strip()
@@ -155,6 +171,10 @@ def assess_item_quality(item: NewsItem) -> QualityAssessment:
     combined = f"{headline} {body}".strip()
 
     reason = _bad_url_reason(item.url)
+    if reason:
+        return QualityAssessment(False, reason, _REJECT)
+
+    reason = _non_football_reason(combined)
     if reason:
         return QualityAssessment(False, reason, _REJECT)
 
