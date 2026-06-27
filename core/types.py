@@ -54,6 +54,7 @@ class Script:
     selected_clip_ids:          list[str] = field(default_factory=list)
     display_headline:           str       = ""
     display_points:             list[str] = field(default_factory=list)
+    display_ticker:             str       = ""
     panel_label:                str       = ""
 
 

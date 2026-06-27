@@ -42,8 +42,8 @@ def _clip_filename(file_path: str) -> str:
     return str(file_path).replace("\\", "/").rstrip("/").split("/")[-1]
 
 
-def _ticker_text(item: NewsItem) -> str:
-    headline = " ".join(item.headline.split())  # collapse all whitespace/newlines to single spaces
+def _ticker_text(script: Script, item: NewsItem) -> str:
+    headline = " ".join((script.display_ticker or item.headline).split())
     return f"  {headline}  ▪  {item.source}  ▪  {_CHANNEL}  ▪  {_TAGLINE}  ▪  "
 
 
@@ -313,7 +313,7 @@ def create_multi_story_video(
             print("    No clip IDs in script — left panel empty")
 
         print("  Step 3/3 — Building broadcast frame")
-        ticker_text          = _ticker_text(item)
+        ticker_text          = _ticker_text(script, item)
         data                 = _build_broadcast_data(script, item, None, left_path, ticker_text)
         ticker_img, ticker_w = _build_ticker(data)
         dp_anim              = _build_dp_anim(data)

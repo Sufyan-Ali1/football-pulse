@@ -121,8 +121,8 @@ def _team_key(team: str, home_team: str, away_team: str) -> str:
 def _normalize_event(event: dict[str, Any], home_team: str, away_team: str) -> dict[str, Any]:
     return {
         "minute": _event_minute(event),
-        "elapsed": event.get("elapsed"),
-        "extra": event.get("extra"),
+        "elapsed": _safe_int(event.get("elapsed")),
+        "extra": _safe_int(event.get("extra")),
         "team": event.get("team") or "",
         "team_key": _team_key(event.get("team") or "", home_team, away_team),
         "player": event.get("player") or "",

@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 
 _SECTION_SPECS = [
     ("opening_hook", "Write an energetic opening hook for a YouTube match summary. Use exactly 2 complete sentences and target 70-85 words. Include preferred_score_phrase exactly once anywhere in the hook. Naturally weave hook_moments_for_narration into the narrative, including player names, without copying those phrases verbatim. Rephrase naturally while preserving all factual details. Avoid repeating the same player name unnecessarily within a sentence. Mention group_name or clean_sheet only if present. Create excitement and curiosity without bullet points, labels, headline-style writing, or information absent from the JSON."),
-    ("match_result", "Set the match context and confirmed result in one sentence targeting 38-52 words. Include competition, round or group if available, teams, final score, winner or draw, and venue. Do not discuss points, qualification, table impact, tactics, or goal details."),
-    ("first_half", "Summarize the first half in 35-70 words using only first-half goals, cards, penalties, and turning points."),
-    ("second_half", "Summarize the second half in 35-70 words using only second-half goals, substitutions, cards, penalties, and turning points."),
+    ("match_result", "Set the match context and confirmed result in one sentence targeting 43-55 words. Include competition, round or group if available, teams, final score, winner or draw, and venue. Do not discuss points, qualification, table impact, tactics, or goal details."),
+    ("first_half", "Summarize the first half in 50-85 words using only first-half goals, cards, penalties, and turning points."),
+    ("second_half", "Summarize the second half in 50-85 words using only second-half goals, substitutions, cards, penalties, and turning points."),
     ("goals_recap", "Narrate every goal chronologically with minute, scorer, and assist if available."),
     ("turning_points", "Explain the listed deterministic turning points. If none are provided, return an empty string."),
     ("top_performers", "Discuss the player of the match and listed top players using only objective stats."),
@@ -70,6 +70,274 @@ def _word_count(text: str) -> int:
     return len(text.split())
 
 
+def _prompt_min_words(payload: dict[str, Any], default: int) -> int:
+    return int(payload.get("min_words") or default) + 15
+
+
+def _prompt_max_words(payload: dict[str, Any], default: int) -> int:
+    return int(payload.get("max_words") or default) + 15
+
+
+def _display_guidance(section: str, payload: dict[str, Any]) -> str:
+    if section == "opening_hook":
+        return (
+            "- title should feel dramatic and match-focused, not generic tournament news.\n"
+            "- points should highlight the result and the 2 or 3 biggest moments from the hook facts.\n"
+            "- ticker_text should summarise the result and biggest storyline in one natural line.\n"
+            "- avoid generic titles like WORLD CUP RESULTS or MATCH SUMMARY.\n"
+        )
+    if section == "match_result":
+        return (
+            "- title should state the confirmed result context, not generic summary wording.\n"
+            "- points should cover competition context, result, and winner confirmation.\n"
+            "- ticker_text should read like a clean lower-third result line.\n"
+        )
+    if section == "first_half":
+        return (
+            "- title should clearly indicate FIRST HALF context.\n"
+            "- points should cover the halftime score and the main first-half incidents.\n"
+            "- ticker_text should summarise the halftime story, not the full match.\n"
+        )
+    if section == "second_half":
+        return (
+            "- title should clearly indicate SECOND HALF context.\n"
+            "- points should cover the second-half score and the decisive second-half incident.\n"
+            "- ticker_text should summarise only the second-half story.\n"
+        )
+    if section == "goals_recap":
+        return (
+            "- title should clearly indicate GOALS RECAP context.\n"
+            "- points should mention the key scorers and goal sequence, not generic match bullets.\n"
+            "- ticker_text should summarise the goal story in one line.\n"
+        )
+    if section == "top_performers":
+        return (
+            "- title should clearly indicate TOP PERFORMERS context.\n"
+            "- points should mention the player of the match and the strongest objective performer stats.\n"
+            "- ticker_text should summarise the standout performers in one line.\n"
+        )
+    if section == "stats_analysis":
+        return (
+            "- title should clearly indicate MATCH STATS context.\n"
+            "- points should mention the most important listed statistics, not generic match bullets.\n"
+            "- ticker_text should summarise the official statistics in one factual line.\n"
+            "- ticker_text must not use interpretive verbs like leads, leading, trails, better, or worse.\n"
+        )
+    if section == "closing":
+        return (
+            "- title should clearly indicate FINAL WORD or a similarly final closing label.\n"
+            "- points should reinforce the closing assessment and player-of-the-match line when present.\n"
+            "- do not use subjective display words such as standout, shines, excels, praised, or strong showing.\n"
+            "- ticker_text should sound like the final factual sign-off for the match.\n"
+        )
+    return ""
+
+
+def _with_display_output_contract(section: str, prompt: str, payload: dict[str, Any]) -> str:
+    expanded = (
+        "Return valid JSON only: "
+        "{\"text\":\"...\",\"title\":\"...\",\"points\":[\"...\",\"...\",\"...\"],\"ticker_text\":\"...\"}"
+    )
+    contract = (
+        "\n\nAlso provide display metadata for this section:\n"
+        "- title: a short on-screen title, 3 to 6 words, ALL CAPS, factual and section-specific.\n"
+        "- points: exactly 3 short bullet points, each 3 to 8 words, factual and section-specific.\n"
+        "- ticker_text: one concise ticker line, 8 to 18 words, factual and section-specific.\n"
+        "- Do not repeat the full voiceover text inside title, points, or ticker_text.\n"
+        "- Do not mention JSON field names, snake_case keys, or placeholder labels in any output field.\n"
+        "- Do not wrap the JSON response in markdown fences.\n"
+        f"{_display_guidance(section, payload)}"
+    )
+    return re.sub(
+        r'Return valid JSON only:\s*\{\s*"text"\s*:\s*"?\.\.\."?\s*\}',
+        contract + expanded,
+        prompt,
+        flags=re.IGNORECASE,
+    )
+
+
+def _section_display_defaults(section: str, facts: MatchFacts) -> tuple[str, list[str], str]:
+    score = f"{facts.home_team} {facts.scoreline} {facts.away_team}"
+    goals = facts.goals or []
+    if section == "opening_hook":
+        title = f"{facts.away_team.upper()} TOO STRONG" if facts.winner == facts.away_team else f"{facts.home_team.upper()} TOO STRONG" if facts.winner == facts.home_team else "MATCH DRAMA"
+        points = [
+            f"RESULT: {score}",
+            f"EARLY STRIKE: {goals[0]['player']} {goals[0]['minute']}" if len(goals) >= 1 else "FAST START TO THE MATCH",
+            f"FINAL BLOW: {goals[-1]['player']} {goals[-1]['minute']}" if goals else "MATCH DECIDED BEFORE FULL TIME",
+        ]
+        ticker = f"{facts.winner or facts.home_team} took control early and never let the match slip."
+        return title, points, ticker
+    if section == "match_result":
+        title = "MATCH RESULT"
+        points = [
+            f"COMPETITION: {facts.competition}",
+            f"RESULT: {score}",
+            f"WINNER: {facts.winner}" if facts.winner and facts.winner != "Draw" else "RESULT: DRAW",
+        ]
+        ticker = f"{facts.competition}: {score} with {facts.winner or 'the result'} confirmed at full time."
+        return title, points, ticker
+    if section == "first_half":
+        fh = _first_half_score_phrase(facts).upper()
+        events = _first_half_events_for_narration(facts)
+        points = [fh]
+        for event in events[:2]:
+            player = event.get("player") or "KEY CHANCE"
+            minute = event.get("minute") or ""
+            points.append(f"{player.upper()} {minute}".strip())
+        while len(points) < 3:
+            points.append("BRAZIL HELD CONTROL BEFORE THE BREAK")
+        ticker = f"Half-time story: {_first_half_score_phrase(facts)} with the key first-half moments recorded."
+        return "FIRST HALF", points[:3], ticker
+    if section == "second_half":
+        sh = _second_half_score_phrase(facts).upper()
+        events = _second_half_events_for_narration(facts)
+        points = [sh]
+        for event in events[:2]:
+            player = event.get("player") or "KEY MOMENT"
+            minute = event.get("minute") or ""
+            points.append(f"{player.upper()} {minute}".strip())
+        while len(points) < 3:
+            points.append("SECOND HALF DECIDED THE FINISH")
+        ticker = f"Second-half story: {_second_half_score_phrase(facts)} with the decisive moment after the break."
+        return "SECOND HALF", points[:3], ticker
+    if section == "goals_recap":
+        points = []
+        for goal in goals[:3]:
+            player = str(goal.get("player") or "SCORER").upper()
+            minute = goal.get("minute") or ""
+            points.append(f"{player} {minute}".strip())
+        while len(points) < 3:
+            points.append("EVERY GOAL RETOLD IN ORDER")
+        goal_bits = "; ".join(f"{g.get('player')} {g.get('minute')}" for g in goals[:3]) if goals else ""
+        ticker = f"Goal recap: {goal_bits}" if goal_bits else "Goal recap from the recorded match events."
+        return "GOALS RECAP", points[:3], ticker
+    if section == "top_performers":
+        performers = _performers_for_narration(facts)
+        points = []
+        for performer in performers[:3]:
+            name = str(performer.get("name") or "PLAYER").upper()
+            if performer.get("is_player_of_match"):
+                points.append(f"POTM: {name}")
+            elif int(performer.get("goals") or 0) > 0:
+                points.append(f"{name}: {int(performer.get('goals') or 0)} GOAL")
+            elif int(performer.get("assists") or 0) > 0:
+                points.append(f"{name}: {int(performer.get('assists') or 0)} ASSIST")
+            else:
+                rating = performer.get("rating") or ""
+                points.append(f"{name}: RATING {rating}".strip())
+        while len(points) < 3:
+            points.append("TOP PERFORMERS PICKED BY STATS")
+        ticker = f"Top performers: {', '.join(str(p.get('name') or '') for p in performers[:3] if p.get('name'))}"
+        return "TOP PERFORMERS", points[:3], ticker
+    if section == "stats_analysis":
+        stats = facts.statistics or {}
+        home = stats.get(facts.home_team) or {}
+        away = stats.get(facts.away_team) or {}
+        points = [
+            f"POSSESSION {home.get('possession','')} - {away.get('possession','')}".strip(),
+            f"SHOTS {home.get('shots','')} - {away.get('shots','')}".strip(),
+            f"CORNERS {home.get('corners','')} - {away.get('corners','')}".strip(),
+        ]
+        ticker = f"Match stats: possession, shots and corners all reviewed from the official match data."
+        return "MATCH STATS", points[:3], ticker
+    if section == "closing":
+        title = "FINAL WORD"
+        points = [str(_closing_assessment_phrase(facts)).upper()]
+        potm = str((facts.player_of_match or {}).get("name") or "").strip()
+        if potm:
+            points.append(f"POTM: {potm.upper()}")
+        points.append("FULL-TIME VERDICT COMPLETE")
+        while len(points) < 3:
+            points.append("MATCH STORY COMPLETE")
+        ticker = f"Final word: {_closing_assessment_phrase(facts)}"
+        return title, points[:3], ticker
+    title = _SECTION_LABELS.get(section, "Match Summary").upper()
+    ticker = f"{title} - {facts.home_team} {facts.scoreline} {facts.away_team}"
+    return title, build_display_points(facts), ticker
+
+
+def _validate_display_metadata(section: str, title: str, points: list[str], ticker_text: str, payload: dict[str, Any]) -> str:
+    if _word_count(title) < 2 or _word_count(title) > 8:
+        return "display title must be 2-8 words"
+    if len(points) != 3:
+        return "display points must contain exactly 3 items"
+    for point in points:
+        wc = _word_count(point)
+        if wc < 2 or wc > 12:
+            return "each display point must be 2-12 words"
+    ticker_wc = _word_count(ticker_text)
+    if ticker_wc < 5 or ticker_wc > 24:
+        return "ticker_text must be 5-24 words"
+    lowered_title = title.lower()
+    lowered_points = " | ".join(points).lower()
+    lowered_ticker = ticker_text.lower()
+    banned_placeholders = [
+        "preferred_score_phrase",
+        "hook_moments_for_narration",
+        "player_of_match_name",
+        "ticker_text",
+        "snake_case",
+    ]
+    for phrase in banned_placeholders:
+        if phrase in lowered_title or phrase in lowered_points or phrase in lowered_ticker:
+            return f"display metadata must not include placeholder text: {phrase}"
+    if section == "stats_analysis":
+        for phrase in ("lead", "leads", "leading", "trail", "trails", "trailing", "better", "worse"):
+            if re.search(rf"\b{re.escape(phrase)}\b", lowered_ticker):
+                return f"stats_analysis ticker_text must stay factual and avoid interpretation: {phrase}"
+    if section == "closing":
+        for phrase in ("excels", "praised", "shines", "standout", "strong showing"):
+            if phrase in lowered_points or phrase in lowered_ticker:
+                return f"closing display metadata must avoid subjective wording: {phrase}"
+    if section == "top_performers":
+        performers = payload.get("performers_for_narration") or []
+        potm_name = next((str(p.get("name") or "").strip() for p in performers if p.get("is_player_of_match")), "")
+        if potm_name:
+            for point in points:
+                lower_point = point.lower()
+                if "potm" in lower_point or "player of the match" in lower_point:
+                    if potm_name.lower() not in lower_point:
+                        return f"top_performers display metadata must identify the correct player of the match: {potm_name}"
+    return ""
+
+
+def _parse_json_like_content(raw_content: str) -> dict[str, Any]:
+    stripped = (raw_content or "").strip()
+    if not stripped:
+        raise json.JSONDecodeError("empty response", stripped, 0)
+    if stripped.startswith("```"):
+        stripped = re.sub(r"^```(?:json)?\s*", "", stripped, flags=re.IGNORECASE)
+        stripped = re.sub(r"\s*```$", "", stripped)
+        stripped = stripped.strip()
+    try:
+        return json.loads(stripped)
+    except json.JSONDecodeError:
+        start = stripped.find("{")
+        end = stripped.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            candidate = stripped[start:end + 1]
+            try:
+                return json.loads(candidate)
+            except json.JSONDecodeError:
+                stripped = candidate
+        text_match = re.search(r'"text"\s*:\s*"(?P<val>.*?)"\s*,\s*"title"', stripped, flags=re.DOTALL)
+        title_match = re.search(r'"title"\s*:\s*"(?P<val>.*?)"\s*,\s*"points"', stripped, flags=re.DOTALL)
+        points_match = re.search(r'"points"\s*:\s*\[(?P<val>.*?)\]\s*,\s*"ticker_text"', stripped, flags=re.DOTALL)
+        ticker_match = re.search(r'"ticker_text"\s*:\s*"(?P<val>.*?)"\s*\}?$', stripped, flags=re.DOTALL)
+        if text_match or title_match or points_match or ticker_match:
+            points: list[str] = []
+            if points_match:
+                points = re.findall(r'"(.*?)"', points_match.group("val"), flags=re.DOTALL)
+            return {
+                "text": text_match.group("val").replace('\\"', '"').strip() if text_match else "",
+                "title": title_match.group("val").replace('\\"', '"').strip() if title_match else "",
+                "points": [point.replace('\\"', '"').strip() for point in points],
+                "ticker_text": ticker_match.group("val").replace('\\"', '"').strip() if ticker_match else "",
+            }
+        raise
+
+
 def _safe_float_local(value: Any) -> float:
     try:
         return float(value)
@@ -77,8 +345,17 @@ def _safe_float_local(value: Any) -> float:
         return 0.0
 
 
+def _split_sentences(text: str) -> list[str]:
+    stripped = text.strip()
+    if not stripped:
+        return []
+    protected = re.sub(r"\b([A-Z])\.\s+(?=[A-ZÀ-Ý][a-zà-ý])", r"\1<prd> ", stripped)
+    parts = [part.strip() for part in re.split(r"(?<=[.!?])\s+(?=[A-ZÀ-Ý])", protected) if part.strip()]
+    return [part.replace("<prd>", ".") for part in parts]
+
+
 def _sentence_count(text: str) -> int:
-    return len(_sentence_parts(text))
+    return len(_split_sentences_clean(text))
 
 
 def _sentence_parts(text: str) -> list[str]:
@@ -90,6 +367,15 @@ def _sentence_parts(text: str) -> list[str]:
 
 def _estimate_duration(wc: int) -> int:
     return round(wc / 2.5)
+
+
+def _split_sentences_clean(text: str) -> list[str]:
+    stripped = text.strip()
+    if not stripped:
+        return []
+    protected = re.sub(r"\b([A-Z])\.\s+(?=[A-Z][a-z])", r"\1<prd> ", stripped)
+    parts = [part.strip() for part in re.split(r"(?<=[.!?])\s+(?=[A-Z])", protected) if part.strip()]
+    return [part.replace("<prd>", ".") for part in parts]
 
 
 def _section_temperature(section: str) -> float:
@@ -114,7 +400,7 @@ def _section_max_tokens(section: str) -> int:
     if section == "goals_recap":
         return 180
     if section == "closing":
-        return 80
+        return 180
     return 700
 
 
@@ -420,7 +706,7 @@ def _top_performers_word_bounds(player_count: int) -> tuple[int, int]:
         return 18, 45
     if player_count == 2:
         return 32, 72
-    return 48, 110
+    return 38, 110
 
 
 def _top_performers_sentence_bounds(player_count: int) -> tuple[int, int]:
@@ -488,7 +774,7 @@ def _stats_analysis_sentence_bounds(stat_count: int) -> tuple[int, int]:
         return 1, 2
     if stat_count <= 4:
         return 2, 3
-    return 3, 4
+    return 4, 6
 
 
 def _stats_points_for_narration(
@@ -650,13 +936,15 @@ def _section_prompt(section: str, instruction: str, payload: dict[str, Any]) -> 
             "Your output is invalid if it is under 35 words.\n"
             "Requirements:\n"
             "- Exactly 2 complete sentences.\n"
-            "- Target 70 to 85 words total; never return fewer than 60 words.\n"
+            "- Target 45 to 60 words total; never return fewer than 35 words.\n"
             "- Sentence 1 must be 32 to 42 words and cover match context, venue, result, and match_result_type.\n"
-            "- Sentence 2 must be 32 to 42 words and cover the goal narrative and clean_sheet if present.\n"
+            "- Sentence 2 must be 16 to 28 words and cover the goal narrative and clean_sheet if present.\n"
+            "- Do not write a brief result line; use enough factual detail to comfortably exceed 35 words.\n"
             "- Include preferred_score_phrase exactly once anywhere in the hook.\n"
-            "- Naturally weave all hook_moments_for_narration into the narrative when there are 3 or fewer, including player names.\n"
+            "- When hook_moments_for_narration contains 3 or fewer items, include all of them in the hook narrative, including player names.\n"
             "- Do not copy hook_moments_for_narration verbatim; rephrase naturally while preserving factual details.\n"
             "- Avoid repeating the same player name unnecessarily within a sentence.\n"
+            "- Never mention JSON field names, variable names, or placeholders such as preferred_score_phrase or hook_moments_for_narration.\n"
             "- Mention group_name or clean_sheet only if present in the JSON.\n"
             "- Do not use label-style phrases like 'key moments:' or bullet points.\n\n"
             "Example style only, do not copy facts from this example:\n"
@@ -671,7 +959,7 @@ def _section_prompt(section: str, instruction: str, payload: dict[str, Any]) -> 
             "This section sets context only; deeper story and table impact are handled later.\n"
             "Requirements:\n"
             "- Exactly 1 complete sentence.\n"
-            "- Length: 28 to 40 words.\n"
+            "- Length: 43 to 55 words.\n"
             "- The sentence MUST begin exactly with: \"In {match_context_phrase},\"\n"
             "- Include preferred_score_phrase exactly once.\n"
             "- Include winner_confirmation_phrase exactly once.\n"
@@ -688,12 +976,13 @@ def _section_prompt(section: str, instruction: str, payload: dict[str, Any]) -> 
             "Every factual statement must be directly supported by the JSON. Never introduce events, players, statistics, or details not present in the JSON.\n"
             "Requirements:\n"
             "- Exactly 2 complete sentences.\n"
-            "- Length: min_words to max_words from the JSON.\n"
+            f"- Length: {_prompt_min_words(payload, 30)} to {_prompt_max_words(payload, 70)} words.\n"
             "- Sentence 1 must include first_half_score_phrase exactly once.\n"
             "- Sentence 2 must cover every event in first_half_events_for_narration exactly once.\n"
             "- Sentence 2 must narrate events in chronological order.\n"
             "- Preserve all player names, assist names, and special minute wording exactly as provided.\n"
-            "- Do not convert first-half stoppage time into '45th minute'.\n"
+            "- If the same player appears in multiple first-half events, use the full player name on first mention and avoid repeating the full name unnecessarily later in the sentence.\n"
+            "- Do not convert first-half stoppage time into '45th minute' or '45 minutes'.\n"
             "- Do not add subjective descriptions or qualitative assessments unless explicitly present in the JSON.\n"
             "- Do not add filler phrases that do not introduce factual information.\n"
             "- Avoid unnecessary repetition of player names while preserving factual accuracy.\n"
@@ -708,7 +997,7 @@ def _section_prompt(section: str, instruction: str, payload: dict[str, Any]) -> 
             "Every factual statement must be directly supported by the JSON. Never introduce events, players, statistics, tactics, injuries, quotes, or details not present in the JSON.\n"
             "Requirements:\n"
             "- Exactly 2 complete sentences.\n"
-            "- Length: min_words to max_words from the JSON.\n"
+            f"- Length: {_prompt_min_words(payload, 30)} to {_prompt_max_words(payload, 70)} words.\n"
             "- Sentence 1 must include second_half_score_phrase exactly once.\n"
             "- Sentence 2 must mention every event in second_half_events_for_narration exactly once and no additional events.\n"
             "- Sentence 2 must narrate events in chronological order.\n"
@@ -729,7 +1018,7 @@ def _section_prompt(section: str, instruction: str, payload: dict[str, Any]) -> 
             "This section only recaps the goals; do not restate the final score or match result.\n"
             "Requirements:\n"
             "- Use sentence_count_min to sentence_count_max complete sentences from the JSON.\n"
-            "- Length: min_words to max_words from the JSON.\n"
+            f"- Length: {_prompt_min_words(payload, 30)} to {_prompt_max_words(payload, 75)} words.\n"
             "- Mention every goal in goals_for_narration exactly once and no additional goals or events.\n"
             "- The order of narration must exactly match the order of goals_for_narration in the JSON.\n"
             "- Each goal must be explicitly narrated with scorer, minute, team, and assist if provided. Multiple goals may appear in the same sentence if the JSON order is preserved.\n"
@@ -741,7 +1030,7 @@ def _section_prompt(section: str, instruction: str, payload: dict[str, Any]) -> 
             "- Rephrase naturally while preserving every factual detail from each goal.\n"
             "- Repeat player names whenever necessary to preserve factual clarity.\n"
             "- For numeric minute wording like '7 minutes', say 'after 7 minutes' or 'at 7 minutes'; never say 'in the 7 minutes'.\n"
-            "- Do not say '45+3 minute', '45+3\\' minute', or '45th minute' when the JSON says first-half stoppage time.\n"
+            "- Do not say '45+3 minute', '45+3\\' minute', '45th minute', or '45 minutes' when the JSON says first-half stoppage time.\n"
             "- Do not mention the running score or final score at any point.\n"
             "- Do not add filler intros such as 'let's take a look' or subjective phrases such as 'final nail in the coffin'.\n"
             "- Keep the tone factual and suitable for spoken football commentary.\n\n"
@@ -756,12 +1045,13 @@ def _section_prompt(section: str, instruction: str, payload: dict[str, Any]) -> 
             "This section only describes the listed performers using objective metrics.\n"
             "Requirements:\n"
             "- Use sentence_count_min to sentence_count_max complete sentences from the JSON.\n"
-            "- Length: min_words to max_words from the JSON.\n"
+            f"- Length: {payload.get('min_words') or 18} to {payload.get('max_words') or 110} words.\n"
             "- Mention performers_for_narration in the exact order shown in the JSON.\n"
             "- Every performer in performers_for_narration must be mentioned exactly once and no performer may be omitted.\n"
             "- Each performer must receive exactly one sentence.\n"
             "- Each sentence must include the performer's name and team.\n"
-            "- Mention the rating only when it is present and greater than zero.\n"
+            "- Each sentence should be roughly 12 to 20 words so the full section has enough spoken detail.\n"
+            "- When a rating is present and greater than zero, each sentence must explicitly include the word rating and the numeric rating value.\n"
             "- Each sentence must include at least one non-zero statistic when one exists in the JSON.\n"
             "- When goals or assists are non-zero, they must be mentioned.\n"
             "- If neither goals nor assists are available, mention the first available non-zero metric in this order: saves, shots_on, key_passes, tackles, interceptions, clean_sheet, minutes.\n"
@@ -788,7 +1078,7 @@ def _section_prompt(section: str, instruction: str, payload: dict[str, Any]) -> 
             "Requirements:\n"
             "- Use sentence_count_min to sentence_count_max complete sentences from the JSON.\n"
             "- Multiple stat points may appear in the same sentence provided the JSON order is preserved.\n"
-            "- Length: min_words to max_words from the JSON.\n"
+            f"- Length: {_prompt_min_words(payload, 24)} to {_prompt_max_words(payload, 115)} words.\n"
             "- The order of narration must exactly match stat_points_for_narration in the JSON.\n"
             "- The total number of narrated statistic points must equal the number of elements in stat_points_for_narration.\n"
             "- Every stat point in stat_points_for_narration must be explicitly narrated exactly once and no stat point may be omitted or repeated.\n"
@@ -820,10 +1110,12 @@ def _section_prompt(section: str, instruction: str, payload: dict[str, Any]) -> 
             "This section should end the video briefly without repeating the scoreline or earlier analysis.\n"
             "Requirements:\n"
             "- Use sentence_count_min to sentence_count_max complete sentences from the JSON.\n"
-            "- Length: min_words to max_words from the JSON.\n"
+            f"- Length: {payload.get('min_words') or 10} to {payload.get('max_words') or 24} words.\n"
             "- Include the exact text from closing_assessment_phrase exactly once without rephrasing.\n"
             "- Treat closing_assessment_phrase as factual input from the JSON.\n"
+            "- Prefer starting with closing_assessment_phrase, then add a natural player-of-the-match clause if present.\n"
             "- If player_of_match_name is present, mention player_of_match_name exactly once, mention player_of_match_team exactly once, and include the exact phrase 'player of the match' exactly once.\n"
+            "- Use natural wording for that clause, such as '{player} of {team} was named player of the match'.\n"
             "- If player_of_match_name is empty, null, or missing, do not use the phrase 'player of the match'.\n"
             "- Do not mention player_of_match_name more than once.\n"
             "- Do not mention the final score, winning margin, venue, group, table, qualification, next fixture, or future outlook.\n"
@@ -862,11 +1154,11 @@ def _should_skip_section(facts: MatchFacts, section: str) -> bool:
     return False
 
 
-def _generate_section(section: str, instruction: str, facts: MatchFacts) -> str:
+def _generate_section(section: str, instruction: str, facts: MatchFacts) -> dict[str, Any]:
     payload = _compact_facts_for_section(facts, section)
     temperature = _section_temperature(section)
     max_tokens = _section_max_tokens(section)
-    prompt = _section_prompt(section, instruction, payload)
+    prompt = _with_display_output_contract(section, _section_prompt(section, instruction, payload), payload)
     messages = [{"role": "user", "content": prompt}]
     _write_debug_artifact(
         facts.fixture_id,
@@ -885,6 +1177,9 @@ def _generate_section(section: str, instruction: str, facts: MatchFacts) -> str:
     response = None
     raw_content = ""
     text = ""
+    title = ""
+    points: list[str] = []
+    ticker_text = ""
     validation_error = ""
     current_prompt = prompt
     for attempt in range(1, max_attempts + 1):
@@ -896,9 +1191,15 @@ def _generate_section(section: str, instruction: str, facts: MatchFacts) -> str:
             response_format={"type": "json_object"},
         )
         raw_content = response.choices[0].message.content
-        data = json.loads(raw_content)
+        data = _parse_json_like_content(raw_content)
         text = str(data.get("text") or "").strip()
+        title = str(data.get("title") or "").strip()
+        raw_points = data.get("points")
+        points = [str(point).strip() for point in raw_points] if isinstance(raw_points, list) else []
+        ticker_text = str(data.get("ticker_text") or "").strip()
         validation_error = _section_validation_error(section, text, payload)
+        if not validation_error:
+            validation_error = _validate_display_metadata(section, title, points, ticker_text, payload)
         if not validation_error:
             break
         _write_debug_artifact(
@@ -910,11 +1211,18 @@ def _generate_section(section: str, instruction: str, facts: MatchFacts) -> str:
                 "model": settings.GROQ_MODEL,
                 "raw_content": raw_content,
                 "text": text,
+                "title": title,
+                "points": points,
+                "ticker_text": ticker_text,
                 "validation_error": validation_error,
                 "usage": getattr(response, "usage", None),
             },
         )
-        current_prompt = _retry_prompt_for_section(prompt, section, payload, text, validation_error)
+        current_prompt = _with_display_output_contract(
+            section,
+            _retry_prompt_for_section(prompt, section, payload, text, validation_error),
+            payload,
+        )
 
     _write_debug_artifact(
         facts.fixture_id,
@@ -923,6 +1231,11 @@ def _generate_section(section: str, instruction: str, facts: MatchFacts) -> str:
             "section": section,
             "model": settings.GROQ_MODEL,
             "raw_content": raw_content,
+            "text": text,
+            "title": title,
+            "points": points,
+            "ticker_text": ticker_text,
+            "validation_error": validation_error,
             "usage": getattr(response, "usage", None),
         },
     )
@@ -930,7 +1243,13 @@ def _generate_section(section: str, instruction: str, facts: MatchFacts) -> str:
         logger.warning("Match script section invalid after LLM retries (%s): %s", section, validation_error)
         if section in {"opening_hook", "match_result", "first_half", "second_half", "goals_recap", "top_performers", "stats_analysis", "closing"}:
             raise ValueError(validation_error)
-    return text
+    return {
+        "section": section,
+        "text": text,
+        "title": title,
+        "points": points,
+        "ticker_text": ticker_text,
+    }
 
 
 def _retry_prompt_for_section(base_prompt: str, section: str, payload: dict[str, Any], previous_text: str, validation_error: str) -> str:
@@ -946,7 +1265,7 @@ def _retry_prompt_for_section(base_prompt: str, section: str, payload: dict[str,
             "Hard requirements:\n"
             f"- {payload.get('sentence_count_min') or 1} to {payload.get('sentence_count_max') or 4} complete sentences\n"
             "- multiple stat points may appear in the same sentence if JSON order is preserved\n"
-            f"- {payload.get('min_words') or 24} to {payload.get('max_words') or 115} words\n"
+            f"- {_prompt_min_words(payload, 24)} to {_prompt_max_words(payload, 115)} words\n"
             f"- mention every stat point exactly once in this order: {stat_facts}\n"
             "- the total number of narrated statistic points must equal the number of stat_points_for_narration entries\n"
             "- every stat point must explicitly include its statistic label using the JSON wording\n"
@@ -979,10 +1298,12 @@ def _retry_prompt_for_section(base_prompt: str, section: str, payload: dict[str,
             f"Previous text: {previous_text}\n\n"
             "Hard requirements:\n"
             f"- {payload.get('sentence_count_min') or 1} complete sentence\n"
-            f"- {payload.get('min_words') or 14} to {payload.get('max_words') or 28} words\n"
+            f"- {payload.get('min_words') or 10} to {payload.get('max_words') or 24} words\n"
             f"- include this exact phrase once without rephrasing: {payload.get('closing_assessment_phrase') or ''}\n"
             "- treat closing_assessment_phrase as factual input from the JSON\n"
+            "- prefer starting with closing_assessment_phrase, then add a natural player-of-the-match clause if present\n"
             "- if player_of_match_name is present, include player_of_match_name exactly once, player_of_match_team exactly once, and the exact phrase player of the match exactly once\n"
+            "- use natural wording such as '{player} of {team} was named player of the match'\n"
             "- if player_of_match_name is absent, do not use the phrase player of the match\n"
             "- do not mention player_of_match_name more than once\n"
             "- do not mention score, venue, group, table, qualification, next fixture, or future outlook\n"
@@ -1007,7 +1328,8 @@ def _retry_prompt_for_section(base_prompt: str, section: str, payload: dict[str,
             "- every performer must be mentioned exactly once and no performer may be omitted\n"
             "- each performer must receive exactly one sentence\n"
             "- each sentence must include name and team\n"
-            "- mention the rating only when it is present and greater than zero\n"
+            "- each sentence should be roughly 12 to 20 words so the full section has enough spoken detail\n"
+            "- when a rating is present and greater than zero, each sentence must explicitly include the word rating and the numeric rating value\n"
             "- each sentence must include at least one non-zero statistic when one exists in the JSON\n"
             "- when goals or assists are non-zero, they must be mentioned\n"
             "- if neither goals nor assists are available, mention the first available non-zero metric in this order: saves, shots_on, key_passes, tackles, interceptions, clean_sheet, minutes\n"
@@ -1037,7 +1359,7 @@ def _retry_prompt_for_section(base_prompt: str, section: str, payload: dict[str,
             f"Previous text: {previous_text}\n\n"
             "Hard requirements:\n"
             f"- {payload.get('sentence_count_min') or 1} to {payload.get('sentence_count_max') or 3} complete sentences\n"
-            f"- {payload.get('min_words') or 30} to {payload.get('max_words') or 75} words\n"
+            f"- {_prompt_min_words(payload, 30)} to {_prompt_max_words(payload, 75)} words\n"
             f"- mention every goal exactly once and no additional goals or events in this exact order: {goal_facts}\n"
             "- each goal must be explicitly narrated with scorer, minute, team, and assist if provided; multiple goals may appear in the same sentence if order is preserved\n"
             "- for normal goals, use 'scored for {team}' instead of vague phrases like 'added a goal'\n"
@@ -1048,7 +1370,7 @@ def _retry_prompt_for_section(base_prompt: str, section: str, payload: dict[str,
             "- repeat player names whenever necessary to preserve factual clarity\n"
             "- for numeric minute wording like '7 minutes', say 'after 7 minutes' or 'at 7 minutes'; never say 'in the 7 minutes'\n"
             "- do not mention the running score, final score, or match result\n"
-            "- do not say '45+3 minute', \"45+3' minute\", or '45th minute' for first-half stoppage time\n"
+            "- do not say '45+3 minute', \"45+3' minute\", '45th minute', or '45 minutes' for first-half stoppage time\n"
             "- no filler intro, no subjective phrases, no table impact\n"
             "- use spoken football commentary style, but stay factual\n"
             "- end the final sentence with a period\n"
@@ -1065,7 +1387,7 @@ def _retry_prompt_for_section(base_prompt: str, section: str, payload: dict[str,
             f"Previous text: {previous_text}\n\n"
             "Hard requirements:\n"
             "- exactly 2 complete sentences\n"
-            f"- {payload.get('min_words') or 30} to {payload.get('max_words') or 70} words\n"
+            f"- {_prompt_min_words(payload, 30)} to {_prompt_max_words(payload, 70)} words\n"
             f"- sentence 1 must include this exact phrase once: {payload.get('second_half_score_phrase') or ''}\n"
             f"- sentence 2 must mention every event exactly once and no additional events, in chronological order: {event_facts}\n"
             "- preserve all listed player names, assist names, and special minute wording exactly\n"
@@ -1087,11 +1409,12 @@ def _retry_prompt_for_section(base_prompt: str, section: str, payload: dict[str,
             f"Previous text: {previous_text}\n\n"
             "Hard requirements:\n"
             "- exactly 2 complete sentences\n"
-            f"- {payload.get('min_words') or 30} to {payload.get('max_words') or 70} words\n"
+            f"- {_prompt_min_words(payload, 30)} to {_prompt_max_words(payload, 70)} words\n"
             f"- sentence 1 must include this exact phrase once: {payload.get('first_half_score_phrase') or ''}\n"
             f"- sentence 2 must cover every event exactly once, in chronological order: {event_phrases}\n"
             "- preserve all listed player names, assist names, and special minute wording exactly\n"
-            "- do not say '45th minute' for first-half stoppage time\n"
+            "- if the same player appears twice, use the full name first and avoid repeating the full name unnecessarily later in the sentence\n"
+            "- do not say '45th minute' or '45 minutes' for first-half stoppage time\n"
             "- do not add subjective descriptions, qualitative assessments, or filler phrases\n"
             "- avoid unnecessary repetition of player names while preserving factual accuracy\n"
             "- use spoken football commentary style, but stay factual\n"
@@ -1108,7 +1431,7 @@ def _retry_prompt_for_section(base_prompt: str, section: str, payload: dict[str,
             f"Previous text: {previous_text}\n\n"
         "Hard requirements:\n"
         "- exactly 1 complete sentence\n"
-        "- 28 to 40 words\n"
+        "- 43 to 55 words\n"
         f"- the sentence MUST begin exactly with: \"In {payload.get('match_context_phrase') or ''},\"\n"
         f"- include this exact phrase once: {payload.get('preferred_score_phrase') or ''}\n"
         f"- include this exact phrase once: {payload.get('winner_confirmation_phrase') or ''}\n"
@@ -1146,14 +1469,16 @@ def _retry_prompt_for_section(base_prompt: str, section: str, payload: dict[str,
         "Rewrite the hook naturally from the JSON facts. Do not list events mechanically.\n\n"
         "Hard requirements:\n"
         "- exactly 2 complete sentences\n"
-        "- target 70 to 85 words total; never return fewer than 60 words\n"
+        "- target 45 to 60 words total; never return fewer than 35 words\n"
         "- sentence 1 must be 32 to 42 words and cover match context, venue, result, and match_result_type\n"
-        "- sentence 2 must be 32 to 42 words and cover the goal narrative and clean_sheet if present\n"
+        "- sentence 2 must be 16 to 28 words and cover the goal narrative and clean_sheet if present\n"
+        "- do not write a brief result line; use enough factual detail to comfortably exceed 35 words\n"
         f"- include this exact phrase once: {preferred_score_phrase}\n"
         f"- include these details if available: {competition}, {venue_short}, {group_name}, {clean_sheet}\n"
-        f"- naturally weave all of these hook moments into the narrative without copying them verbatim: {decisive_text}\n"
+        f"- naturally weave all of these hook moments into the narrative without copying them verbatim, and include all of them: {decisive_text}\n"
         f"- include these player names if provided: {player_names}\n"
         "- avoid repeating the same player name unnecessarily within a sentence\n"
+        "- never mention JSON field names, variable names, or placeholders such as preferred_score_phrase or hook_moments_for_narration\n"
         "- no comma-only headline, no fragments, no bullet points, no label-style phrasing like 'key moments:'\n"
         "- return valid JSON only: {\"text\":\"...\"}"
     )
@@ -1324,7 +1649,7 @@ def _section_validation_error(section: str, text: str, payload: dict[str, Any]) 
             return f"top_performers must be {sentence_min}-{sentence_max} sentences, got {sentences}"
         if not re.search(r"[.!?]$", text):
             return "top_performers must end with sentence punctuation"
-        sentence_texts = _sentence_parts(text)
+        sentence_texts = _split_sentences_clean(text)
         performers = payload.get("performers_for_narration") or []
         if len(sentence_texts) != len(performers):
             return "top_performers must use one sentence per performer"
@@ -1354,6 +1679,7 @@ def _section_validation_error(section: str, text: str, payload: dict[str, Any]) 
         expected_potm = 1 if any(bool(p.get("is_player_of_match")) for p in performers) else 0
         if player_of_match_mentions != expected_potm:
             return f"top_performers must mention 'player of the match' exactly {expected_potm} time(s)"
+        potm_performer = next((p for p in performers if bool(p.get("is_player_of_match"))), None)
         name_positions: list[int] = []
         for sentence, performer in zip(sentence_texts, performers):
             name = str(performer.get("name") or "").strip()
@@ -1410,6 +1736,10 @@ def _section_validation_error(section: str, text: str, payload: dict[str, Any]) 
                         return f"top_performers sentence must include clean sheet for {name}"
                     if metric_name == "minutes" and (str(metric_value) not in sentence or "minute" not in sentence.lower()):
                         return f"top_performers sentence must include minutes for {name}"
+            if "player of the match" in sentence.lower():
+                if not performer.get("is_player_of_match"):
+                    expected_name = str((potm_performer or {}).get("name") or "").strip()
+                    return f"top_performers must assign player of the match to the correct performer: {expected_name}"
         if name_positions != sorted(name_positions):
             return "top_performers must mention performers in the JSON order"
         return ""
@@ -1491,6 +1821,8 @@ def _section_validation_error(section: str, text: str, payload: dict[str, Any]) 
             detail = goal.get("detail")
             if minute and minute not in text:
                 return f"goals_recap must include minute wording: {minute}"
+            if minute == "first-half stoppage time" and re.search(r"\b(?:at|in|after)\s+45(?:\+?\d+)?\s+minutes?\b|\b45th minute\b", text, re.IGNORECASE):
+                return "goals_recap must preserve first-half stoppage time wording"
             if detail and detail not in text:
                 return f"goals_recap must include special goal detail: {detail}"
             if minute:
@@ -1511,7 +1843,7 @@ def _section_validation_error(section: str, text: str, payload: dict[str, Any]) 
             return f"second_half must be exactly 2 sentences, got {sentences}"
         if not re.search(r"[.!?]$", text):
             return "second_half must end with sentence punctuation"
-        sentence_texts = _sentence_parts(text)
+        sentence_texts = _split_sentences_clean(text)
         score_phrase = payload.get("second_half_score_phrase")
         if score_phrase and text.count(score_phrase) != 1:
             return f"second_half must include second_half_score_phrase exactly once: {score_phrase}"
@@ -1587,7 +1919,7 @@ def _section_validation_error(section: str, text: str, payload: dict[str, Any]) 
             return f"first_half must be exactly 2 sentences, got {sentences}"
         if not re.search(r"[.!?]$", text):
             return "first_half must end with sentence punctuation"
-        sentence_texts = _sentence_parts(text)
+        sentence_texts = _split_sentences_clean(text)
         score_phrase = payload.get("first_half_score_phrase")
         if score_phrase and text.count(score_phrase) != 1:
             return f"first_half must include first_half_score_phrase exactly once: {score_phrase}"
@@ -1649,8 +1981,8 @@ def _section_validation_error(section: str, text: str, payload: dict[str, Any]) 
                 event_positions.append(event_sentence.find(minute))
             if phrase and text.count(phrase) > 1:
                 return f"first_half must not repeat event phrase: {phrase}"
-            if minute == "first-half stoppage time" and re.search(r"\b45th minute\b|\b45th\b", text, re.IGNORECASE):
-                return "first_half must not call first-half stoppage time the 45th minute"
+            if minute == "first-half stoppage time" and re.search(r"\b45th minute\b|\b45th\b|\b(?:at|in|after)\s+45(?:\+?\d+)?\s+minutes?\b", text, re.IGNORECASE):
+                return "first_half must preserve first-half stoppage time wording"
         if event_positions != sorted(event_positions):
             return "first_half must narrate events in chronological order"
         return ""
@@ -1695,16 +2027,16 @@ def _section_validation_error(section: str, text: str, payload: dict[str, Any]) 
     if section != "opening_hook":
         return ""
     wc = _word_count(text)
-    if wc < 35 or wc > 65:
-        return f"opening_hook must be 35-65 words, got {wc}"
+    if wc < 24 or wc > 65:
+        return f"opening_hook must be 24-65 words, got {wc}"
     sentences = _sentence_count(text)
     if sentences != 2:
         return f"opening_hook must be exactly 2 sentences, got {sentences}"
-    sentence_texts = _sentence_parts(text)
+    sentence_texts = _split_sentences_clean(text)
     for idx, sentence in enumerate(sentence_texts, start=1):
         sentence_wc = _word_count(sentence)
-        if sentence_wc < 16 or sentence_wc > 35:
-            return f"opening_hook sentence {idx} must be 16-35 words, got {sentence_wc}"
+        if sentence_wc < 10 or sentence_wc > 35:
+            return f"opening_hook sentence {idx} must be 10-35 words, got {sentence_wc}"
     preferred_score_phrase = payload.get("preferred_score_phrase")
     if preferred_score_phrase and text.count(preferred_score_phrase) != 1:
         return f"opening_hook must include preferred_score_phrase exactly: {preferred_score_phrase}"
@@ -1925,13 +2257,13 @@ def _fallback_section(section: str, facts: MatchFacts) -> str:
     return ""
 
 
-def _generate_section_texts(facts: MatchFacts) -> list[tuple[str, str]]:
-    sections: list[tuple[str, str]] = []
+def _generate_section_texts(facts: MatchFacts) -> list[dict[str, Any]]:
+    sections: list[dict[str, Any]] = []
     for section, instruction in _SECTION_SPECS:
         if _should_skip_section(facts, section):
             continue
         try:
-            text = _generate_section(section, instruction, facts)
+            output = _generate_section(section, instruction, facts)
         except Exception as exc:
             logger.warning("Match script section failed (%s): %s", section, exc)
             _write_debug_artifact(
@@ -1940,17 +2272,53 @@ def _generate_section_texts(facts: MatchFacts) -> list[tuple[str, str]]:
                 {"section": section, "error_type": type(exc).__name__, "error": str(exc)},
             )
             text = _fallback_section(section, facts)
-        if text:
-            _write_debug_artifact(facts.fixture_id, f"section_{section}_text", {"section": section, "text": text})
-            sections.append((section, text))
+            title, points, ticker_text = _section_display_defaults(section, facts)
+            output = {
+                "section": section,
+                "text": text,
+                "title": title,
+                "points": points,
+                "ticker_text": ticker_text,
+            }
+        if output.get("text"):
+            _write_debug_artifact(
+                facts.fixture_id,
+                f"section_{section}_text",
+                {
+                    "section": section,
+                    "text": output.get("text"),
+                    "title": output.get("title"),
+                    "points": output.get("points"),
+                    "ticker_text": output.get("ticker_text"),
+                },
+            )
+            sections.append(output)
 
     if not sections:
         sections = [
-            ("opening_hook", _fallback_section("opening_hook", facts)),
-            ("match_result", _fallback_section("match_result", facts)),
-            ("closing", _fallback_section("closing", facts)),
+            {
+                "section": "opening_hook",
+                "text": _fallback_section("opening_hook", facts),
+                "title": _section_display_defaults("opening_hook", facts)[0],
+                "points": _section_display_defaults("opening_hook", facts)[1],
+                "ticker_text": _section_display_defaults("opening_hook", facts)[2],
+            },
+            {
+                "section": "match_result",
+                "text": _fallback_section("match_result", facts),
+                "title": _section_display_defaults("match_result", facts)[0],
+                "points": _section_display_defaults("match_result", facts)[1],
+                "ticker_text": _section_display_defaults("match_result", facts)[2],
+            },
+            {
+                "section": "closing",
+                "text": _fallback_section("closing", facts),
+                "title": _section_display_defaults("closing", facts)[0],
+                "points": _section_display_defaults("closing", facts)[1],
+                "ticker_text": _section_display_defaults("closing", facts)[2],
+            },
         ]
-    return [(section, text) for section, text in sections if text]
+    return [section_data for section_data in sections if section_data.get("text")]
 
 
 def _make_match_script(
@@ -1961,6 +2329,9 @@ def _make_match_script(
     news_id: str,
     script_format: str,
     panel_label: str,
+    display_headline: str,
+    display_points: list[str],
+    display_ticker: str,
 ) -> Script:
     wc = _word_count(text)
     estimated_duration = _estimate_duration(wc)
@@ -1972,17 +2343,19 @@ def _make_match_script(
         word_count=wc,
         estimated_duration_seconds=estimated_duration,
         selected_clip_ids=selected_clip_ids,
-        display_headline=f"{facts.home_team.upper()} {facts.scoreline} {facts.away_team.upper()}",
+        display_headline=display_headline,
         panel_label=panel_label,
-        display_points=build_display_points(facts),
+        display_points=display_points,
+        display_ticker=display_ticker,
     )
 
 
 def generate_match_script(facts: MatchFacts, clips: list | None = None) -> Script:
     sections = _generate_section_texts(facts)
-    text = "\n\n".join(section_text for _, section_text in sections).strip()
+    text = "\n\n".join(str(section_data.get("text") or "").strip() for section_data in sections).strip()
     wc = _word_count(text)
     estimated_duration = _estimate_duration(wc)
+    default_title, default_points, default_ticker = _section_display_defaults("match_result", facts)
     script = _make_match_script(
         facts,
         text,
@@ -1990,6 +2363,9 @@ def generate_match_script(facts: MatchFacts, clips: list | None = None) -> Scrip
         news_id=f"match_{facts.fixture_id}",
         script_format="match",
         panel_label="MATCH STATS",
+        display_headline=default_title,
+        display_points=default_points,
+        display_ticker=default_ticker,
     )
     logger.info("Match script generated for fixture %s: %d words", facts.fixture_id, wc)
     _write_debug_artifact(
@@ -2010,7 +2386,9 @@ def generate_match_script_parts(facts: MatchFacts, clips: list | None = None) ->
     used_clip_ids: set[str] = set()
     scripts: list[Script] = []
 
-    for index, (section, text) in enumerate(sections, start=1):
+    for index, section_data in enumerate(sections, start=1):
+        section = str(section_data.get("section") or "")
+        text = str(section_data.get("text") or "").strip()
         wc = _word_count(text)
         estimated_duration = _estimate_duration(wc)
         selected_clip_ids = select_match_clip_ids(
@@ -2020,6 +2398,14 @@ def generate_match_script_parts(facts: MatchFacts, clips: list | None = None) ->
             exclude_clip_ids=used_clip_ids,
         )
         used_clip_ids.update(selected_clip_ids)
+        title = str(section_data.get("title") or "").strip()
+        points = [str(point).strip() for point in (section_data.get("points") or []) if str(point).strip()]
+        ticker_text = str(section_data.get("ticker_text") or "").strip()
+        if not title or len(points) != 3 or not ticker_text:
+            default_title, default_points, default_ticker = _section_display_defaults(section, facts)
+            title = title or default_title
+            points = points if len(points) == 3 else default_points
+            ticker_text = ticker_text or default_ticker
         scripts.append(
             _make_match_script(
                 facts,
@@ -2028,6 +2414,9 @@ def generate_match_script_parts(facts: MatchFacts, clips: list | None = None) ->
                 news_id=f"match_{facts.fixture_id}_{index:02d}_{section}",
                 script_format="match_part",
                 panel_label=_SECTION_LABELS.get(section, "Match Summary").upper(),
+                display_headline=title,
+                display_points=points,
+                display_ticker=ticker_text,
             )
         )
 
@@ -2044,6 +2433,9 @@ def generate_match_script_parts(facts: MatchFacts, clips: list | None = None) ->
             {
                 "news_id": script.news_id,
                 "panel_label": script.panel_label,
+                "display_headline": script.display_headline,
+                "display_points": script.display_points,
+                "display_ticker": script.display_ticker,
                 "word_count": script.word_count,
                 "estimated_duration_seconds": script.estimated_duration_seconds,
                 "selected_clip_ids": script.selected_clip_ids,
@@ -2058,6 +2450,9 @@ def generate_match_script_parts(facts: MatchFacts, clips: list | None = None) ->
 def combine_match_script_parts(facts: MatchFacts, scripts: list[Script]) -> Script:
     text = "\n\n".join(script.text for script in scripts if script.text).strip()
     selected_clip_ids = sorted({clip_id for script in scripts for clip_id in script.selected_clip_ids})
+    display_headline = scripts[0].display_headline if scripts else f"{facts.home_team.upper()} {facts.scoreline} {facts.away_team.upper()}"
+    display_points = scripts[0].display_points if scripts else build_display_points(facts)
+    display_ticker = scripts[0].display_ticker if scripts else f"{facts.home_team} {facts.scoreline} {facts.away_team} match summary"
     return _make_match_script(
         facts,
         text,
@@ -2065,6 +2460,9 @@ def combine_match_script_parts(facts: MatchFacts, scripts: list[Script]) -> Scri
         news_id=f"match_{facts.fixture_id}",
         script_format="match",
         panel_label="MATCH STATS",
+        display_headline=display_headline,
+        display_points=display_points,
+        display_ticker=display_ticker,
     )
 
 

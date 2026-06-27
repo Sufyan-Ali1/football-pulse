@@ -216,7 +216,7 @@ def _save_video_metadata(video_output: Path, metadata) -> Path:
 
 def _part_news_item(base_item, script, index: int, total: int):
     label = script.panel_label.replace("_", " ").title() if script.panel_label else f"Part {index}"
-    headline = f"{base_item.headline} - {label}"
+    headline = script.display_headline or f"{base_item.headline} - {label}"
     return type(base_item)(
         id=script.news_id,
         headline=headline,
@@ -372,6 +372,9 @@ def _generate_fixture_video(fixture_id: int) -> None:
                     {
                         "news_id": part.news_id,
                         "panel_label": part.panel_label,
+                        "display_headline": part.display_headline,
+                        "display_points": part.display_points,
+                        "display_ticker": part.display_ticker,
                         "text": part.text,
                         "word_count": part.word_count,
                         "estimated_duration_seconds": part.estimated_duration_seconds,
