@@ -136,13 +136,24 @@ def _is_live_blog_url(url: str) -> bool:
     return any(pattern.search(path) for pattern in _LIVE_URL_PATTERNS)
 
 
-def _bad_url_reason(url: str) -> str | None:
+def _is_standalone_update_headline(headline: str) -> bool:
+    if re.search(r"\b(transfer centre live|live updates?|live blog)\b", headline, re.I):
+        return False
+    if re.search(r"[-:]\s*live\b|\blive\s*[-:]", headline, re.I):
+        return False
+    return bool(
+        re.search(r"\blatest\s*:", headline, re.I)
+        or re.search(r"\binjury update\b", headline, re.I)
+    )
+
+
+def _bad_url_reason(url: str, headline: str = "") -> str | None:
     target = _target_url(url)
     if not _looks_like_article_url(target):
         return "bad_url_format"
     if _is_video_url(target) or _is_social_video_url(target):
         return "video_url"
-    if _is_live_blog_url(target):
+    if _is_live_blog_url(target) and not _is_standalone_update_headline(headline):
         return "bad_url_format"
     return None
 
@@ -170,7 +181,7 @@ def assess_item_quality(item: NewsItem) -> QualityAssessment:
     body = _clean_text(item.body)
     combined = f"{headline} {body}".strip()
 
-    reason = _bad_url_reason(item.url)
+    reason = _bad_url_reason(item.url, headline)
     if reason:
         return QualityAssessment(False, reason, _REJECT)
 
