@@ -74,6 +74,23 @@ def _circuit_open(entry: dict) -> bool:
     skip_until = entry.get("skip_until")
     if not skip_until:
         return False
+
+
+def _entry_body(entry) -> str:
+    """Prefer the richest body field exposed by the feed entry."""
+    for key in ("summary", "description"):
+        value = entry.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+
+    content = entry.get("content")
+    if isinstance(content, list):
+        for part in content:
+            if isinstance(part, dict):
+                value = part.get("value")
+                if isinstance(value, str) and value.strip():
+                    return value.strip()
+    return ""
     try:
         return datetime.fromisoformat(skip_until) > datetime.now(timezone.utc)
     except Exception:
@@ -88,7 +105,7 @@ def _parse_entries(feed, source_name: str) -> list[NewsItem]:
 
     for entry in feed.entries:
         headline  = entry.get("title", "").strip()
-        body      = entry.get("summary", entry.get("description", "")).strip()
+        body      = _entry_body(entry)
         url       = entry.get("link", "")
         published = entry.get("published_parsed")
 

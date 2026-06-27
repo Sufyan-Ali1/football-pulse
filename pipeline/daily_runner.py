@@ -8,10 +8,10 @@ per story and stitches them into one multi-story video.
 
 Verification loop:
   Pull 10 articles -> verify unverified ones in batches of 5 -> collect
-  -> repeat (up to MAX_VERIFY_ROUNDS) until we have MIN_STORIES_FOR_DAILY.
+  -> repeat (up to MAX_VERIFY_ROUNDS) until we have enough viable candidates.
   This avoids sending all DB articles to Groq at once.
 
-Minimum 3 stories required; if not enough accumulate, the job exits.
+Minimum stories required comes from settings.MIN_STORIES_FOR_DAILY.
 """
 import logging
 import json
@@ -104,7 +104,9 @@ def _daily_rejection_reason(article: sqlite3.Row) -> str | None:
         return "missing_relevance_score"
     if score < _MIN_RELEVANCE_SCORE:
         return f"low_relevance_{score}"
-    if article["source"] == "Google Alerts" and score < _MIN_GOOGLE_ALERTS_RELEVANCE_SCORE:
+    source = article["source"] or ""
+    source_type = article["source_type"] or ""
+    if (source == "Google Alerts" or source_type == "google_alerts") and score < _MIN_GOOGLE_ALERTS_RELEVANCE_SCORE:
         return f"low_google_alerts_relevance_{score}"
     return None
 
@@ -229,7 +231,7 @@ def _select_stories(max_age_hours: int = 12) -> list[sqlite3.Row]:
             mark_articles_rejected([a["id"] for a in rejected])
             breakdown = "  ".join(f"{k}:{v}" for k, v in sorted(reject_counts.items()))
             logger.info(
-                "Round %d: rejected %d quality/relevance articles (%s), kept %d",
+                "Round %d: rejected %d articles after verifier (%s), kept %d",
                 round_num + 1, len(rejected), breakdown, len(passing),
             )
 
@@ -281,7 +283,7 @@ def run_daily_video() -> None:
         mark_articles_rejected([a["id"] for a in final_rejected])
         breakdown = "  ".join(f"{k}:{v}" for k, v in sorted(final_reject_counts.items()))
         logger.info(
-            "Final quality gate rejected %d article(s) before video build (%s)",
+            "Final daily eligibility rejected %d article(s) before video build (%s)",
             len(final_rejected), breakdown,
         )
         articles = final_articles
