@@ -346,5 +346,6580 @@
     "height": 1080,
     "is_used": 0,
     "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/30.mp4",
+    "description": "A soccer player kicks a ball as fans cheer and confetti falls in a packed stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "player",
+      "fans",
+      "confetti"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 14.28,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/31.mp4",
+    "description": "A man kicks a ball towards a goal with a goalkeeper and another man watching in a gymnasium.",
+    "keywords": [
+      "handball",
+      "goal",
+      "gymnasium",
+      "kick",
+      "goalkeeper"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 11.4,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/32.mp4",
+    "description": "Four men cheer and react excitedly while watching a soccer game in a living room.",
+    "keywords": [
+      "soccer",
+      "men",
+      "cheering",
+      "living room",
+      "celebration"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.29,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/33.mp4",
+    "description": "A soccer ball rolls near a goal on a field with white stadium seating in the background.",
+    "keywords": [
+      "soccer",
+      "ball",
+      "goal",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/34.mp4",
+    "description": "A soccer player kicks a ball on a green field with other players in the background.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "ball",
+      "kick"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 9.94,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/35.mp4",
+    "description": "A soccer player scores a goal as the goalkeeper fails to make the save.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "goalkeeper",
+      "player",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 14.26,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/36.mp4",
+    "description": "A soccer player kicks a ball on a field with empty stadium seating in the background.",
+    "keywords": [
+      "soccer",
+      "ball",
+      "player",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 13.0,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/37.mp4",
+    "description": "A soccer player in blue dribbles past opponents on a green field with stadium lights and spectators.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "player",
+      "ball",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 9.68,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/38.mp4",
+    "description": "A soccer player in blue runs on a green field with a referee.",
+    "keywords": [
+      "soccer",
+      "player",
+      "field",
+      "referee",
+      "running"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 7.96,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/39.mp4",
+    "description": "Soccer players in red uniforms sing national anthem on field with crowd and flags in background.",
+    "keywords": [
+      "soccer",
+      "players",
+      "stadium",
+      "anthem",
+      "uniforms"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/40.mp4",
+    "description": "Soccer players in red uniforms huddle together on and off the field, showing teamwork and celebration.",
+    "keywords": [
+      "soccer",
+      "team",
+      "huddle",
+      "celebration",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/41.mp4",
+    "description": "A soccer player dribbles past another player on a field at dusk.",
+    "keywords": [
+      "soccer",
+      "field",
+      "dusk",
+      "player",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 3.5,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/42.mp4",
+    "description": "A man performs freestyle soccer moves with a ball on a dark garage floor.",
+    "keywords": [
+      "soccer",
+      "freestyle",
+      "ball",
+      "garage",
+      "man"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 18.69,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/43.mp4",
+    "description": "A soccer player kicks a ball on a field at night under stadium lights.",
+    "keywords": [
+      "soccer",
+      "player",
+      "ball",
+      "field",
+      "kick"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.67,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/44.mp4",
+    "description": "A group of men in athletic wear stack hands and walk on a soccer field.",
+    "keywords": [
+      "soccer",
+      "team",
+      "field",
+      "stacking",
+      "hands"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 3.09,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/45.mp4",
+    "description": "A soccer game with five players on a green field with white lines and a goal.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "goal",
+      "game"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.21,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/46.mp4",
+    "description": "A soccer ball is kicked and chased by two players on a green field at dusk.",
+    "keywords": [
+      "soccer",
+      "ball",
+      "players",
+      "field",
+      "kicking"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.01,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/47.mp4",
+    "description": "A soccer player juggles a ball on a field at night with a teammate watching.",
+    "keywords": [
+      "soccer",
+      "field",
+      "night",
+      "player",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 22.19,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/48.mp4",
+    "description": "A soccer player prepares to kick a ball on a field at night.",
+    "keywords": [
+      "soccer",
+      "ball",
+      "field",
+      "player",
+      "kick"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.97,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/49.mp4",
+    "description": "A man in a maroon vest dribbles a soccer ball on a field at night.",
+    "keywords": [
+      "soccer",
+      "field",
+      "night",
+      "dribbling",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 24.57,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/50.mp4",
+    "description": "Two soccer players run on a field, one in a blue vest, chasing the ball and each other.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "ball",
+      "vest"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 7.88,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/51.mp4",
+    "description": "A person performs agility ladder drills on a dark outdoor field wearing neon green shoes.",
+    "keywords": [
+      "agility",
+      "ladder",
+      "drills",
+      "neon",
+      "shoes"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.05,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/52.mp4",
+    "description": "A group of men play soccer on an outdoor field with artificial turf and white markings.",
+    "keywords": [
+      "soccer",
+      "field",
+      "men",
+      "playing",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.13,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/53.mp4",
+    "description": "Four friends cheer and celebrate while watching a soccer game with confetti.",
+    "keywords": [
+      "soccer",
+      "confetti",
+      "celebration",
+      "friends",
+      "cheering"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 21.46,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/54.mp4",
+    "description": "Aerial view of a stadium with a track and field, showcasing its surroundings and facilities.",
+    "keywords": [
+      "stadium",
+      "aerial",
+      "track",
+      "field",
+      "facilities"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 7.57,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/55.mp4",
+    "description": "A soccer player performs ball control moves on a field at night under stadium lights.",
+    "keywords": [
+      "soccer",
+      "player",
+      "ball",
+      "field",
+      "night"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 12.93,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/56.mp4",
+    "description": "A soccer goalie prepares to defend a shot on goal at night.",
+    "keywords": [
+      "soccer",
+      "goalie",
+      "field",
+      "goal",
+      "net"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 7.17,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/57.mp4",
+    "description": "A soccer player juggles a ball with their feet on a green field with white lines.",
+    "keywords": [
+      "soccer",
+      "ball",
+      "field",
+      "player",
+      "feet"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 14.43,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/58.mp4",
+    "description": "A group of friends cheer and celebrate while watching a soccer game on a couch.",
+    "keywords": [
+      "soccer",
+      "celebration",
+      "confetti",
+      "couch",
+      "fans"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 12.21,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/59.mp4",
+    "description": "A soccer team performs a corner kick on a green field with white markings.",
+    "keywords": [
+      "soccer",
+      "field",
+      "kick",
+      "corner",
+      "team"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 23.27,
+    "width": 640,
+    "height": 360,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/60.mp4",
+    "description": "A soccer player sits on a bench, tying his shoes in a locker room setting.",
+    "keywords": [
+      "soccer",
+      "player",
+      "locker",
+      "room",
+      "shoes"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/61.mp4",
+    "description": "A man performs a weightlifting routine in a gym with various equipment and large windows.",
+    "keywords": [
+      "weightlifting",
+      "gym",
+      "man",
+      "weights",
+      "exercise"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/62.mp4",
+    "description": "A man signs a contract with sports officials in a luxurious office with a stadium view.",
+    "keywords": [
+      "contract",
+      "signing",
+      "office",
+      "sports",
+      "officials"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/63.mp4",
+    "description": "A man signs a document at a table with another man, in a room with sports memorabilia.",
+    "keywords": [
+      "contract",
+      "signing",
+      "table",
+      "suit",
+      "pen"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/64.mp4",
+    "description": "Photographers with cameras and lenses capture an event in a conference room setting.",
+    "keywords": [
+      "photographers",
+      "cameras",
+      "lenses",
+      "conference",
+      "event"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/65.mp4",
+    "description": "A football transfer agreement is signed on a wooden desk with a pen.",
+    "keywords": [
+      "football",
+      "agreement",
+      "desk",
+      "pen",
+      "signature"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/66.mp4",
+    "description": "A contract signing ceremony for Football Pulse with a pen, documents, and trophies on a wooden table.",
+    "keywords": [
+      "contract",
+      "football",
+      "pulse",
+      "signing",
+      "ceremony"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 960,
+    "height": 960,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/67.mp4",
+    "description": "A soccer player waves to the crowd in a stadium, showing appreciation for their support.",
+    "keywords": [
+      "soccer",
+      "player",
+      "stadium",
+      "crowd",
+      "appreciation"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/68.mp4",
+    "description": "Soccer player celebrates in front of a cheering crowd in a stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "player",
+      "crowd",
+      "celebration"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/69.mp4",
+    "description": "A contract document with a soccer logo and pen on a wooden table is shown in detail.",
+    "keywords": [
+      "contract",
+      "soccer",
+      "document",
+      "pen",
+      "table"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1264,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/70.mp4",
+    "description": "Two soccer players compete for the ball on a green field with a large crowd watching.",
+    "keywords": [
+      "soccer",
+      "players",
+      "ball",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/71.mp4",
+    "description": "A soccer player scores a goal, evading the goalkeeper, in a stadium with a large crowd.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "player",
+      "stadium",
+      "crowd"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/72.mp4",
+    "description": "A soccer player kicks the ball into the goal, scoring past the goalkeeper in a stadium.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "player",
+      "stadium",
+      "kick"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/73.mp4",
+    "description": "A soccer player kicks a free kick in a crowded stadium with players from both teams on the field.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "ball",
+      "kick"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/74.mp4",
+    "description": "Soccer player walks on field, interacting with crowd and camera crew in stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "player",
+      "crowd",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/75.mp4",
+    "description": "A man in a suit holds up a soccer jersey in a room with trophies and a logo.",
+    "keywords": [
+      "jersey",
+      "man",
+      "suit",
+      "trophies",
+      "logo"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/76.mp4",
+    "description": "A soccer player runs through a tunnel towards a stadium, with close-ups of his face and movements.",
+    "keywords": [
+      "soccer",
+      "player",
+      "stadium",
+      "tunnel",
+      "running"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/77.mp4",
+    "description": "A man walks towards and away from a sports building with a bag on his shoulder.",
+    "keywords": [
+      "athlete",
+      "bag",
+      "building",
+      "field",
+      "walking"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/78.mp4",
+    "description": "A soccer player waves to the crowd in a stadium with enthusiastic fans.",
+    "keywords": [
+      "soccer",
+      "player",
+      "stadium",
+      "crowd",
+      "waving"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/79.mp4",
+    "description": "A man walks to a sports facility, carrying a bag, wearing athletic gear.",
+    "keywords": [
+      "athlete",
+      "facility",
+      "bag",
+      "walking",
+      "sports"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/80.mp4",
+    "description": "A suited man walks through a room with photographers and a sports logo present.",
+    "keywords": [
+      "suit",
+      "photographers",
+      "logo",
+      "room",
+      "man"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/81.mp4",
+    "description": "A man in a suit speaks at a press conference with a microphone and water bottle.",
+    "keywords": [
+      "press conference",
+      "suit",
+      "microphone",
+      "water bottle",
+      "speaker"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/82.mp4",
+    "description": "A coach in a gray suit reacts on the sidelines of a soccer game with a concerned expression.",
+    "keywords": [
+      "coach",
+      "soccer",
+      "stadium",
+      "suit",
+      "sidelines"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/83.mp4",
+    "description": "A coach argues with a referee on a soccer field in front of a crowd.",
+    "keywords": [
+      "coach",
+      "referee",
+      "soccer",
+      "argument",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/84.mp4",
+    "description": "A man applauds on a soccer field with a cheering crowd in the background.",
+    "keywords": [
+      "soccer",
+      "crowd",
+      "applause",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/85.mp4",
+    "description": "A coach stands on a soccer field, observing the game with concern and intensity.",
+    "keywords": [
+      "coach",
+      "soccer",
+      "field",
+      "stadium",
+      "game"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.04,
+    "width": 752,
+    "height": 416,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/86.mp4",
+    "description": "A soccer game unfolds in a packed stadium with a green field and bright lights at night.",
+    "keywords": [
+      "stadium",
+      "soccer",
+      "field",
+      "crowd",
+      "game"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.04,
+    "width": 1916,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/87.mp4",
+    "description": "A large crowd of people cheer and wave flags in a stadium.",
+    "keywords": [
+      "crowd",
+      "stadium",
+      "flags",
+      "cheering",
+      "spectators"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 11.03,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/88.mp4",
+    "description": "A soccer game at a stadium with a large crowd and bright lights.",
+    "keywords": [
+      "stadium",
+      "soccer",
+      "crowd",
+      "lights",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 15.3,
+    "width": 3840,
+    "height": 2160,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/89.mp4",
+    "description": "A person reviews and signs documents at a wooden desk with another person.",
+    "keywords": [
+      "documents",
+      "desk",
+      "signing",
+      "papers",
+      "pen"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 15.64,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/90.mp4",
+    "description": "A team's bus arrives at a stadium, escorted by police and cheered by fans waving flags.",
+    "keywords": [
+      "bus",
+      "stadium",
+      "fans",
+      "police",
+      "team"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/91.mp4",
+    "description": "A soccer player kicks the ball into the goal, scoring past the goalkeeper and opponent players on the field.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "kick",
+      "field",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 13.93,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/92.mp4",
+    "description": "A soccer player waves to fans in a stadium with confetti and cheering crowds.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "player",
+      "fans",
+      "confetti"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.0,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/93.mp4",
+    "description": "A man walks on a sports facility's sidewalk, carrying a gym bag, at sunrise or sunset.",
+    "keywords": [
+      "athlete",
+      "sports",
+      "facility",
+      "bag",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.0,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/94.mp4",
+    "description": "A soccer player walks through a tunnel and onto a field, preparing for a game.",
+    "keywords": [
+      "soccer",
+      "player",
+      "tunnel",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.0,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/95.mp4",
+    "description": "A soccer game unfolds with coaches on the sidelines and players on the field.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "coaches",
+      "sidelines",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.0,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/96.mp4",
+    "description": "A soccer coach reacts on the sidelines during a game, showing frustration and intensity.",
+    "keywords": [
+      "coach",
+      "soccer",
+      "stadium",
+      "sidelines",
+      "reaction"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.0,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/97.mp4",
+    "description": "A man applauds on a soccer field with a crowd of spectators cheering in the background.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "crowd",
+      "coach",
+      "applause"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.0,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/98.mp4",
+    "description": "A soccer coach argues with a referee on the field during a game.",
+    "keywords": [
+      "soccer",
+      "coach",
+      "referee",
+      "argument",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.0,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/99.mp4",
+    "description": "A soccer coach reacts emotionally on the sidelines during a game.",
+    "keywords": [
+      "coach",
+      "soccer",
+      "stadium",
+      "sidelines",
+      "reacting"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.0,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/100.mp4",
+    "description": "A man in a suit speaks at a press conference with microphones and reporters.",
+    "keywords": [
+      "press",
+      "conference",
+      "microphones",
+      "suit",
+      "reporters"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.0,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/101.mp4",
+    "description": "A suited man walks to a podium with microphones, surrounded by photographers and a presentation wall.",
+    "keywords": [
+      "press",
+      "conference",
+      "microphones",
+      "suited",
+      "man"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.0,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/102.mp4",
+    "description": "A man in a sports uniform interacts with a woman and enters a sports facility with a bag.",
+    "keywords": [
+      "sports",
+      "man",
+      "uniform",
+      "bag",
+      "facility"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.0,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/103.mp4",
+    "description": "Soccer team walks out of tunnel, onto field, and takes photos with fans and mascot in stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "team",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.0,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/104.mp4",
+    "description": "A football field with goalpost under stadium lights is shown from a static camera at different zoom levels.",
+    "keywords": [
+      "football",
+      "field",
+      "stadium",
+      "goalpost",
+      "lights"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 11.7,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/105.mp4",
+    "description": "A soccer team scores a goal and celebrates on a green field with white lines and goals.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "celebration",
+      "field",
+      "team"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 14.12,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/106.mp4",
+    "description": "A soccer player kicks the ball while other players watch on a green field at night.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "ball",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.09,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/107.mp4",
+    "description": "Soccer players in yellow and blue uniforms play on a grass field with white markings.",
+    "keywords": [
+      "soccer",
+      "field",
+      "grass",
+      "players",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.68,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/108.mp4",
+    "description": "A soccer goalkeeper in green runs across a field, throwing a ball.",
+    "keywords": [
+      "soccer",
+      "goalkeeper",
+      "green",
+      "field",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.62,
+    "width": 1280,
+    "height": 720,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/109.mp4",
+    "description": "A soccer game between Argentina and Austria with players on the field and a crowd in the stands.",
+    "keywords": [
+      "soccer",
+      "game",
+      "players",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/110.mp4",
+    "description": "Messi interacts with an Austrian player on the field, exchanging words and gestures.",
+    "keywords": [
+      "Messi",
+      "soccer",
+      "field",
+      "players",
+      "interaction"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/111.mp4",
+    "description": "A soccer game between Argentina and Austria with players in action on a green field with a crowd.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/112.mp4",
+    "description": "A soccer player reacts during a match between Argentina and Austria with a missed goal opportunity.",
+    "keywords": [
+      "soccer",
+      "player",
+      "stadium",
+      "goal",
+      "Messi"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/113.mp4",
+    "description": "Soccer players in red and white or blue and white jerseys play on a green field with a crowd.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 23.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/114.mp4",
+    "description": "Soccer players and fans celebrate a goal in a stadium with excitement and joy.",
+    "keywords": [
+      "soccer",
+      "celebration",
+      "stadium",
+      "fans",
+      "goal"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/115.mp4",
+    "description": "A soccer player scores a goal in a packed stadium with a crowd and advertisements visible.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "crowd",
+      "player"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 11.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/116.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd, players, and advertisements.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "player",
+      "crowd"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 20.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/117.mp4",
+    "description": "Soccer players react to a goal scored during a match between Argentina and Austria.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "players",
+      "stadium",
+      "celebration"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/118.mp4",
+    "description": "Soccer players celebrate on a field with a goal and crowd in the background.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "goal",
+      "celebration"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/119.mp4",
+    "description": "A soccer game between Tunisia and Japan with players on the field and a crowd in the background.",
+    "keywords": [
+      "soccer",
+      "game",
+      "players",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/120.mp4",
+    "description": "A soccer game between Tunisia and Japan with Japan scoring a goal.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "Japan",
+      "stadium",
+      "game"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/121.mp4",
+    "description": "A soccer game between Tunisia and Japan with Japan leading 4-0.",
+    "keywords": [
+      "soccer",
+      "game",
+      "goal",
+      "players",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 16.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/122.mp4",
+    "description": "A soccer player in blue reacts during a game with a 0-4 score.",
+    "keywords": [
+      "soccer",
+      "player",
+      "stadium",
+      "game",
+      "scoreboard"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/123.mp4",
+    "description": "A soccer game between Tunisia and Japan with players in action on a green field with spectators.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/124.mp4",
+    "description": "A soccer player scores, fans cheer, and a goal is shown in a stadium with a large crowd.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "fans",
+      "scoring"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 17.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/125.mp4",
+    "description": "A soccer game between Tunisia and Japan with players on a green field and a goal scored.",
+    "keywords": [
+      "soccer",
+      "field",
+      "goal",
+      "players",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/126.mp4",
+    "description": "A soccer game between Tunisia and Japan unfolds with players in action on a green field with spectators.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/127.mp4",
+    "description": "A soccer player scores a goal, evading the goalkeeper, in a stadium with spectators.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "player",
+      "goalkeeper"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 15.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/128.mp4",
+    "description": "A soccer player scores a goal, with the goalkeeper failing to block the ball.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "score",
+      "goalkeeper",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 11.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/129.mp4",
+    "description": "A soccer game between Tunisia and Japan with players in action on a green field with a crowd.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "goal"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/130.mp4",
+    "description": "A soccer game between Tunisia and Japan unfolds with players in action on a green field with spectators.",
+    "keywords": [
+      "soccer",
+      "game",
+      "field",
+      "players",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/131.mp4",
+    "description": "Soccer players and referees walk out for the World Cup final, with a trophy presentation and celebration.",
+    "keywords": [
+      "World Cup",
+      "Soccer",
+      "Trophy",
+      "Referees",
+      "Players"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 19.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/132.mp4",
+    "description": "A soccer game between Argentina and France with players on the field and a goal attempt.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 15.0,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/133.mp4",
+    "description": "A soccer referee interacts with players on the field during a match between Argentina and France.",
+    "keywords": [
+      "soccer",
+      "referee",
+      "players",
+      "field",
+      "whistle"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/134.mp4",
+    "description": "A soccer player falls while attempting to block a shot on goal during a match.",
+    "keywords": [
+      "soccer",
+      "player",
+      "goal",
+      "stadium",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/135.mp4",
+    "description": "A soccer game between Argentina and France with players, referees, and spectators in a stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "referees",
+      "spectators"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 14.0,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/136.mp4",
+    "description": "A soccer game between Argentina and France with players in action on the field.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "game",
+      "goal"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 16.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/137.mp4",
+    "description": "Soccer players collide on field during a match with a referee present.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "referee",
+      "collision"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/138.mp4",
+    "description": "Soccer players take a free kick during a match between Argentina and France.",
+    "keywords": [
+      "soccer",
+      "free kick",
+      "goal",
+      "stadium",
+      "Messi"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 14.0,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/139.mp4",
+    "description": "A soccer player scores a goal in a crowded stadium with a penalty kick.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "penalty",
+      "kick"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/140.mp4",
+    "description": "Soccer players in white and blue uniforms play on a green field with a goal and crowd.",
+    "keywords": [
+      "soccer",
+      "field",
+      "goal",
+      "players",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 17.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/141.mp4",
+    "description": "A soccer player kicks the ball towards the goal during a match with a large crowd watching.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "player",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 26.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/142.mp4",
+    "description": "Soccer players and referees walk out for the World Cup final, with fans and a stadium in the background.",
+    "keywords": [
+      "soccer",
+      "World Cup",
+      "stadium",
+      "referees",
+      "players"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/143.mp4",
+    "description": "A soccer player celebrates scoring a goal in front of a cheering crowd.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "celebration",
+      "crowd",
+      "player"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 3.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/144.mp4",
+    "description": "Soccer player reacts emotionally as fans cheer in stadium.",
+    "keywords": [
+      "Messi",
+      "soccer",
+      "stadium",
+      "fans",
+      "celebration"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/145.mp4",
+    "description": "Soccer players and staff walk on a field, shaking hands and interacting with each other and children.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "handshake",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/146.mp4",
+    "description": "Soccer players in white and blue jerseys play on a green field with a crowd in the background.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "crowd",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 12.0,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/147.mp4",
+    "description": "A soccer player scores a goal in a World Cup match between Argentina and France.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 12.0,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/148.mp4",
+    "description": "A soccer player scores a goal during a match at a crowded stadium with a goalkeeper and spectators.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/149.mp4",
+    "description": "A soccer game between Argentina and France with players on the field and a crowd in the stands.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "crowd",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/150.mp4",
+    "description": "A soccer player shoots the ball towards the goal in a crowded stadium during a match.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/151.mp4",
+    "description": "A soccer player attempts to score a goal during a match between Argentina and France.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "player",
+      "stadium",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 11.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/152.mp4",
+    "description": "A soccer game between Argentina and Algeria shows players on field, goal attempts, and a player reacting.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 13.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/153.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd, players, and goalkeepers.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/154.mp4",
+    "description": "A soccer player attempts to score a goal during a match between Argentina and Algeria.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/155.mp4",
+    "description": "Soccer players celebrate on a field with a crowd, scoreboard showing Argentina leading Algeria 3-0.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "crowd",
+      "goal",
+      "celebration"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/156.mp4",
+    "description": "Soccer players celebrate and play on a field with a goal and crowd in the background.",
+    "keywords": [
+      "soccer",
+      "players",
+      "goal",
+      "celebration",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/157.mp4",
+    "description": "A soccer game between Argentina and Algeria unfolds with players on the field and a crowd in the stands.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/158.mp4",
+    "description": "The clip shows a soccer game between Argentina and Algeria, focusing on players and fans during and after the match.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "fans",
+      "game"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/159.mp4",
+    "description": "A soccer game between Argentina and Algeria unfolds with players on the field and a packed stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/160.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd and celebrates with teammates.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "player",
+      "celebration"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/161.mp4",
+    "description": "Soccer players attempt to score goal during intense match with crowd watching.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "players",
+      "crowd",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/162.mp4",
+    "description": "Soccer players in light blue and white uniforms walk on a green field with a crowd in background.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "crowd",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/163.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd and various advertisements.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "crowd",
+      "advertisements"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/164.mp4",
+    "description": "A soccer game between Argentina and Algeria unfolds with players on a green field with a goal and spectators.",
+    "keywords": [
+      "soccer",
+      "game",
+      "field",
+      "goal",
+      "players"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/165.mp4",
+    "description": "A soccer player scores a goal, evading the goalkeeper and defenders in a stadium.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "player",
+      "goalkeeper"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/166.mp4",
+    "description": "Soccer players celebrate on a field with a goal and crowd in the background.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "celebration",
+      "field",
+      "players"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/167.mp4",
+    "description": "A soccer game between Bosnia and Herzegovina and Qatar at a packed stadium with a 0-0 score.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "game"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/168.mp4",
+    "description": "A soccer game unfolds with players on the field and spectators in the stands.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/169.mp4",
+    "description": "A soccer game between Bosnia and Qatar with a goal scored and fans celebrating.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "celebration",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 16.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/170.mp4",
+    "description": "A man celebrates in front of a cheering crowd at a sporting event.",
+    "keywords": [
+      "celebration",
+      "crowd",
+      "sports",
+      "stadium",
+      "athlete"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 3.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/171.mp4",
+    "description": "Two men shake hands in a stadium setting with a referee and security personnel present.",
+    "keywords": [
+      "handshake",
+      "stadium",
+      "referee",
+      "security",
+      "suit"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/172.mp4",
+    "description": "Soccer players in white and blue uniforms play on a green field with a crowd in the background.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "stadium",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/173.mp4",
+    "description": "A soccer game between Bosnia and Qatar with players on the field and a crowd in the stands.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/174.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "crowd",
+      "scoreboard"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 15.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/175.mp4",
+    "description": "Soccer players kick the ball in a stadium with spectators.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/176.mp4",
+    "description": "Soccer players kick and chase the ball on a field with a crowd in the background.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "ball",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/177.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd, players, and goalkeepers.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/178.mp4",
+    "description": "A soccer game between Bosnia and Qatar unfolds with players in action on a green field with spectators.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/179.mp4",
+    "description": "Soccer players kick a ball into a goal during a game with a goalie and spectators.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "players",
+      "ball",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/180.mp4",
+    "description": "A soccer game between Brazil and Haiti at a packed stadium with a green field and advertisements.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "field",
+      "players",
+      "game"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/181.mp4",
+    "description": "A soccer team scores a goal during a match in a packed stadium with a 3-0 lead.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/182.mp4",
+    "description": "A soccer game between Brazil and Haiti with Brazil leading 3-0, showing players in action on the field.",
+    "keywords": [
+      "soccer",
+      "Brazil",
+      "Haiti",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/183.mp4",
+    "description": "A soccer player scores a goal during a match between Brazil and Haiti.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/184.mp4",
+    "description": "A soccer player scores a goal, with teammates and fans celebrating in the background.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "crowd",
+      "referee"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/185.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd, during a Brazil vs Haiti match.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "Brazil",
+      "Haiti"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/186.mp4",
+    "description": "A soccer game between Brazil and Haiti with Brazil leading 3-0, showing players in action on the field.",
+    "keywords": [
+      "soccer",
+      "Brazil",
+      "Haiti",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/187.mp4",
+    "description": "A soccer game between Brazil and Haiti with Brazil leading 3-0, showing players, crowd, and a player's reaction.",
+    "keywords": [
+      "soccer",
+      "Brazil",
+      "Haiti",
+      "stadium",
+      "players"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/188.mp4",
+    "description": "A soccer game between Brazil and Haiti with players on the field and a goal attempt.",
+    "keywords": [
+      "soccer",
+      "game",
+      "field",
+      "goal",
+      "players"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/189.mp4",
+    "description": "A soccer player is called offside during a match between Brazil and Haiti.",
+    "keywords": [
+      "soccer",
+      "offside",
+      "referee",
+      "field",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/190.mp4",
+    "description": "A soccer game between Brazil and Haiti with players on the field and a goal attempt.",
+    "keywords": [
+      "soccer",
+      "game",
+      "field",
+      "goal",
+      "players"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/191.mp4",
+    "description": "A soccer player scores a goal, captured in three frames showing the play and celebration.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "score",
+      "stadium",
+      "football"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 18.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/192.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd, showcasing skill and teamwork.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "player",
+      "crowd"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/193.mp4",
+    "description": "A soccer player falls to the ground while teammates rush to assist on a green field with white lines.",
+    "keywords": [
+      "soccer",
+      "player",
+      "field",
+      "fall",
+      "assist"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/194.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd and teammates in blue and white uniforms.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "player",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 15.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/195.mp4",
+    "description": "A soccer player reacts on the field with teammates and crowd in the background.",
+    "keywords": [
+      "soccer",
+      "player",
+      "field",
+      "crowd",
+      "goal"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/196.mp4",
+    "description": "A soccer game between Canada and Qatar at a stadium with sparse action and a 0-0 score.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "game"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/197.mp4",
+    "description": "A soccer game between Canada and Qatar unfolds with players on the field and a packed stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/198.mp4",
+    "description": "A soccer game between Canada and Qatar with goals scored and players reacting.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "players",
+      "stadium",
+      "football"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/199.mp4",
+    "description": "Soccer players celebrate on field with scoreboard showing Canada leading 3-0 against Qatar.",
+    "keywords": [
+      "soccer",
+      "Canada",
+      "Qatar",
+      "field",
+      "goal"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/200.mp4",
+    "description": "A soccer game between Canada and Qatar with Canada scoring multiple goals.",
+    "keywords": [
+      "soccer",
+      "Canada",
+      "Qatar",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/201.mp4",
+    "description": "A soccer player holds up and puts on a jersey with the name and number on it.",
+    "keywords": [
+      "soccer",
+      "player",
+      "jersey",
+      "field",
+      "game"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 2.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/202.mp4",
+    "description": "Soccer players in red and white uniforms play on a green field with a crowd in the background.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/203.mp4",
+    "description": "A soccer player celebrates with teammates and staff after a goal in a stadium.",
+    "keywords": [
+      "soccer",
+      "celebration",
+      "stadium",
+      "player",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 3.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/204.mp4",
+    "description": "A soccer team scores multiple goals against an opposing team in a stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "score",
+      "players"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/205.mp4",
+    "description": "A soccer team celebrates a win as a referee signals with their hands on the field.",
+    "keywords": [
+      "soccer",
+      "referee",
+      "field",
+      "team",
+      "celebrating"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/206.mp4",
+    "description": "Soccer players walk on a field with a scoreboard showing Canada leading Qatar 6-0.",
+    "keywords": [
+      "soccer",
+      "Canada",
+      "Qatar",
+      "stadium",
+      "players"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/207.mp4",
+    "description": "A soccer game between Canada and Qatar shows players in action on a green field with a crowd.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/208.mp4",
+    "description": "A soccer game between Canada and Qatar with a goal scored by Canada.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "Canada",
+      "Qatar",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/209.mp4",
+    "description": "Soccer players celebrate on a field with a goal and crowd in the background.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "goal",
+      "celebration"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 3.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/210.mp4",
+    "description": "A soccer game between Canada and Qatar with two Canadian goals.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 13.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/211.mp4",
+    "description": "A soccer game unfolds with players in white and black uniforms on a green field with a goal.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/212.mp4",
+    "description": "A soccer referee interacts with players on the field during a Canada vs Qatar match.",
+    "keywords": [
+      "soccer",
+      "referee",
+      "players",
+      "field",
+      "game"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/213.mp4",
+    "description": "A soccer player is given a red card by a referee on a field with spectators.",
+    "keywords": [
+      "soccer",
+      "referee",
+      "player",
+      "field",
+      "red card"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 1.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/214.mp4",
+    "description": "A soccer game between Canada and Qatar unfolds with players in action on the field and spectators cheering.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/215.mp4",
+    "description": "A soccer game between England and Croatia at a packed stadium with a 0-0 score.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "game"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/216.mp4",
+    "description": "A soccer game between England and Croatia unfolds with players in action on a green field with spectators.",
+    "keywords": [
+      "soccer",
+      "game",
+      "field",
+      "players",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/217.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd and various sponsors' advertisements.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "crowd",
+      "sponsors"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/218.mp4",
+    "description": "A soccer game between England and Croatia unfolds with players in action on a green field with spectators.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/219.mp4",
+    "description": "A soccer player scores a goal, evading the goalkeeper, in a competitive match between England and Croatia.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "player",
+      "goalkeeper",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/220.mp4",
+    "description": "A soccer player scores a goal in a crowded stadium with a score of England 3, Croatia 2.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/221.mp4",
+    "description": "A soccer goal is scored in a crowded stadium with players and spectators reacting.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/222.mp4",
+    "description": "A soccer game between England and Croatia with players in action on a green field with spectators.",
+    "keywords": [
+      "soccer",
+      "game",
+      "players",
+      "field",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/223.mp4",
+    "description": "England scores a goal against Croatia in a soccer match, with fans and players celebrating.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "England",
+      "Croatia",
+      "celebration"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 13.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/224.mp4",
+    "description": "A soccer player reacts and teams walk on a field with a scoreboard showing England vs Croatia.",
+    "keywords": [
+      "soccer",
+      "field",
+      "player",
+      "stadium",
+      "scoreboard"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/225.mp4",
+    "description": "A soccer game between England and Croatia with players in action on a green field with a crowd.",
+    "keywords": [
+      "soccer",
+      "game",
+      "field",
+      "players",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/226.mp4",
+    "description": "A soccer game between England and Croatia at a packed stadium with players in white and blue uniforms.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "game",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/227.mp4",
+    "description": "A soccer player takes a free kick during a match between England and Croatia.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "kick"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/228.mp4",
+    "description": "A referee in a green shirt discusses with another official on a soccer field.",
+    "keywords": [
+      "referee",
+      "soccer",
+      "field",
+      "officials",
+      "discussion"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 2.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/229.mp4",
+    "description": "A soccer game between England and Croatia shows players, referees, and spectators in a stadium setting.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "referees",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 11.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/230.mp4",
+    "description": "A soccer player scores a goal, equalizing the game, amidst a lively stadium with fans and teammates.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "fans",
+      "scoreboard"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/231.mp4",
+    "description": "Soccer players compete in a stadium with a goal scored amidst a packed crowd.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/232.mp4",
+    "description": "Soccer players in blue and white uniforms play on a green field with a goalkeeper in pink.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goalkeeper",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/233.mp4",
+    "description": "A soccer game between France and Iraq with goals and player actions in a stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goals",
+      "players",
+      "France"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 130.43,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/234.mp4",
+    "description": "A soccer game between France and Iraq shows players on the field with a score of 0-0.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "game"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/235.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd, players, and advertisements.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/236.mp4",
+    "description": "A soccer player kicks the ball towards the goal in a stadium with spectators and advertisements.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "player",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/237.mp4",
+    "description": "A soccer game between France and Iraq unfolds with players on the field and a goal attempt.",
+    "keywords": [
+      "soccer",
+      "game",
+      "players",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/238.mp4",
+    "description": "Soccer players in blue and white uniforms play on a green field with a crowd in the background.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "crowd",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/239.mp4",
+    "description": "A soccer player scores a goal, evading the goalie and defenders in a stadium.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "player",
+      "scoreboard"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/240.mp4",
+    "description": "A soccer player scores a goal in a match between France and Iraq.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "France",
+      "Iraq",
+      "player"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/241.mp4",
+    "description": "A soccer game between France and Iraq with France leading 3-0, showing players on the field and crowd.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "crowd",
+      "scoreboard"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/242.mp4",
+    "description": "A soccer game between France and Iraq with players on the field and a goal attempt.",
+    "keywords": [
+      "soccer",
+      "game",
+      "players",
+      "field",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 11.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/243.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd, players, and goalkeepers.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "player",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/244.mp4",
+    "description": "Soccer players in blue and white uniforms play on a green field with a crowd in the background.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/245.mp4",
+    "description": "A soccer player scores a goal in a match between France and Iraq.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "France",
+      "Iraq",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/246.mp4",
+    "description": "Soccer players kick ball on green field with crowd and advertisements in background.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "ball",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/247.mp4",
+    "description": "Soccer players in white and blue jerseys play on a green field with a goal and crowd.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/248.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd, captured in three frames.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "crowd",
+      "player"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/249.mp4",
+    "description": "Soccer players in blue and white uniforms play on a green field with a goal and crowd.",
+    "keywords": [
+      "soccer",
+      "field",
+      "goal",
+      "players",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/250.mp4",
+    "description": "A soccer game unfolds with players on a green field surrounded by a packed stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "game"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 2.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/251.mp4",
+    "description": "A soccer player scores a goal during a match between Germany and Curacao.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "crowd",
+      "McDonald's"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 3.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/252.mp4",
+    "description": "A soccer game between Germany and Cura\u00e7ao with a goal being scored.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "scoreboard"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/253.mp4",
+    "description": "A soccer player scores a goal, evading the goalkeeper, amidst a lively stadium with spectators and Coca-Cola advertising.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "player",
+      "stadium",
+      "goalkeeper"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/254.mp4",
+    "description": "A soccer game between Germany and Curacao with a free kick resulting in a goal.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "free kick",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/255.mp4",
+    "description": "A soccer game unfolds with players in blue and white uniforms on a green field with a goal.",
+    "keywords": [
+      "soccer",
+      "field",
+      "goal",
+      "players",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/256.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd, players, and a referee present.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/257.mp4",
+    "description": "A soccer game unfolds with players in blue and white uniforms on a green field with a crowd.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/258.mp4",
+    "description": "A soccer game between Germany and Cura\u00e7ao with players on the field and a crowd in the stands.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "crowd",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 2.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/259.mp4",
+    "description": "A soccer game between Germany and Cura\u00e7ao with players kicking the ball and scoring goals.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/260.mp4",
+    "description": "A soccer game unfolds with players on the field, a goal, and a crowd in the background.",
+    "keywords": [
+      "soccer",
+      "field",
+      "goal",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/261.mp4",
+    "description": "A soccer game between Germany and Cura\u00e7ao with players on the field and a goalie defending the net.",
+    "keywords": [
+      "soccer",
+      "game",
+      "players",
+      "field",
+      "goalie"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/262.mp4",
+    "description": "A soccer game between Germany and Cura\u00e7ao with Germany leading 7-1.",
+    "keywords": [
+      "soccer",
+      "Germany",
+      "Cura\u00e7ao",
+      "goal",
+      "celebration"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/263.mp4",
+    "description": "A soccer game between Germany and Cura\u00e7ao with players in action on a green field with a goal.",
+    "keywords": [
+      "soccer",
+      "game",
+      "field",
+      "goal",
+      "players"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 3.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/264.mp4",
+    "description": "A soccer game between Germany and Cura\u00e7ao unfolds with players on the field and a goal attempt.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/265.mp4",
+    "description": "A soccer player celebrates with fans in the stands during a match between Germany and Curacao.",
+    "keywords": [
+      "soccer",
+      "celebration",
+      "crowd",
+      "stadium",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/266.mp4",
+    "description": "Soccer players clash in a stadium with a goal attempt and save.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "save"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/267.mp4",
+    "description": "A soccer game between Germany and Cura\u00e7ao with goals and player actions on a crowded stadium field.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/268.mp4",
+    "description": "Soccer players celebrate and react on field with crowd and goal in background.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "celebration",
+      "crowd",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/269.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd and various sponsors displayed.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "crowd",
+      "sponsors"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/270.mp4",
+    "description": "A soccer game unfolds in a packed stadium with players in white and black uniforms.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "crowd"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 2.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/271.mp4",
+    "description": "Soccer players in white and black uniforms play on a green field with a crowd in the background.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/272.mp4",
+    "description": "A soccer game between Iran and New Zealand unfolds with players in action on a green field.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/273.mp4",
+    "description": "A soccer game between Iran and New Zealand at a crowded stadium with players and spectators in action.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/274.mp4",
+    "description": "A soccer game between Iran and New Zealand unfolds with players in action on a green field.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/275.mp4",
+    "description": "Soccer players react to a goal on a field with a referee and crowd in the background.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "referee",
+      "stadium",
+      "players"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 3.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/276.mp4",
+    "description": "A soccer game between Iran and New Zealand unfolds with players in action on a green field.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/277.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd, players, and goalkeepers.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/278.mp4",
+    "description": "A soccer game between Iran and New Zealand unfolds with players kicking the ball into the goal.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "players",
+      "stadium",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/279.mp4",
+    "description": "A soccer player in white reacts on the field with teammates and opponents nearby.",
+    "keywords": [
+      "soccer",
+      "player",
+      "field",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/280.mp4",
+    "description": "Soccer players kick and head the ball in a stadium with a large crowd and advertisements.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "ball",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 11.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/281.mp4",
+    "description": "A soccer game between Iran and New Zealand with players on the field and a crowd in the stands.",
+    "keywords": [
+      "soccer",
+      "game",
+      "players",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 3.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/282.mp4",
+    "description": "A soccer game ends in a tie, showing players, coaches, and referees on the field.",
+    "keywords": [
+      "soccer",
+      "referee",
+      "players",
+      "coaches",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/283.mp4",
+    "description": "A soccer game between Iran and New Zealand on a green field with a crowd and goalposts.",
+    "keywords": [
+      "soccer",
+      "field",
+      "goal",
+      "players",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/284.mp4",
+    "description": "A soccer player in black uniform kicks the ball during a match against Iran.",
+    "keywords": [
+      "soccer",
+      "player",
+      "ball",
+      "kick",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/285.mp4",
+    "description": "A soccer game between Iran and New Zealand at a packed stadium with a goal scored.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/286.mp4",
+    "description": "A soccer player scores a goal in a stadium with spectators and Coca-Cola advertisements.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "player",
+      "goalkeeper"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/287.mp4",
+    "description": "Soccer players in white and black uniforms interact on a green field with a ball and goal.",
+    "keywords": [
+      "soccer",
+      "field",
+      "goal",
+      "players",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/288.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd, players, and referees present.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/289.mp4",
+    "description": "A soccer game between Iran and New Zealand on a green field with players and spectators.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 2.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/290.mp4",
+    "description": "Soccer players in white and red uniforms play on a green field with a crowd in the background.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 17.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/291.mp4",
+    "description": "A soccer player scores a goal in a stadium with a referee and teammates celebrating.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "referee",
+      "player"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/292.mp4",
+    "description": "A soccer game between Iraq and Norway at a packed stadium with players celebrating a goal.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "celebration",
+      "players"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/293.mp4",
+    "description": "Soccer players compete in a stadium with a goal scored.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/294.mp4",
+    "description": "Soccer players in red and white uniforms play on a green field with a crowd in the background.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 17.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/295.mp4",
+    "description": "Soccer players in red and white uniforms play on a green field with a goal and spectators.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "players",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 11.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/296.mp4",
+    "description": "Soccer players in red and white uniforms play on a green field with a goal and crowd.",
+    "keywords": [
+      "soccer",
+      "players",
+      "goal",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/297.mp4",
+    "description": "Soccer players in red and white uniforms play on a green field with a goal and crowd.",
+    "keywords": [
+      "soccer",
+      "field",
+      "goal",
+      "players",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/298.mp4",
+    "description": "Soccer players in red and white uniforms play on a green field with a goal and Coca-Cola ads.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "players",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/299.mp4",
+    "description": "Soccer players in red and white uniforms play on a green field with a goal and spectators.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "players",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/300.mp4",
+    "description": "A soccer game between Japan and Sweden at a packed stadium with players in blue and yellow uniforms.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "game",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/301.mp4",
+    "description": "A soccer game between Japan and Sweden with a goal being scored.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 16.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/302.mp4",
+    "description": "A soccer game between Japan and Sweden with players in blue and yellow uniforms on a green field.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/303.mp4",
+    "description": "A soccer game between Japan and Sweden with players kicking the ball and goalkeepers defending.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/304.mp4",
+    "description": "A soccer game between Japan and Sweden with players kicking and heading the ball near the goal.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "players",
+      "stadium",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/305.mp4",
+    "description": "A soccer game between Japan and Sweden ends in a 1-1 draw with emotional moments.",
+    "keywords": [
+      "soccer",
+      "Japan",
+      "Sweden",
+      "players",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/306.mp4",
+    "description": "A soccer game between Japan and Sweden at a crowded stadium with players in blue and yellow uniforms.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "game",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/307.mp4",
+    "description": "A soccer game between Japan and Sweden at a crowded stadium with players in blue and yellow uniforms.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/308.mp4",
+    "description": "A soccer player attempts to score a goal during a match between Japan and Sweden.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "player",
+      "stadium",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/309.mp4",
+    "description": "A soccer game between Japan and Sweden at a stadium with a penalty kick attempt.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "kick"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/310.mp4",
+    "description": "A soccer game between Japan and Sweden at a packed stadium with players in blue and yellow uniforms.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "uniforms",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/311.mp4",
+    "description": "A soccer game between Japan and Sweden at a packed stadium with players in blue and yellow uniforms.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/312.mp4",
+    "description": "A soccer game between Japan and Sweden at a packed stadium with players in blue and yellow uniforms.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "uniforms",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/313.mp4",
+    "description": "A soccer player scores a goal during a match between Japan and Sweden.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "Japan",
+      "Sweden",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 17.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/314.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "player",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 19.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/315.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd, showcasing skill and teamwork.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "player",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/316.mp4",
+    "description": "Fans and players celebrate a soccer match between Netherlands and Sweden with a 5-1 outcome.",
+    "keywords": [
+      "soccer",
+      "Netherlands",
+      "Sweden",
+      "fans",
+      "celebration"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/317.mp4",
+    "description": "Soccer players in orange and blue uniforms play on a green field with a goal and crowd.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "players",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 14.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/318.mp4",
+    "description": "A soccer game between Netherlands and Sweden at a crowded stadium with players in orange and blue uniforms.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/319.mp4",
+    "description": "A soccer team in orange scores a free kick goal against a team in blue.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "free kick",
+      "stadium",
+      "players"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/320.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd and teammates celebrating.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "crowd",
+      "player"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/321.mp4",
+    "description": "A soccer game between Netherlands and Sweden with players in action on the field.",
+    "keywords": [
+      "soccer",
+      "Netherlands",
+      "Sweden",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 20.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/322.mp4",
+    "description": "A soccer game between Netherlands and Sweden with players in action on a green field with spectators.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/323.mp4",
+    "description": "A soccer player in blue is challenged by an opponent near the goal line.",
+    "keywords": [
+      "soccer",
+      "player",
+      "goal",
+      "challenge",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/324.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd, during a Netherlands vs Sweden match.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "crowd",
+      "football"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/325.mp4",
+    "description": "A soccer game between Norway and Senegal with a penalty shootout and crowd reactions.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "crowd",
+      "penalty"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/326.mp4",
+    "description": "Soccer players in black and white uniforms play on a green field with a goal and spectators.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "players",
+      "field",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/327.mp4",
+    "description": "A soccer game unfolds with players in white and black uniforms on a green field with a goal.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "goal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/328.mp4",
+    "description": "Soccer players compete on a green field with goalposts and netting under stadium lights and audience.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 13.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/329.mp4",
+    "description": "Soccer players react to a match between Norway and Senegal, showing emotions and interactions on the field.",
+    "keywords": [
+      "soccer",
+      "players",
+      "Norway",
+      "Senegal",
+      "celebration"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/330.mp4",
+    "description": "A soccer game between Norway and Senegal with players and spectators in a stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/331.mp4",
+    "description": "A soccer player shoots the ball towards the goal during a match between Norway and Senegal.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "player",
+      "ball",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 9.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/332.mp4",
+    "description": "A soccer player scores a goal during a match between Norway and Senegal.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "Norway",
+      "Senegal",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 13.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/333.mp4",
+    "description": "A soccer player scores a goal, captured in three frames showing the approach, shot, and aftermath.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/334.mp4",
+    "description": "Soccer players kick ball into goal during intense match with cheering crowd and goal celebrations.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "players",
+      "crowd",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/335.mp4",
+    "description": "A soccer game between Norway and Senegal with players scoring goals in a stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "Norway"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/336.mp4",
+    "description": "Soccer players in white and black uniforms play on a green field with a goal and crowd.",
+    "keywords": [
+      "soccer",
+      "field",
+      "goal",
+      "players",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/337.mp4",
+    "description": "Soccer players in white and black uniforms play on a green field with a goal and crowd.",
+    "keywords": [
+      "soccer",
+      "field",
+      "goal",
+      "players",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/338.mp4",
+    "description": "A soccer game between Panama and Croatia with players in action on a green field with spectators.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "game"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 14.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/339.mp4",
+    "description": "A soccer game between Panama and Croatia with players on the field and a goal being defended.",
+    "keywords": [
+      "soccer",
+      "game",
+      "players",
+      "goal",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/340.mp4",
+    "description": "Soccer players interact on a field with a crowd in the background, showing a post-game moment.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "crowd",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/341.mp4",
+    "description": "A soccer game between Panama and Croatia with players kicking the ball in a stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/342.mp4",
+    "description": "A soccer game between Panama and Croatia with players kicking and running on the field.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 11.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/343.mp4",
+    "description": "A soccer player takes a free kick during a match between Panama and Croatia.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "player",
+      "ball",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/344.mp4",
+    "description": "A soccer player kicks the ball towards the goal during a match between Panama and Croatia.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "player",
+      "stadium",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/345.mp4",
+    "description": "Soccer players compete on a field with a crowd in the background, showcasing a goal-scoring play.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 21.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/346.mp4",
+    "description": "A soccer player scores a goal in a crowded stadium during a match between Panama and Croatia.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/347.mp4",
+    "description": "A soccer player scores a goal in a stadium with a crowd and multiple players on the field.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/348.mp4",
+    "description": "A soccer game between Panama and Croatia with players kicking and heading the ball in a stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "ball"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/349.mp4",
+    "description": "Soccer players compete in a stadium with a goal scored.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 22.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/350.mp4",
+    "description": "Soccer players in red and white uniforms play on a green field with a crowd in the background.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/351.mp4",
+    "description": "A soccer game between Portugal and Uzbekistan shows players in action on a green field with a crowd.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "field",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/352.mp4",
+    "description": "Soccer players in red and white uniforms play on a green field with a goal and spectators.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "goal",
+      "spectators"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 14.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/353.mp4",
+    "description": "Soccer players interact on a field with a scoreboard showing Portugal leading Uzbekistan 5-0.",
+    "keywords": [
+      "soccer",
+      "players",
+      "field",
+      "scoreboard",
+      "stadium"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/354.mp4",
+    "description": "Soccer player scores a goal, celebrates, and walks off the field in a packed stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "player",
+      "celebration"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 6.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/355.mp4",
+    "description": "A soccer game between Portugal and Uzbekistan with two goals scored by Portugal.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/356.mp4",
+    "description": "A soccer game between Portugal and Uzbekistan unfolds with players on the field and a referee officiating.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "referee",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/357.mp4",
+    "description": "Soccer players score goals in a stadium with a crowd, showcasing their skills and teamwork.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 15.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/358.mp4",
+    "description": "A soccer player scores a goal in a stadium with a large crowd and celebrates with teammates.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "crowd",
+      "celebration"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 3.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/359.mp4",
+    "description": "A soccer player scores a goal in a stadium with a packed crowd and various sponsors.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "crowd",
+      "sponsors"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/360.mp4",
+    "description": "A soccer game between Portugal and Uzbekistan on a green field with a crowd and advertisements.",
+    "keywords": [
+      "soccer",
+      "field",
+      "players",
+      "crowd",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/361.mp4",
+    "description": "A soccer game between Portugal and Uzbekistan unfolds with players in action on a green field with spectators.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "players",
+      "goal",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 10.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/362.mp4",
+    "description": "A soccer game between Scotland and Brazil with a goal scored by Brazil.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "field"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 15.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/363.mp4",
+    "description": "A soccer game between Scotland and Brazil with Brazil leading 3-0, showing players in action on the field.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "players",
+      "Brazil"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/364.mp4",
+    "description": "A referee holds up an injury time sign on a soccer field with Neymar Jr. and a stadium crowd.",
+    "keywords": [
+      "soccer",
+      "referee",
+      "Neymar",
+      "stadium",
+      "injury time"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 2.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/365.mp4",
+    "description": "A soccer game between Scotland and Brazil with Brazil leading 3-0.",
+    "keywords": [
+      "soccer",
+      "Brazil",
+      "Scotland",
+      "stadium",
+      "goal"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 21.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/366.mp4",
+    "description": "A soccer game between Scotland and Brazil with Brazil leading 3-0 in a crowded stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "Brazil",
+      "Scotland",
+      "game"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 1.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/367.mp4",
+    "description": "A soccer game ends with Brazil winning 3-0 against Scotland, showing players and coaches reacting.",
+    "keywords": [
+      "soccer",
+      "Brazil",
+      "Scotland",
+      "stadium",
+      "referees"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 8.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/368.mp4",
+    "description": "A soccer game between Scotland and Brazil shows players, a referee, and a goal in a stadium.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "referee",
+      "goal",
+      "players"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 11.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/369.mp4",
+    "description": "A soccer player scores a goal in a stadium with a large crowd.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "crowd",
+      "player"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/370.mp4",
+    "description": "A soccer player scores a goal, with teammates and opponents reacting on the field.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "player",
+      "scoreboard"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 11.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/371.mp4",
+    "description": "A soccer player celebrates on the field with a crowd in the background.",
+    "keywords": [
+      "soccer",
+      "player",
+      "field",
+      "stadium",
+      "celebration"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 4.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/372.mp4",
+    "description": "A soccer player scores a goal during a match between Scotland and Brazil.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "ball"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 13.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/373.mp4",
+    "description": "A soccer game between Scotland and Brazil with Brazil scoring a goal.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "crowd"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 5.02,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/374.mp4",
+    "description": "A soccer game between Scotland and Brazil with Brazil scoring multiple goals.",
+    "keywords": [
+      "soccer",
+      "stadium",
+      "goal",
+      "Brazil",
+      "Scotland"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 12.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
+  },
+  {
+    "file_path": "drive://Clips/375.mp4",
+    "description": "A soccer game between Scotland and Brazil with Brazil scoring a goal.",
+    "keywords": [
+      "soccer",
+      "goal",
+      "stadium",
+      "players",
+      "Brazil"
+    ],
+    "source": "groq_vision_manual",
+    "source_url": null,
+    "duration": 7.01,
+    "width": 1920,
+    "height": 1080,
+    "downloaded_at": "2026-06-27T20:24:09.718054+00:00",
+    "is_used": 0,
+    "last_used_at": null
   }
+
 ]

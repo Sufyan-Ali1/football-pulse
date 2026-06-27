@@ -15,11 +15,11 @@ THUMBNAILS_DIR = TEMP_DIR / "thumbnails"
 
 # ── Groq ─────────────────────────────────────────────────────────────────────
 GROQ_API_KEY          = os.environ.get("GROQ_API_KEY", "")
-GROQ_API_KEY_1        = os.environ.get("GROQ_API_KEY_1", "")
-GROQ_API_KEY_2        = os.environ.get("GROQ_API_KEY_2", "")
-GROQ_API_KEY_3        = os.environ.get("GROQ_API_KEY_3", "")
-GROQ_API_KEY_4        = os.environ.get("GROQ_API_KEY_4", "")
-GROQ_API_KEY_5        = os.environ.get("GROQ_API_KEY_5", "")
+GROQ_API_KEYS         = {
+    name: value
+    for name, value in os.environ.items()
+    if value and (name == "GROQ_API_KEY" or name.startswith("GROQ_API_KEY_"))
+}
 GROQ_MODEL            = "llama-3.3-70b-versatile"
 GROQ_VISION_MODEL     = "meta-llama/llama-4-scout-17b-16e-instruct"
 
