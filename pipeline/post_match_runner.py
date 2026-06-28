@@ -22,6 +22,7 @@ from core.database import (
     get_available_clips,
     get_match_video,
     mark_video_clips_used,
+    reset_all_video_clips_usage,
     update_match_video,
 )
 from process.match_facts import extract_match_facts, is_finished_fixture
@@ -41,6 +42,7 @@ _LIVE_STATUSES = {"1H", "HT", "2H", "ET", "BT", "P", "SUSP", "INT", "LIVE"}
 _NOT_STARTED_STATUSES = {"NS", "TBD"}
 _RECENT_MATCH_LOOKBACK_HOURS = 6
 _POST_MATCH_GROUP_1_LABELS = {"OPENING HOOK", "MATCH RESULT", "FIRST HALF", "SECOND HALF"}
+_POST_MATCH_MIN_CLIPS = 12
 
 
 def _debug_enabled() -> bool:
@@ -214,6 +216,24 @@ def _save_video_metadata(video_output: Path, metadata) -> Path:
     return metadata_path
 
 
+def _load_post_match_clip_pool() -> list:
+    clips = get_available_clips(min_count=_POST_MATCH_MIN_CLIPS, reset_if_insufficient=True)
+    if len(clips) >= _POST_MATCH_MIN_CLIPS:
+        return clips
+
+    released = reset_all_video_clips_usage()
+    reloaded = get_available_clips()
+    logger.warning(
+        "Post-match clip pool still small after cooldown release (%d available, need about %d). "
+        "Reset %d used clip(s) and reloaded %d clip(s).",
+        len(clips),
+        _POST_MATCH_MIN_CLIPS,
+        released,
+        len(reloaded),
+    )
+    return reloaded
+
+
 def _part_news_item(base_item, script, index: int, total: int):
     label = script.panel_label.replace("_", " ").title() if script.panel_label else f"Part {index}"
     headline = script.display_headline or f"{base_item.headline} - {label}"
@@ -353,7 +373,7 @@ def _generate_fixture_video(fixture_id: int) -> None:
         facts = extract_match_facts(data)
         _write_debug_artifact(fixture_id, "step_02_extracted_match_facts", facts.to_dict())
         logger.info("Post-match step fixture %s: loading available stock clips", fixture_id)
-        clips = get_available_clips()
+        clips = _load_post_match_clip_pool()
         _write_debug_artifact(fixture_id, "step_03_available_clips", {"count": len(clips), "clips": clips})
         logger.info("Post-match step fixture %s: generating section-wise LLM script", fixture_id)
         script_parts = generate_match_script_parts(facts, clips=clips)

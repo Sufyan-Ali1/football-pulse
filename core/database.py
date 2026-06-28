@@ -420,15 +420,38 @@ def release_expired_video_clips() -> int:
     return released
 
 
-def get_available_clips() -> list[sqlite3.Row]:
-    """Return clips that are not within the cooldown window."""
-    release_expired_video_clips()
+def reset_all_video_clips_usage() -> int:
+    """Reset all used clips so they can be reused immediately."""
+    with _conn() as c:
+        cursor = c.execute(
+            "UPDATE video_clips SET is_used = 0, last_used_at = NULL WHERE COALESCE(is_used, 0) = 1"
+        )
+        c.commit()
+    return int(cursor.rowcount or 0)
+
+
+def _load_available_clips() -> list[sqlite3.Row]:
     with _conn() as c:
         return c.execute(
             """SELECT * FROM video_clips
                WHERE COALESCE(is_used, 0) = 0
                ORDER BY downloaded_at DESC"""
         ).fetchall()
+
+
+def get_available_clips(min_count: int | None = None, reset_if_insufficient: bool = False) -> list[sqlite3.Row]:
+    """Return clips that are not within the cooldown window.
+
+    If reset_if_insufficient is true and the available pool is smaller than
+    min_count, all used clips are reset once and the pool is reloaded.
+    """
+    release_expired_video_clips()
+    clips = _load_available_clips()
+    required = max(0, int(min_count or 0))
+    if reset_if_insufficient and required and len(clips) < required:
+        reset_all_video_clips_usage()
+        clips = _load_available_clips()
+    return clips
 
 
 def mark_video_clips_used(clip_ids: list[str]) -> None:

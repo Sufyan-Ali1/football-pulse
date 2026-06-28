@@ -31,6 +31,7 @@ from core.database import (
     mark_articles_rejected,
     mark_articles_used,
     mark_video_clips_used,
+    reset_all_video_clips_usage,
     row_to_news_item,
     update_daily_video,
 )
@@ -48,6 +49,7 @@ logger = logging.getLogger(__name__)
 _BATCH_SIZE = 10
 _MAX_ROUNDS = 3
 _CANDIDATE_COUNT = 7
+_MIN_CLIPS_PER_STORY = 4
 _MIN_RELEVANCE_SCORE = 6
 _MIN_GOOGLE_ALERTS_RELEVANCE_SCORE = 7
 _WORLD_CUP_PATTERNS = [
@@ -73,6 +75,30 @@ def _remove_used_clips_from_pool(clips: list, used_clip_ids: list[str]) -> list:
         return clips
     used_ids = set(used_clip_ids)
     return [clip for clip in clips if clip["id"] not in used_ids]
+
+
+def _ensure_clip_pool_for_remaining_stories(
+    clip_library: list,
+    remaining_stories: int,
+    *,
+    reset_attempted: bool,
+) -> tuple[list, bool]:
+    needed = max(0, remaining_stories) * _MIN_CLIPS_PER_STORY
+    if reset_attempted or len(clip_library) >= needed or needed == 0:
+        return clip_library, reset_attempted
+
+    released = reset_all_video_clips_usage()
+    reloaded = get_available_clips()
+    logger.warning(
+        "Clip pool too small for %d remaining story/stories (%d available, need about %d). "
+        "Reset %d used clip(s) and reloaded %d clip(s).",
+        remaining_stories,
+        len(clip_library),
+        needed,
+        released,
+        len(reloaded),
+    )
+    return reloaded, True
 
 
 def _metadata_sidecar_path(video_output: Path) -> Path:
@@ -308,11 +334,21 @@ def run_daily_video() -> None:
 
     logger.info("Building %d-story video for %s ...", len(articles), video_date)
 
-    clip_library = get_available_clips()
+    clip_library = get_available_clips(
+        min_count=len(articles) * _MIN_CLIPS_PER_STORY,
+        reset_if_insufficient=True,
+    )
     logger.info("Clip library: %d available clips loaded", len(clip_library))
 
     stories: list[tuple[Script, NewsItem, Path | None]] = []
+    clip_reset_attempted = False
     for i, article in enumerate(articles, start=1):
+        remaining_stories = len(articles) - i + 1
+        clip_library, clip_reset_attempted = _ensure_clip_pool_for_remaining_stories(
+            clip_library,
+            remaining_stories,
+            reset_attempted=clip_reset_attempted,
+        )
         item = row_to_news_item(article)
         content_type = article["content_type"]
 
