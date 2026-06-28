@@ -27,6 +27,7 @@ GROQ_VISION_MODEL     = "meta-llama/llama-4-scout-17b-16e-instruct"
 ELEVENLABS_API_KEY          = os.environ.get("ELEVENLABS_API_KEY", "")
 ELEVENLABS_VOICE_ID_ENGLISH = os.environ.get("ELEVENLABS_VOICE_ID_ENGLISH", "")
 ELEVENLABS_VOICE_ID_YORUBA  = os.environ.get("ELEVENLABS_VOICE_ID_YORUBA", "")
+VOICEOVER_TTS_PROVIDER      = os.environ.get("VOICEOVER_TTS_PROVIDER", "edge-tts").strip()
 EDGE_TTS_VOICE_ENGLISH      = os.environ.get("EDGE_TTS_VOICE_ENGLISH", "en-US-AndrewNeural").strip()
 EDGE_TTS_VOICE_YORUBA       = os.environ.get("EDGE_TTS_VOICE_YORUBA", "en-US-AndrewNeural").strip()
 EDGE_TTS_RATE               = os.environ.get("EDGE_TTS_RATE", "+0%").strip()

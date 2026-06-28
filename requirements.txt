@@ -38,6 +38,7 @@ moviepy==1.0.3
 numpy==2.4.5
 oauthlib==3.3.1
 openai==2.36.0
+opencv-python==4.10.0.84
 pillow==12.2.0
 proglog==0.1.12
 proto-plus==1.28.0
@@ -50,6 +51,7 @@ pydantic_core==2.46.4
 pyparsing==3.3.2
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
+rapidocr-onnxruntime==1.4.4
 requests==2.34.1
 requests-oauthlib==2.0.0
 sgmllib3k==1.0.0

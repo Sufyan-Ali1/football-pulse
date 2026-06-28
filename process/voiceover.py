@@ -1,64 +1,17 @@
 """
 Voiceover generator - Step 5.
 
-Converts script text to an MP3 via ElevenLabs.
-  language="english" -> ElevenLabs (ELEVENLABS_VOICE_ID_ENGLISH)
-  language="yoruba"  -> ElevenLabs (ELEVENLABS_VOICE_ID_YORUBA)
-
-Output saved to storage/Voiceovers/{news_id}_{format}_{language}.mp3
+Generates an MP3 voiceover for a script using the configured TTS provider.
+Supported providers come from clients.tts, currently ElevenLabs and Edge TTS.
 """
 import logging
 from pathlib import Path
 
-import requests
-
+from clients.tts import get_tts_provider
 from config import settings
 from core.types import Script
 
 logger = logging.getLogger(__name__)
-
-_ELEVENLABS_TTS_URL = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
-
-_ELEVENLABS_VOICE_SETTINGS = {
-    "stability": 0.55,
-    "similarity_boost": 0.75,
-    "style": 0.3,
-    "use_speaker_boost": True,
-}
-
-
-
-def _generate_elevenlabs(script: Script, language: str, output_path: Path) -> Path:
-    voice_id = (
-        settings.ELEVENLABS_VOICE_ID_YORUBA
-        if language == "yoruba"
-        else settings.ELEVENLABS_VOICE_ID_ENGLISH
-    )
-    if not settings.ELEVENLABS_API_KEY or not voice_id:
-        raise RuntimeError(f"ElevenLabs credentials are not configured for language={language!r}")
-
-    response = requests.post(
-        _ELEVENLABS_TTS_URL.format(voice_id=voice_id),
-        json={
-            "text": script.text,
-            "model_id": "eleven_multilingual_v2",
-            "voice_settings": _ELEVENLABS_VOICE_SETTINGS,
-        },
-        headers={
-            "xi-api-key": settings.ELEVENLABS_API_KEY,
-            "Content-Type": "application/json",
-            "Accept": "audio/mpeg",
-        },
-        timeout=120,
-    )
-    response.raise_for_status()
-    output_path.write_bytes(response.content)
-    logger.info(
-        "ElevenLabs voiceover saved: %s (%.1f KB)",
-        output_path.name,
-        output_path.stat().st_size / 1024,
-    )
-    return output_path
 
 
 def generate_voiceover(script: Script, language: str = "english") -> Path:
@@ -72,7 +25,29 @@ def generate_voiceover(script: Script, language: str = "english") -> Path:
 
     settings.VOICEOVERS_DIR.mkdir(parents=True, exist_ok=True)
 
-    if language in ("english", "yoruba"):
-        return _generate_elevenlabs(script, language, output_path)
+    primary_name = settings.VOICEOVER_TTS_PROVIDER
+    fallback_name = "elevenlabs"
 
-    raise ValueError("language must be 'english' or 'yoruba'")
+    try:
+        provider = get_tts_provider(primary_name)
+        return provider.synthesize(script.text, output_path, language=language)
+    except Exception as primary_exc:
+        if primary_name.strip().lower() == fallback_name:
+            raise
+
+        logger.warning(
+            "Primary TTS provider %s failed for %s: %s. Falling back to %s.",
+            primary_name,
+            output_path.name,
+            primary_exc,
+            fallback_name,
+        )
+
+        try:
+            fallback_provider = get_tts_provider(fallback_name)
+            return fallback_provider.synthesize(script.text, output_path, language=language)
+        except Exception as fallback_exc:
+            raise RuntimeError(
+                f"Primary TTS provider {primary_name!r} failed: {primary_exc}. "
+                f"Fallback provider {fallback_name!r} failed: {fallback_exc}"
+            ) from fallback_exc
