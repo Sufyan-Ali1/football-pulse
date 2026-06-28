@@ -1,5 +1,5 @@
 """
-Script generator — Step 4.
+Script generator - Step 4.
 
 Generates 20-30 second segment scripts for multi-story videos.
 Each call returns script text, display headline, panel label,
@@ -12,6 +12,8 @@ import logging
 import re
 from pathlib import Path
 
+from openai import BadRequestError
+
 from clients.groq_client import get_groq_client
 from config import settings
 from core.types import ContentType, NewsItem, Script
@@ -19,6 +21,10 @@ from core.types import ContentType, NewsItem, Script
 logger = logging.getLogger(__name__)
 
 _PROMPTS_DIR = Path(__file__).resolve().parent.parent / "config" / "prompts"
+_CLIP_CONTEXT_LIMITS = (24, 12, 6)
+_CLIP_DESCRIPTION_LIMIT = 140
+_CLIP_KEYWORDS_LIMIT = 80
+
 
 def _load_prompt() -> str:
     return (_PROMPTS_DIR / "segment.txt").read_text(encoding="utf-8")
@@ -69,8 +75,8 @@ def _story_terms(item: NewsItem, content_type: ContentType) -> set[str]:
 def _clip_relevance_score(clip: dict, story_terms: set[str]) -> tuple[int, float]:
     clip_text = " ".join(
         [
-            clip["description"] or "",
-            clip["keywords"] or "",
+            clip.get("description") or "",
+            clip.get("keywords") or "",
         ]
     ).lower()
     clip_terms = {
@@ -80,6 +86,41 @@ def _clip_relevance_score(clip: dict, story_terms: set[str]) -> tuple[int, float
     }
     overlap = len(story_terms & clip_terms)
     return overlap, _clip_duration_seconds(clip)
+
+
+def _truncate_text(text: str, limit: int) -> str:
+    cleaned = " ".join((text or "").split())
+    if len(cleaned) <= limit:
+        return cleaned
+    return cleaned[: max(0, limit - 3)].rstrip() + "..."
+
+
+def _rank_story_clips(
+    clips: list,
+    item: NewsItem,
+    content_type: ContentType,
+) -> list[dict]:
+    story_terms = _story_terms(item, content_type)
+    return sorted(
+        clips,
+        key=lambda clip: _clip_relevance_score(clip, story_terms),
+        reverse=True,
+    )
+
+
+def _build_clip_block(candidate_clips: list[dict]) -> str:
+    if not candidate_clips:
+        return "\n\nAVAILABLE VIDEO CLIPS: (none)"
+
+    clip_lines = "\n".join(
+        (
+            f"ID: {clip['id']} | Duration: {_clip_duration_seconds(clip):.2f}s | "
+            f"Description: {_truncate_text(clip.get('description', ''), _CLIP_DESCRIPTION_LIMIT)} | "
+            f"Keywords: {_truncate_text(clip.get('keywords', ''), _CLIP_KEYWORDS_LIMIT)}"
+        )
+        for clip in candidate_clips
+    )
+    return f"\n\nAVAILABLE VIDEO CLIPS:\n{clip_lines}"
 
 
 def _select_covering_clip_ids(
@@ -133,7 +174,6 @@ def _select_covering_clip_ids(
     return selected_ids
 
 
-
 def generate_segment_script(
     item: NewsItem,
     content_type: ContentType,
@@ -147,75 +187,98 @@ def generate_segment_script(
     """
     from core.database import get_all_clips
 
-    template    = _load_prompt()
+    template = _load_prompt()
     base_prompt = _render(template, item, content_type)
     if clips is None:
         clips = get_all_clips()
 
-    if clips:
-        clip_lines = "\n".join(
-            f"ID: {c['id']} | Duration: {_clip_duration_seconds(c):.2f}s | Description: {c['description']} | Keywords: {c['keywords'] or ''}"
-            for c in clips
-        )
-        clip_block = f"\n\nAVAILABLE VIDEO CLIPS:\n{clip_lines}"
-    else:
-        clip_block = "\n\nAVAILABLE VIDEO CLIPS: (none)"
-
-    prompt = (
-        f"{base_prompt}{clip_block}\n\n"
+    prompt_suffix = (
+        "\n\n"
         "Return valid JSON with exactly these five keys:\n"
-        '{\n'
+        "{\n"
         '  "script": "<around 80 words spoken voiceover script, equalling 25-30 seconds on air>",\n'
         '  "headline": "<punchy on-screen headline, 10-14 words, ALL CAPS>",\n'
         '  "panel_label": "<short label for the info panel, e.g. DEAL POINTS / MATCH STATS / KEY FACTS / INJURY UPDATE>",\n'
         '  "points": [\n'
-        '    "<point 1 — one detailed fact relevant to this story, 15-20 words>",\n'
-        '    "<point 2 — one detailed fact relevant to this story, 15-20 words>",\n'
-        '    "<point 3 — one detailed fact relevant to this story, 15-20 words>"\n'
-        '  ],\n'
+        '    "<point 1 - one detailed fact relevant to this story, 15-20 words>",\n'
+        '    "<point 2 - one detailed fact relevant to this story, 15-20 words>",\n'
+        '    "<point 3 - one detailed fact relevant to this story, 15-20 words>"\n'
+        "  ],\n"
         '  "video_ids": ["<id1>", "<id2>", "<id3>", "..."]\n'
-        '}\n'
+        "}\n"
         "headline: clean formatted version of the story for on-screen display.\n"
         "panel_label examples by story type:\n"
-        "  transfer confirmed  → DEAL POINTS (list fee, contract length, clubs involved)\n"
-        "  transfer rumour     → TRANSFER TALK (list interest, asking price, timeline)\n"
-        "  manager sacked/appointed → KEY FACTS (list dates, replacement, record)\n"
-        "  match result        → MATCH STATS (list scoreline, scorers, key moments)\n"
-        "  injury/squad news   → SQUAD UPDATE (list player, timeline, impact)\n"
-        "  club statement      → CLUB NEWS (list what was confirmed, when, next steps)\n"
-        "points: 3 short bullet facts shown on screen — match the panel_label context, NOT script sentences.\n"
-        "video_ids: return 4 to 8 UNIQUE clip IDs that best match this story visually, in preferred usage order. "
+        "  transfer confirmed -> DEAL POINTS (list fee, contract length, clubs involved)\n"
+        "  transfer rumour -> TRANSFER TALK (list interest, asking price, timeline)\n"
+        "  manager sacked/appointed -> KEY FACTS (list dates, replacement, record)\n"
+        "  match result -> MATCH STATS (list scoreline, scorers, key moments)\n"
+        "  injury/squad news -> SQUAD UPDATE (list player, timeline, impact)\n"
+        "  club statement -> CLUB NEWS (list what was confirmed, when, next steps)\n"
+        "points: 3 short bullet facts shown on screen - match the panel_label context, not script sentences.\n"
+        "video_ids: return 4 to 8 unique clip IDs that best match this story visually, in preferred usage order. "
         "Do not repeat clip IDs. If fewer than 4 relevant clips exist, return as many unique clips as possible. "
         "If none fit, use []."
     )
+    ranked_clips = _rank_story_clips(clips, item, content_type) if clips else []
 
-    _MIN_WORDS = 50
+    min_words = 50
     data = None
-    for attempt in range(3):
-        retry_note = (
-            f"\n\nIMPORTANT: Your previous script was too short. "
-            f"The script field MUST be at least 100 words. Write more detail."
-            if attempt > 0 else ""
-        )
-        groq_client = get_groq_client()
-        response = groq_client.chat.completions.create(
-            model=settings.GROQ_MODEL,
-            messages=[{"role": "user", "content": prompt + retry_note}],
-            max_tokens=1000,
-            temperature=0.7,
-            response_format={"type": "json_object"},
-        )
-        data = json.loads(response.choices[0].message.content)
-        wc_check = _word_count(str(data.get("script", "")))
-        if wc_check >= _MIN_WORDS:
-            break
-        logger.warning("Script too short (%d words) on attempt %d — retrying", wc_check, attempt + 1)
+    last_size_error: Exception | None = None
+    groq_client = get_groq_client()
 
-    data             = data or {}
-    text             = str(data.get("script", "")).strip()
+    for clip_limit in _CLIP_CONTEXT_LIMITS:
+        candidate_clips = ranked_clips[:clip_limit]
+        prompt = f"{base_prompt}{_build_clip_block(candidate_clips)}{prompt_suffix}"
+        logger.info(
+            "Segment script prompt for '%s': using %d/%d clip(s)",
+            item.headline[:60],
+            len(candidate_clips),
+            len(clips or []),
+        )
+        try:
+            for attempt in range(3):
+                retry_note = (
+                    "\n\nIMPORTANT: Your previous script was too short. "
+                    "The script field must be at least 100 words. Write more detail."
+                    if attempt > 0 else ""
+                )
+                response = groq_client.chat.completions.create(
+                    model=settings.GROQ_MODEL,
+                    messages=[{"role": "user", "content": prompt + retry_note}],
+                    max_tokens=1000,
+                    temperature=0.7,
+                    response_format={"type": "json_object"},
+                )
+                data = json.loads(response.choices[0].message.content)
+                wc_check = _word_count(str(data.get("script", "")))
+                if wc_check >= min_words:
+                    last_size_error = None
+                    break
+                logger.warning(
+                    "Script too short (%d words) on attempt %d - retrying",
+                    wc_check,
+                    attempt + 1,
+                )
+            if data:
+                break
+        except BadRequestError as exc:
+            if "Request too large" not in str(exc):
+                raise
+            last_size_error = exc
+            logger.warning(
+                "Segment script prompt too large for '%s' with %d clip(s) - retrying with fewer",
+                item.headline[:60],
+                len(candidate_clips),
+            )
+
+    if last_size_error is not None and not data:
+        raise last_size_error
+
+    data = data or {}
+    text = str(data.get("script", "")).strip()
     display_headline = str(data.get("headline", "")).strip()
-    panel_label      = str(data.get("panel_label", "")).strip().upper()
-    display_points   = [str(p) for p in data.get("points", []) if p][:3]
+    panel_label = str(data.get("panel_label", "")).strip().upper()
+    display_points = [str(p) for p in data.get("points", []) if p][:3]
     wc = _word_count(text)
     estimated_duration = _estimate_duration(wc)
     llm_video_ids = [str(v) for v in data.get("video_ids", []) if v]
@@ -228,15 +291,20 @@ def generate_segment_script(
     )
     logger.info(
         "Segment script: %s | %d words | clips=%s | %s",
-        content_type, wc, video_ids, item.headline[:60],
+        content_type,
+        wc,
+        video_ids,
+        item.headline[:60],
     )
     return Script(
-        news_id=item.id, script_type=content_type, format="segment",
-        text=text, word_count=wc, estimated_duration_seconds=estimated_duration,
+        news_id=item.id,
+        script_type=content_type,
+        format="segment",
+        text=text,
+        word_count=wc,
+        estimated_duration_seconds=estimated_duration,
         selected_clip_ids=video_ids,
         display_headline=display_headline,
         panel_label=panel_label,
         display_points=display_points,
     )
-
-
