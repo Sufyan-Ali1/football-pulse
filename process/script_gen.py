@@ -75,8 +75,8 @@ def _story_terms(item: NewsItem, content_type: ContentType) -> set[str]:
 def _clip_relevance_score(clip: dict, story_terms: set[str]) -> tuple[int, float]:
     clip_text = " ".join(
         [
-            clip.get("description") or "",
-            clip.get("keywords") or "",
+            clip["description"] or "",
+            clip["keywords"] or "",
         ]
     ).lower()
     clip_terms = {
@@ -115,8 +115,8 @@ def _build_clip_block(candidate_clips: list[dict]) -> str:
     clip_lines = "\n".join(
         (
             f"ID: {clip['id']} | Duration: {_clip_duration_seconds(clip):.2f}s | "
-            f"Description: {_truncate_text(clip.get('description', ''), _CLIP_DESCRIPTION_LIMIT)} | "
-            f"Keywords: {_truncate_text(clip.get('keywords', ''), _CLIP_KEYWORDS_LIMIT)}"
+            f"Description: {_truncate_text(clip['description'] or '', _CLIP_DESCRIPTION_LIMIT)} | "
+            f"Keywords: {_truncate_text(clip['keywords'] or '', _CLIP_KEYWORDS_LIMIT)}"
         )
         for clip in candidate_clips
     )
